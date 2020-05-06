@@ -1,7 +1,11 @@
 from django.contrib.auth import get_user_model
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.urls import reverse
+from django.views.decorators.csrf import csrf_exempt
 from django.views.generic import DetailView, RedirectView, UpdateView
+from random import randint
+
+from rest_framework.views import APIView, Response
 
 User = get_user_model()
 
@@ -40,3 +44,15 @@ class UserRedirectView(LoginRequiredMixin, RedirectView):
 
 
 user_redirect_view = UserRedirectView.as_view()
+
+
+class TestApi(APIView):
+    def post(self, request):
+        number = random_with_N_digits(5)
+        return Response({"number": number})
+
+
+def random_with_N_digits(n):  # generate OTP
+    range_start = 10 ** (n - 1)
+    range_end = (10 ** n) - 1
+    return randint(range_start, range_end)
