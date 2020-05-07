@@ -7,6 +7,8 @@ from random import randint
 
 from rest_framework.views import APIView, Response
 
+from users.verification_code_generator import VerificationCodeGenerator
+
 User = get_user_model()
 
 
@@ -48,11 +50,7 @@ user_redirect_view = UserRedirectView.as_view()
 
 class TestApi(APIView):
     def post(self, request):
-        number = random_with_N_digits(5)
+        number = VerificationCodeGenerator.random_with_N_digits(5)
         return Response({"number": number})
 
 
-def random_with_N_digits(n):  # generate OTP
-    range_start = 10 ** (n - 1)
-    range_end = (10 ** n) - 1
-    return randint(range_start, range_end)
