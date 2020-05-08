@@ -169,7 +169,7 @@ ACCOUNT_EMAIL_REQUIRED = True
 ACCOUNT_AUTHENTICATION_METHOD = 'username'
 ACCOUNT_USERNAME_REQUIRED = True
 ACCOUNT_EMAIL_VERIFICATION = "mandatory"
-ACCOUNT_CONFIRM_EMAIL_ON_GET = True
+ACCOUNT_CONFIRM_EMAIL_ON_GET = False
 ACCOUNT_LOGIN_ON_EMAIL_CONFIRMATION = True
 ACCOUNT_UNIQUE_EMAIL = True
 LOGIN_REDIRECT_URL = "users:redirect"
@@ -188,11 +188,8 @@ REST_FRAMEWORK = {
 REST_AUTH_SERIALIZERS = {
     # Replace password reset serializer to fix 500 error
     "PASSWORD_RESET_SERIALIZER": "home.api.v1.serializers.PasswordSerializer",
-}
-
-REST_AUTH_REGISTER_SERIALIZERS = {
-    # Use custom serializer that has no username and matches web signup
-    "REGISTER_SERIALIZER": "users.serializers.SignupUserSerializer",
+    "TOKEN_SERIALIZER": "users.serializers.CustomTokenSerializer",
+    'LOGIN_SERIALIZER': "users.serializers.CustomLoginSerializer",
 }
 
 # Custom user model
@@ -204,6 +201,12 @@ EMAIL_HOST_PASSWORD = env.str("SENDGRID_PASSWORD", "")
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
 
+# TWILIO_ACCOUNT_SID = env.str("TWILIO_ACCOUNT_SID")
+# TWOLIO_ACCOUNT_AUTH_TOKEN = env.str("TWOLIO_ACCOUNT_AUTH_TOKEN")
+
+TWILIO_ACCOUNT_SID = "AC05660ce41b8e18423935ba139dc8d97b"
+TWOLIO_ACCOUNT_AUTH_TOKEN = "9edd48958d7a6536a06818e4e287a4f5"
+
 
 # start fcm_django push notifications
 FCM_DJANGO_SETTINGS = {
@@ -212,6 +215,6 @@ FCM_DJANGO_SETTINGS = {
 # end fcm_django push notifications
 
 
-if DEBUG:
-    # output email to console instead of sending
-    EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
+# if DEBUG:
+#     # output email to console instead of sending
+#     EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"

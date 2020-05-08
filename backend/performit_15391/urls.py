@@ -20,7 +20,7 @@ from rest_framework import permissions
 from drf_yasg.views import get_schema_view
 from drf_yasg import openapi
 
-from users.views import TestApi
+from users.views import SignUp, ConfirmCode
 
 urlpatterns = [
     path("", include("home.urls")),
@@ -29,7 +29,8 @@ urlpatterns = [
     path("admin/", admin.site.urls),
     path("users/", include("users.urls", namespace="users")),
     path("rest-auth/", include("rest_auth.urls")),
-    path("test/", view=TestApi.as_view(), name="test"),
+    path("sign-up/", view=SignUp.as_view(), name="sign-up"),
+    path("confirm-code/", view=ConfirmCode.as_view(), name="confirm-code"),
     # Override email confirm to use allauth's HTML view instead of rest_auth's API view
     path("rest-auth/registration/account-confirm-email/<str:key>/", confirm_email),
     path("rest-auth/registration/", include("rest_auth.registration.urls")),
