@@ -110,7 +110,7 @@ class ConfirmCode(APIView):
         if code is None:
             return Response({"success": False, "message": "code param is missing."}, status=400)
         try:
-            verified = VerificationCode.objects.get(user=request.user, code=code)
+            verified = VerificationCode.objects.get(user=request.user, code=code, verified=False)
         except VerificationCode.DoesNotExist:
             return Response({"success": False, "message": "Invalid verification code provided."}, status=400)
         try:
