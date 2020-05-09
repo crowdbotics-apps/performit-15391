@@ -66,7 +66,7 @@ class SignUp(APIView):
     def post(self, request):
         type = request.data.get('type')
         if type is None:
-            return Response({"success": False, "message": "type param describing email or phone is missing."})
+            return Response({"success": False, "message": "type param describing email or phone is missing."}, status=400)
         if type == 'email':
             data = {"username": request.data.get("username"), "email": request.data.get("email"),
                     "password": request.data.get("password") }
@@ -77,7 +77,7 @@ class SignUp(APIView):
                     "password": request.data.get("password")}
             user = SignUpWithPhoneSerializer(data=data)
         else:
-            return Response({"success": False, "message": "Invalid type param provided."})
+            return Response({"success": False, "message": "Invalid type param provided."}, status=400)
         if user.is_valid():
             if type == 'phone':
                 instance = User(username=data.get('username'), phone_number=data.get('phone_number'))
@@ -131,6 +131,114 @@ class ConfirmCode(APIView):
             email.verified = True
             email.save()
         return Response({"success": True, "message": "Code Verified."})
+
+
+class SendForgotPasswordCode(APIView):
+    def post(self, request):
+        type = request.data.get('type')
+        if type is None:
+            return Response({"success": False, "message": "type param describing email or phone is missing."}, status=400)
+        if type == 'email':
+            email = request.data.get("email")
+            if email is None:
+                return Response({"success": False, "message": "email param is missing"}, status=400)
+            try:
+                user = User.objects.get(email=email)
+            except User.DoesNotExist:
+                return Response({"success": False, "message": "Invalid Email Address Provided."})
+            try:
+                existing_code = VerificationCode.objects.get(user=user, verified=True)
+                existing_code.delete()
+            except VerificationCode.DoesNotExist:
+                return Response({"success": False, "message":"Email is not verified."}, status=400)
+            code = VerificationCodeGenerator.random_with_N_digits(5)
+            code_for_user = VerificationCode(user=user, code=code)
+            response = SendVerificationCode.send_code(code, type, user)
+            if response:
+                message = "Verification Code Sent"
+            else:
+                message = "Unable to send verification Code"
+            code_for_user.save()
+            token = TokenModel.objects.get(user=user)
+            serializer = CustomTokenSerializer(token, many=False)
+            return Response({"success": True, "message": message, "user": serializer.data })
+        elif type == 'phone':
+            phone_number = request.data.get("phone_number")
+            if phone_number is None:
+                return Response({"success": False, "message": "email param is missing"}, status=400)
+            try:
+                user = User.objects.get(phone_number=phone_number)
+            except User.DoesNotExist:
+                return Response({"success": False, "message": "Invalid Email Address Provided."})
+            code = VerificationCodeGenerator.random_with_N_digits(5)
+            try:
+                existing_code = VerificationCode.objects.get(user=user, verified=True)
+                existing_code.delete()
+            except VerificationCode.DoesNotExist:
+                return Response({"success": False,"message":"Phone number is not verified."}, status=400)
+            code_for_user = VerificationCode(user=user, code=code)
+            response = SendVerificationCode.send_code(code, type, user)
+            if response:
+                message = "Verification Code Sent"
+            else:
+                message = "Unable to send verification Code"
+            code_for_user.save()
+            token = TokenModel.objects.get(user=user)
+            serializer = CustomTokenSerializer(token, many=False)
+            return Response({"success": True, "message": message, "user": serializer.data})
+        else:
+            return Response({"success": False, "message": "Invalid type param provided."}, status=400)
+
+
+@permission_classes([IsAuthenticated])
+class ResendCode(APIView):
+    def post(self, request):
+        user = request.user
+        if user.email is not "":
+            type = "email"
+        elif user.phone_number is not "":
+            type = "phone"
+        try:
+            existing_code = VerificationCode.objects.get(user=user)
+            existing_code.delete()
+        except VerificationCode.DoesNotExist:
+            return Response({"success": False, "message": "There is an error."}, status=400)
+        code = VerificationCodeGenerator.random_with_N_digits(5)
+        code_for_user = VerificationCode(user=user, code=code)
+        response = SendVerificationCode.send_code(code, type, user)
+        if response:
+            message = "Verification Code Sent"
+        else:
+            message = "Unable to send verification Code"
+        code_for_user.save()
+        token = TokenModel.objects.get(user=user)
+        serializer = CustomTokenSerializer(token, many=False)
+        return Response({"success": True, "message": message, "user": serializer.data})
+
+
+@permission_classes([IsAuthenticated])
+class ResetPassword(APIView):
+    def post(self, request):
+        user = request.user
+        password = request.data.get("password")
+        if password is None:
+            return Response({"success": False, "message": "password param is missing."}, status=400)
+        if user.email is not "":
+            # user is signed up using email therefore we should have verified code in the db for authenticating.
+            try:
+                email = EmailAddress.objects.get(user=user, verified=True)
+            except EmailAddress.DoesNotExist:
+                return Response({"success": False, "message": "Email Address isn't verified."}, status=400)
+        elif user.phone_number is not "":
+            if user.phone_number_verified:
+                pass
+            return Response({"success": False, "message": "Phone number is not verified."}, status=400)
+        #check for password reset code verification.
+        user.set_password(password)
+        user.save()
+        token = TokenModel.objects.get(user=user)
+        serializer = CustomTokenSerializer(token, many=False)
+        return Response({"success": False, "message": "password reset successful.", "user": serializer.data})
 
 
 
