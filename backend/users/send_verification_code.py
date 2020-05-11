@@ -32,5 +32,5 @@ class SendVerificationCode:
                 return True
             except Exception as e:
                 print(e)
-                print(message)
+                # print(message)
                 return False
