@@ -9,6 +9,7 @@ import Home from './screens/';
 import Onboarding from './Onboarding';
 import TermsAndConditions from './TermsAndConditions';
 import ForgotPassword from './screens/ForgotPassword';
+import ResetPassword from './screens/ResetPassword';
 
 export default (EmailAuthNavigator = createStackNavigator(
   {
@@ -21,8 +22,9 @@ export default (EmailAuthNavigator = createStackNavigator(
     Onboarding: {screen: Onboarding},
     TermsAndConditions: {screen: TermsAndConditions},
     ForgotPassword: {screen: ForgotPassword},
+    ResetPassword: {screen: ResetPassword},
   },
   {
-    initialRouteName: 'SignIn',
+    initialRouteName: 'ResetPassword',
   },
 ));

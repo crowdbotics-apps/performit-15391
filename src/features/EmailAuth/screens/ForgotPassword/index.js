@@ -128,7 +128,7 @@ class ForgotPassword extends Component {
 }
 
 const mapStateToProps = state => ({
-  forgotPasswordErrors: state.EmailAuth.errors.PasswordRecover,
+  forgotPasswordErrors: state.EmailAuth.errors.ForgotPassword,
 });
 
 const mapDispatchToProps = dispatch => ({

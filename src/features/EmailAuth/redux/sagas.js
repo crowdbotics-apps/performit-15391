@@ -7,6 +7,7 @@ import {
   EMAIL_AUTH_SIGNUP_REQUEST,
   EMAIL_AUTH_PASSWORD_RECOVER_REQUEST,
   EMAIL_AUTH_FORGOT_PASSWORD_REQUEST,
+  EMAIL_AUTH_RESET_PASSWORD_REQUEST,
   EMAIL_AUTH_LOGIN_SUCCESS,
   EMAIL_AUTH_SIGNUP_ERROR,
   EMAIL_AUTH_SIGNUP_SUCCESS,
@@ -14,6 +15,8 @@ import {
   EMAIL_AUTH_PASSWORD_RECOVER_ERROR,
   EMAIL_AUTH_FORGOT_PASSWORD_SUCCESS,
   EMAIL_AUTH_FORGOT_PASSWORD_ERROR,
+  EMAIL_AUTH_RESET_PASSWORD_SUCCESS,
+  EMAIL_AUTH_RESET_PASSWORD_ERROR,
 } from './constants';
 import {request} from '../../../utils/http';
 
@@ -42,6 +45,13 @@ function sendForgotPassword(email) {
   //There is no reset password endpoint in backend, it's just a fake url
   return request.post('/send-forgot-password-code/', {
     email,
+  });
+}
+
+function sendResetPassword(password) {
+  //There is no reset password endpoint in backend, it's just a fake url
+  return request.post('/send-forgot-password-code/', {
+    password,
   });
 }
 
@@ -161,9 +171,38 @@ function* handleForgotPassword(action) {
   }
 }
 
+function* handleResetPassword(action) {
+  const {password} = action;
+
+  try {
+    const {status} = yield call(sendResetPassword, email);
+
+    if (status === 200) {
+      yield put({
+        type: EMAIL_AUTH_RESET_PASSWORD_SUCCESS,
+        email,
+      });
+
+      // you can change the navigate for navigateAndResetStack to go to a protected route
+      NavigationService.navigate('ConfirmationRequired');
+    } else {
+      yield put({
+        type: EMAIL_AUTH_RESET_PASSWORD_ERROR,
+        error: 'Unknown Error',
+      });
+    }
+  } catch (error) {
+    yield put({
+      type: EMAIL_AUTH_RESET_PASSWORD_ERROR,
+      error: "Can't recover password with provided email",
+    });
+  }
+}
+
 export default all([
   takeLatest(EMAIL_AUTH_LOGIN_REQUEST, handleLogin),
   takeLatest(EMAIL_AUTH_SIGNUP_REQUEST, handleSignUp),
   takeLatest(EMAIL_AUTH_PASSWORD_RECOVER_REQUEST, handlePasswordRecovery),
   takeLatest(EMAIL_AUTH_FORGOT_PASSWORD_REQUEST, handleForgotPassword),
+  takeLatest(EMAIL_AUTH_RESET_PASSWORD_REQUEST, handleResetPassword),
 ]);

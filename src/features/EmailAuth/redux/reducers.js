@@ -1,9 +1,10 @@
 import * as actions from "./constants";
+import {EMAIL_AUTH_FORGOT_PASSWORD_ERROR} from "./constants";
 
 const initialState = {
   user: null,
   accessToken: null,
-  errors: { SignIn: null, SignUp: null, PasswordRecover: null }
+  errors: { SignIn: null, SignUp: null, PasswordRecover: null, ForgotPassword: null, ResetPassword: null }
 };
 
 export default EmailAuthReducer = (state = initialState, action) => {
@@ -14,6 +15,10 @@ export default EmailAuthReducer = (state = initialState, action) => {
       return { ...state, errors: { SignIn: action.error } };
     case actions.EMAIL_AUTH_PASSWORD_RECOVER_ERROR:
       return { ...state, errors: { PasswordRecover: action.error } };
+    case actions.EMAIL_AUTH_FORGOT_PASSWORD_ERROR:
+      return { ...state, errors: { ForgotPassword: action.error } };
+    case actions.EMAIL_AUTH_RESET_PASSWORD_ERROR:
+      return { ...state, errors: { ResetPassword: action.error } };
     case actions.EMAIL_AUTH_SIGNUP_SUCCESS:
       return { ...state, user: action.user };
     case actions.EMAIL_AUTH_SIGNUP_ERROR:
