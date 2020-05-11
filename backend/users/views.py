@@ -97,12 +97,10 @@ class SignUp(APIView):
             else:
                 message = "Unable to send verification Code"
             code_for_user.save()
-            serializer = CustomTokenSerializer(token, many=False)
-            return Response({"success": True, "message": message, "user": serializer.data })
+            return Response({"success": True, "message": message })
         return Response({"success": False, "message": user.errors}, status=400)
 
 
-@permission_classes([IsAuthenticated])
 class ConfirmCode(APIView):
 
     def post(self, request):
@@ -110,11 +108,11 @@ class ConfirmCode(APIView):
         if code is None:
             return Response({"success": False, "message": "code param is missing."}, status=400)
         try:
-            verified = VerificationCode.objects.get(user=request.user, code=code, verified=False)
+            verified = VerificationCode.objects.get(code=code, verified=False)
         except VerificationCode.DoesNotExist:
             return Response({"success": False, "message": "Invalid verification code provided."}, status=400)
         try:
-            user = User.objects.get(pk=request.user.id)
+            user = User.objects.get(pk=verified.user_id)
         except User.DoesNotExist:
             return Response({"success": False, "message": "Invalid User."}, status=400)
         verified.verified = True
@@ -130,7 +128,9 @@ class ConfirmCode(APIView):
                 return Response({"success": False, "message": "Email Address does not exist."}, status=400)
             email.verified = True
             email.save()
-        return Response({"success": True, "message": "Code Verified."})
+            token = TokenModel.objects.get(user=user)
+            serializer = CustomTokenSerializer(token, many=False)
+        return Response({"success": True, "message": "Code Verified.", "user": serializer.data })
 
 
 class SendForgotPasswordCode(APIView):
@@ -159,9 +159,7 @@ class SendForgotPasswordCode(APIView):
             else:
                 message = "Unable to send verification Code"
             code_for_user.save()
-            token = TokenModel.objects.get(user=user)
-            serializer = CustomTokenSerializer(token, many=False)
-            return Response({"success": True, "message": message, "user": serializer.data })
+            return Response({"success": True, "message": message })
         elif type == 'phone':
             phone_number = request.data.get("phone_number")
             if phone_number is None:
