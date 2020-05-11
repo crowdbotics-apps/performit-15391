@@ -185,6 +185,7 @@ DEPENDENCIES:
 SPEC REPOS:
   trunk:
     - boost-for-react-native
+  https://github.com/cocoapods/specs.git:
     - Google-Maps-iOS-Utils
     - GoogleMaps
     - GoogleSignIn

@@ -67,7 +67,7 @@ function* handleLogin(action) {
 
 function* handleSignUp(action) {
   const {
-    user: {email, password},
+    user: {email, password, username},
   } = action;
   try {
     const {status, data} = yield call(sendSignUp, {email, password});

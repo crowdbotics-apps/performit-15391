@@ -1,14 +1,63 @@
-import { StyleSheet } from "react-native";
+import {StyleSheet} from 'react-native';
 
-import { scaleVertical, scale } from "../../../utils/scale";
-
+import {scaleVertical, scaleModerate, scale} from '../../../utils/scale';
 
 export const styles = StyleSheet.create({
   screen: {
     flex: 1,
-    flexDirection: "column",
-    backgroundColor: 'white'
+    flexDirection: 'column',
+    backgroundColor: 'white',
   },
+
+  signUpScreen: {
+    flex: 1,
+    flexDirection: 'column',
+    justifyContent: 'flex-start',
+    alignItems: 'center',
+    backgroundColor: 'black',
+  },
+
+  inputContainer: {
+    width: '95%',
+    height: scaleModerate(46),
+    borderRadius: scaleModerate(23),
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: '#111111',
+    marginBottom: scaleModerate(24),
+  },
+
+  inputEmailImage: {
+    flex: 1,
+    width: scaleModerate(20),
+    height: scaleModerate(22),
+    marginLeft: scaleModerate(10),
+  },
+
+  inputEyeImage: {
+    flex: 1,
+    width: scaleModerate(22),
+    height: scaleModerate(18),
+    marginRight: scaleModerate(10),
+  },
+
+  inputUserNameImage: {
+    flex: 1,
+    width: scaleModerate(22),
+    height: scaleModerate(22),
+    marginLeft: scaleModerate(10),
+  },
+
+  signUpInput: {
+    flex: 9,
+    backgroundColor: '#111111',
+    color: '#989ba5',
+    marginLeft: scaleModerate(17),
+    fontSize: scaleModerate(16),
+    fontFamily: 'Nunito-Regular',
+  },
+
   input: {
     backgroundColor: 'white',
     marginLeft: scale(10),
@@ -19,30 +68,61 @@ export const styles = StyleSheet.create({
     borderColor: '#E5E5E5',
   },
 
-  actionButon:{
+  actionButon: {
     backgroundColor: '#ED6854',
-    borderWidth:0,
+    borderWidth: 0,
     marginLeft: scale(10),
     marginRight: scale(10),
     paddingTop: scaleVertical(15),
     paddingBottom: scaleVertical(15),
     marginTop: scaleVertical(10),
     marginBottom: scaleVertical(10),
-    borderRadius: 12
+    borderRadius: 12,
+  },
+
+  imageContainer: {
+    backgroundColor: 'black',
+    height: scaleModerate(290, 1),
+    flexDirection: 'column',
+    justifyContent: 'flex-end',
+    alignItems: 'center',
+    marginBottom: scaleVertical(15),
+  },
+
+  imageBackground: {
+    resizeMode: 'cover',
+    marginBottom: scale(10),
+    flexDirection: 'column',
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: 'black',
+  },
+
+  titleTextContainer: {
+    paddingTop: scaleModerate(20),
+    flexDirection: 'column',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+
+  titleText: {
+    color: '#ffffff',
+    fontWeight: 'bold',
+    fontSize: scaleModerate(34),
+    fontFamily: 'Nunito-Bold',
   },
 
   image: {
-    resizeMode: "cover",
-    marginBottom: scale(10)
+    resizeMode: 'cover',
   },
 
   textRow: {
-    textAlign: "center",
-    color: 'black'
+    textAlign: 'center',
+    color: 'black',
   },
 
-  boldText:{
-    fontWeight: 'bold'
+  boldText: {
+    fontWeight: 'bold',
   },
   buttons: {
     flexDirection: 'row',
@@ -52,7 +132,7 @@ export const styles = StyleSheet.create({
   button: {
     marginHorizontal: 14,
     marginTop: 27.5,
-    alignSelf: "center",
+    alignSelf: 'center',
     borderColor: '#ED6854',
     borderWidth: 2,
     padding: 15,
@@ -60,9 +140,10 @@ export const styles = StyleSheet.create({
     width: 64,
     height: 64,
     alignItems: 'center',
-    justifyContent: 'center'
+    justifyContent: 'center',
   },
   text: {
-    color: 'black',
-  }
+    color: '#989ba5',
+    borderWidth: 0,
+  },
 });
