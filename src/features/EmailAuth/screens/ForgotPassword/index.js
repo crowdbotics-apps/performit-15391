@@ -17,7 +17,7 @@ import * as emailAuthActions from '../../redux/actions';
 import ErrorBox from '../../../../components/ErrorBox';
 import Icon from 'react-native-vector-icons/FontAwesome';
 
-class SignIn extends Component {
+class ForgotPassword extends Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -55,7 +55,7 @@ class SignIn extends Component {
           />
         </ImageBackground>
         <View style={[styles.titleTextContainer]}>
-          <Text style={[styles.titleText]}>LOGIN</Text>
+          <Text style={[styles.titleText]}>FORGOT PASSWORD</Text>
         </View>
       </View>
     );
@@ -114,73 +114,6 @@ class SignIn extends Component {
         contentContainerStyle={styles.signUpScreen}
         style={{backgroundColor: 'black'}}>
         {this.renderImage()}
-        <View style={styles.inputContainer}>
-          <View style={[styles.inputEmailImage]}>
-            <Image
-              style={[styles.inputEmailImage]}
-              source={require('../../../../assets/images/account.png')}
-            />
-          </View>
-          <TextInput
-            value={username}
-            onChangeText={this.handleUsernameChange}
-            placeholder="Username"
-            style={styles.signUpInput}
-            autoCapitalize="none"
-            placeholderTextColor="#989ba5"
-            underlineColorAndroid="transparent"
-          />
-        </View>
-
-        <View style={styles.inputContainer}>
-          <View style={[styles.inputEmailImage]}>
-            <Image
-              style={[styles.inputEmailImage]}
-              source={require('../../../../assets/images/small_lock.png')}
-            />
-          </View>
-          <TextInput
-            value={password}
-            onChangeText={this.handlePasswordChange}
-            placeholder="Password"
-            style={styles.signUpInput}
-            secureTextEntry={!showPassword}
-            autoCapitalize="none"
-            placeholderTextColor="#989ba5"
-            underlineColorAndroid="transparent"
-          />
-          <TouchableOpacity
-            style={[styles.inputEyeImage]}
-            onPress={() =>
-              password && this.setState({showPassword: !showPassword})
-            }>
-            <Image
-              style={[styles.inputEyeImage]}
-              source={require('../../../../assets/images/eye.png')}
-            />
-          </TouchableOpacity>
-        </View>
-
-        <View style={styles.tncContainer}>
-          <TouchableOpacity
-            style={styles.tncText2Container}
-            onPress={() => this.goToForgotPassword()}>
-            <Text style={styles.tncText2}>Forgot Password?</Text>
-          </TouchableOpacity>
-        </View>
-
-        <TouchableOpacity style={styles.signUpButtonContainer}>
-          <Text style={styles.signUpButtonText}>LOGIN</Text>
-        </TouchableOpacity>
-
-        <View style={[styles.tncContainer, {marginTop: scaleModerate(75)}]}>
-          <Text style={styles.tncText1}>Don’t have an account? </Text>
-          <TouchableOpacity
-            style={styles.tncText2Container}
-            onPress={() => this.goToSignUp()}>
-            <Text style={styles.tncText2}>Sign Up</Text>
-          </TouchableOpacity>
-        </View>
 
         {this.renderErrors()}
       </ScrollView>
@@ -200,11 +133,11 @@ const mapDispatchToProps = dispatch => ({
   },
 });
 
-SignIn.navigationOptions = {
+ForgotPassword.navigationOptions = {
   header: null,
 };
 
 export default connect(
   mapStateToProps,
   mapDispatchToProps,
-)(SignIn);
+)(ForgotPassword);

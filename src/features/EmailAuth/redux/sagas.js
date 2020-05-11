@@ -37,10 +37,10 @@ function sendPasswordRecovery(email) {
 
 function* handleLogin(action) {
   const {
-    user: {email, password},
+    user: {username, password},
   } = action;
   try {
-    const {status, data} = yield call(sendLogin, {email, password});
+    const {status, data} = yield call(sendLogin, {username, password});
 
     if (status === 200) {
       yield put({

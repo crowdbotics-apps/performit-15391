@@ -8,6 +8,7 @@ import ConfirmationRequiredScreen from './screens/ConfirmationRequired';
 import Home from './screens/';
 import Onboarding from './Onboarding';
 import TermsAndConditions from './TermsAndConditions';
+import ForgotPassword from './screens/ForgotPassword';
 
 export default (EmailAuthNavigator = createStackNavigator(
   {
@@ -19,8 +20,9 @@ export default (EmailAuthNavigator = createStackNavigator(
     ConfirmationRequired: {screen: ConfirmationRequiredScreen},
     Onboarding: {screen: Onboarding},
     TermsAndConditions: {screen: TermsAndConditions},
+    ForgotPassword: {screen: ForgotPassword},
   },
   {
-    initialRouteName: 'Onboarding',
+    initialRouteName: 'SignIn',
   },
 ));

@@ -62,7 +62,7 @@ export const styles = StyleSheet.create({
   },
 
   tncText2Container: {
-    height: scaleModerate(17),
+    height: scaleModerate(19),
     borderBottomWidth: scaleModerate(1),
     borderColor: '#b88746',
   },
@@ -75,7 +75,7 @@ export const styles = StyleSheet.create({
 
   inputEmailImage: {
     flex: 1,
-    width: scaleModerate(20),
+    width: scaleModerate(22),
     height: scaleModerate(22),
     marginLeft: scaleModerate(10),
   },
