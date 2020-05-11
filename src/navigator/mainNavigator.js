@@ -26,7 +26,7 @@ const AppNavigator = {
 // Maps: { screen: MapsNavigator },
 // Calendar: { screen: CalendarNavigator },
 // Camera: { screen: CameraNavigator },
-// EmailAuth: { screen: EmailAuthNavigator },
+EmailAuth: { screen: EmailAuthNavigator },
 
     /** new navigators can be added here */
 };
@@ -37,7 +37,7 @@ const DrawerAppNavigator = createDrawerNavigator(
   },
   {
     contentComponent: SideMenu,
-    initialRouteName: 'SplashScreen',
+    initialRouteName: 'EmailAuth',
   },
 );
 
