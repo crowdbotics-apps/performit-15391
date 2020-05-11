@@ -21,12 +21,12 @@ const AppNavigator = {
       screen: SplashScreen
     },
     //@BlueprintNavigationInsertion
-Messenger: { screen: MessengerNavigator },
-Tutorial: { screen: TutorialNavigator },
-Maps: { screen: MapsNavigator },
-Calendar: { screen: CalendarNavigator },
-Camera: { screen: CameraNavigator },
-EmailAuth: { screen: EmailAuthNavigator },
+// Messenger: { screen: MessengerNavigator },
+// Tutorial: { screen: TutorialNavigator },
+// Maps: { screen: MapsNavigator },
+// Calendar: { screen: CalendarNavigator },
+// Camera: { screen: CameraNavigator },
+// EmailAuth: { screen: EmailAuthNavigator },
 
     /** new navigators can be added here */
 };
