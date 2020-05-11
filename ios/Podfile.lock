@@ -182,9 +182,6 @@ DEPENDENCIES:
 SPEC REPOS:
   https://cdn.cocoapods.org/:
     - boost-for-react-native
-    - Google-Maps-iOS-Utils
-    - GoogleMaps
-    - GoogleToolboxForMac
   https://github.com/cocoapods/specs.git:
     - Google-Maps-iOS-Utils
     - GoogleMaps

@@ -150,6 +150,10 @@ const mapDispatchToProps = dispatch => ({
   },
 });
 
+SignIn.navigationOptions = {
+  header: null,
+};
+
 export default connect(
   mapStateToProps,
   mapDispatchToProps,

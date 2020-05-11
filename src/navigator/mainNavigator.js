@@ -1,8 +1,8 @@
-import { createAppContainer } from 'react-navigation';
-import { createStackNavigator } from 'react-navigation-stack';
+import {createAppContainer} from 'react-navigation';
+import {createStackNavigator} from 'react-navigation-stack';
 import {createDrawerNavigator} from 'react-navigation-drawer';
 
-import SplashScreen from "../features/SplashScreen";
+import SplashScreen from '../features/SplashScreen';
 import SideMenu from './sideMenu';
 //@BlueprintImportInsertion
 import MessengerNavigator from '../features/Messenger/navigator';
@@ -17,18 +17,18 @@ import EmailAuthNavigator from '../features/EmailAuth/navigator';
  */
 
 const AppNavigator = {
-    SplashScreen: {
-      screen: SplashScreen
-    },
-    //@BlueprintNavigationInsertion
-// Messenger: { screen: MessengerNavigator },
-// Tutorial: { screen: TutorialNavigator },
-// Maps: { screen: MapsNavigator },
-// Calendar: { screen: CalendarNavigator },
-// Camera: { screen: CameraNavigator },
-// EmailAuth: { screen: EmailAuthNavigator },
+  // SplashScreen: {
+  //   screen: Splash Screen
+  // },
+  //@BlueprintNavigationInsertion
+  // Messenger: { screen: MessengerNavigator },
+  // Tutorial: { screen: TutorialNavigator },
+  // Maps: { screen: MapsNavigator },
+  // Calendar: { screen: CalendarNavigator },
+  // Camera: { screen: CameraNavigator },
+  EmailAuth: {screen: EmailAuthNavigator},
 
-    /** new navigators can be added here */
+  /** new navigators can be added here */
 };
 
 const DrawerAppNavigator = createDrawerNavigator(
@@ -37,7 +37,7 @@ const DrawerAppNavigator = createDrawerNavigator(
   },
   {
     contentComponent: SideMenu,
-    initialRouteName: 'SplashScreen',
+    initialRouteName: 'EmailAuth',
   },
 );
 
