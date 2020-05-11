@@ -21,6 +21,6 @@ export default (EmailAuthNavigator = createStackNavigator(
     TermsAndConditions: {screen: TermsAndConditions},
   },
   {
-    initialRouteName: 'Home',
+    initialRouteName: 'Onboarding',
   },
 ));
