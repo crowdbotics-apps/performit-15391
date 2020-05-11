@@ -75,7 +75,7 @@ export const styles = StyleSheet.create({
 
   inputEmailImage: {
     flex: 1,
-    width: scaleModerate(22),
+    width: scaleModerate(20),
     height: scaleModerate(22),
     marginLeft: scaleModerate(10),
   },
@@ -190,5 +190,27 @@ export const styles = StyleSheet.create({
   text: {
     color: '#989ba5',
     borderWidth: 0,
+  },
+
+  forgetPasswordDescContainer: {
+    width: '80%',
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginBottom: scaleModerate(24),
+  },
+
+  forgetPasswordDescText: {
+    color: '#ffffff',
+    fontSize: scaleModerate(16),
+    fontFamily: 'Nunito-Regular',
+    textAlign: 'center',
+  },
+
+  forgetPassTitleTextContainer: {
+    paddingTop: scaleModerate(50),
+    flexDirection: 'column',
+    justifyContent: 'center',
+    alignItems: 'center',
   },
 });

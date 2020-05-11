@@ -6,11 +6,14 @@ import {
   EMAIL_AUTH_LOGIN_ERROR,
   EMAIL_AUTH_SIGNUP_REQUEST,
   EMAIL_AUTH_PASSWORD_RECOVER_REQUEST,
+  EMAIL_AUTH_FORGOT_PASSWORD_REQUEST,
   EMAIL_AUTH_LOGIN_SUCCESS,
   EMAIL_AUTH_SIGNUP_ERROR,
   EMAIL_AUTH_SIGNUP_SUCCESS,
   EMAIL_AUTH_PASSWORD_RECOVER_SUCCESS,
   EMAIL_AUTH_PASSWORD_RECOVER_ERROR,
+  EMAIL_AUTH_FORGOT_PASSWORD_SUCCESS,
+  EMAIL_AUTH_FORGOT_PASSWORD_ERROR,
 } from './constants';
 import {request} from '../../../utils/http';
 
@@ -31,6 +34,13 @@ function sendSignUp({email, password}) {
 function sendPasswordRecovery(email) {
   //There is no reset password endpoint in backend, it's just a fake url
   return request.post('/api/v1/password-reset/', {
+    email,
+  });
+}
+
+function sendForgotPassword(email) {
+  //There is no reset password endpoint in backend, it's just a fake url
+  return request.post('/send-forgot-password-code/', {
     email,
   });
 }
@@ -123,8 +133,37 @@ function* handlePasswordRecovery(action) {
   }
 }
 
+function* handleForgotPassword(action) {
+  const {email} = action;
+
+  try {
+    const {status} = yield call(sendForgotPassword, email);
+
+    if (status === 200) {
+      yield put({
+        type: EMAIL_AUTH_FORGOT_PASSWORD_SUCCESS,
+        email,
+      });
+
+      // you can change the navigate for navigateAndResetStack to go to a protected route
+      NavigationService.navigate('ConfirmationRequired');
+    } else {
+      yield put({
+        type: EMAIL_AUTH_FORGOT_PASSWORD_ERROR,
+        error: 'Unknown Error',
+      });
+    }
+  } catch (error) {
+    yield put({
+      type: EMAIL_AUTH_FORGOT_PASSWORD_ERROR,
+      error: "Can't recover password with provided email",
+    });
+  }
+}
+
 export default all([
   takeLatest(EMAIL_AUTH_LOGIN_REQUEST, handleLogin),
   takeLatest(EMAIL_AUTH_SIGNUP_REQUEST, handleSignUp),
   takeLatest(EMAIL_AUTH_PASSWORD_RECOVER_REQUEST, handlePasswordRecovery),
+  takeLatest(EMAIL_AUTH_FORGOT_PASSWORD_REQUEST, handleForgotPassword),
 ]);

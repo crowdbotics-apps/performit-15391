@@ -16,59 +16,54 @@ import {styles} from '../styles';
 import * as emailAuthActions from '../../redux/actions';
 import ErrorBox from '../../../../components/ErrorBox';
 import Icon from 'react-native-vector-icons/FontAwesome';
+import {forgotPassword} from "../../redux/actions";
 
 class ForgotPassword extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      username: '',
+      email: '',
       password: '',
       validationErrors: {},
       showPassword: false,
     };
 
-    this.handleUsernameChange = this.handleUsernameChange.bind(this);
-    this.handlePasswordChange = this.handlePasswordChange.bind(this);
-    this.goToPasswordRecover = this.goToPasswordRecover.bind(this);
-    this.goToSignUp = this.goToSignUp.bind(this);
-    this.submitLogin = this.submitLogin.bind(this);
+    this.handleEmailChange = this.handleEmailChange.bind(this);
+    this.submitForgotPassword = this.submitForgotPassword.bind(this);
   }
 
   renderImage = () => {
     const screenSize = Dimensions.get('window');
     const imageBackgroundSize = {
       width: scaleModerate(312, 1),
-      height: scaleModerate(191, 1),
+      height: scaleModerate(350, 1),
     };
     const imageSize = {
       width: scaleModerate(100, 1),
-      height: scaleModerate(100, 1),
+      height: scaleModerate(122, 1),
     };
     return (
-      <View style={[styles.imageContainer, {width: screenSize.width}]}>
-        <ImageBackground
-          style={[styles.imageBackground, imageBackgroundSize]}
-          source={require('../../../../assets/images/Bubbles.png')}>
+      <View
+        style={[
+          styles.imageContainer,
+          {width: screenSize.width, height: scaleModerate(396, 1)},
+        ]}>
+        <View style={[styles.imageBackground]}>
           <Image
             style={[styles.image, imageSize]}
-            source={require('../../../../assets/images/logo_performit.png')}
+            source={require('../../../../assets/images/forgot_user.png')}
           />
-        </ImageBackground>
-        <View style={[styles.titleTextContainer]}>
+        </View>
+        <View style={[styles.forgetPassTitleTextContainer]}>
           <Text style={[styles.titleText]}>FORGOT PASSWORD</Text>
         </View>
       </View>
     );
   };
 
-  handleUsernameChange(username) {
-    this.setState({username});
+  handleEmailChange(email) {
+    this.setState({email});
     // todo add email validation
-  }
-
-  handlePasswordChange(password) {
-    this.setState({password});
-    // todo change keyboard and add validation
   }
 
   renderErrors() {
@@ -78,35 +73,18 @@ class ForgotPassword extends Component {
     }
   }
 
-  submitLogin() {
+  submitForgotPassword() {
     const {
-      actions: {login},
+      actions: {forgotPassword},
     } = this.props;
 
-    const {username, password} = this.state;
-    // todo add disable buttons on submit
-    login({username, password});
+    const {email} = this.state;
 
-    this.setState({username: '', password: ''});
-  }
-
-  goToPasswordRecover() {
-    const {navigation} = this.props;
-    navigation.navigate('RecoverPassword');
-  }
-
-  goToSignUp() {
-    const {navigation} = this.props;
-    navigation.navigate('SignUp');
-  }
-
-  goToForgotPassword() {
-    const {navigation} = this.props;
-    navigation.navigate('ForgotPassword');
+    forgotPassword(email);
   }
 
   render() {
-    const {username, password, showPassword} = this.state;
+    const {email, showPassword} = this.state;
     const {errors} = this.props;
 
     return (
@@ -115,6 +93,34 @@ class ForgotPassword extends Component {
         style={{backgroundColor: 'black'}}>
         {this.renderImage()}
 
+        <View style={styles.forgetPasswordDescContainer}>
+          <Text style={styles.forgetPasswordDescText}>
+            Please insert the associated email address or mobile number for your account
+          </Text>
+        </View>
+
+        <View style={styles.inputContainer}>
+          <View style={[styles.inputEmailImage]}>
+            <Image
+              style={[styles.inputEmailImage]}
+              source={require('../../../../assets/images/Profile.png')}
+            />
+          </View>
+          <TextInput
+            value={email}
+            onChangeText={this.handleEmailChange}
+            placeholder="Email Address or Mobile number"
+            style={styles.signUpInput}
+            autoCapitalize="none"
+            placeholderTextColor="#989ba5"
+            underlineColorAndroid="transparent"
+          />
+        </View>
+
+        <TouchableOpacity style={styles.signUpButtonContainer}>
+          <Text style={styles.signUpButtonText}>SUBMIT</Text>
+        </TouchableOpacity>
+
         {this.renderErrors()}
       </ScrollView>
     );
@@ -122,13 +128,13 @@ class ForgotPassword extends Component {
 }
 
 const mapStateToProps = state => ({
-  signInErrors: state.EmailAuth.errors.SignIn,
+  forgotPasswordErrors: state.EmailAuth.errors.PasswordRecover,
 });
 
 const mapDispatchToProps = dispatch => ({
   actions: {
-    login: ({username, password}) => {
-      dispatch(emailAuthActions.login({username, password}));
+    forgotPassword: email => {
+      dispatch(emailAuthActions.forgotPassword(email));
     },
   },
 });

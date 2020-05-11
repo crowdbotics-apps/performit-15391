@@ -115,9 +115,9 @@ class SignIn extends Component {
         style={{backgroundColor: 'black'}}>
         {this.renderImage()}
         <View style={styles.inputContainer}>
-          <View style={[styles.inputEmailImage]}>
+          <View style={[styles.inputUserNameImage]}>
             <Image
-              style={[styles.inputEmailImage]}
+              style={[styles.inputUserNameImage]}
               source={require('../../../../assets/images/account.png')}
             />
           </View>
