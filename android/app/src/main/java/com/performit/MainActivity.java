@@ -1,4 +1,4 @@
-package com.performit_15391;
+package com.performit;
 
 import android.os.Bundle;
 import org.devio.rn.splashscreen.SplashScreen;
@@ -16,6 +16,6 @@ public class MainActivity extends ReactActivity {
      */
     @Override
     protected String getMainComponentName() {
-        return "performit_15391";
+        return "Performit";
     }
 }

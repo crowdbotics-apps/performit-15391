@@ -1,4 +1,4 @@
-package com.performit_15391;
+package com.performit;
 
 import android.app.Application;
 import android.util.Log;

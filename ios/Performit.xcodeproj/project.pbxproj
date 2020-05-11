@@ -7,7 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		00E356F31AD99517003FC87E /* performit_15391Tests.m in Sources */ = {isa = PBXBuildFile; fileRef = 00E356F21AD99517003FC87E /* performit_15391Tests.m */; };
+		00E356F31AD99517003FC87E /* PerformitTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 00E356F21AD99517003FC87E /* PerformitTests.m */; };
 		0586397757854093874554A6 /* Nunito-ExtraBold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 3D6D4FF39D544B9C8D631E0A /* Nunito-ExtraBold.ttf */; };
 		0938044CCB144557B10AAD30 /* Nunito-BlackItalic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 63FAFA966C7D4BC08DF6D15B /* Nunito-BlackItalic.ttf */; };
 		129FCD44B2FC459B8B51D35B /* Nunito-Light.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 5EB72401C2FF404698E4C0FA /* Nunito-Light.ttf */; };
@@ -19,11 +19,11 @@
 		2D02E4BC1E0B4A80006451C7 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB01A68108700A75B9A /* AppDelegate.m */; };
 		2D02E4BD1E0B4A84006451C7 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 13B07FB51A68108700A75B9A /* Images.xcassets */; };
 		2D02E4BF1E0B4AB3006451C7 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB71A68108700A75B9A /* main.m */; };
-		2DCD954D1E0B4F2C00145EB5 /* performit_15391Tests.m in Sources */ = {isa = PBXBuildFile; fileRef = 00E356F21AD99517003FC87E /* performit_15391Tests.m */; };
-		3A8E8175A044E38D0A99C497 /* libPods-performit_15391Tests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 72ABDF95BBC8C1A25E43E632 /* libPods-performit_15391Tests.a */; };
+		2DCD954D1E0B4F2C00145EB5 /* PerformitTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 00E356F21AD99517003FC87E /* PerformitTests.m */; };
+		3A8E8175A044E38D0A99C497 /* libPods-PerformitTests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 72ABDF95BBC8C1A25E43E632 /* libPods-PerformitTests.a */; };
 		45446341DB454FFE96D5D4D9 /* Nunito-SemiBold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = B08A91BA2F614710AC37811E /* Nunito-SemiBold.ttf */; };
 		4780D800FB9F4621892DB0AF /* Nunito-ExtraLight.ttf in Resources */ = {isa = PBXBuildFile; fileRef = DA6A6CBA978244C6BE2188CB /* Nunito-ExtraLight.ttf */; };
-		4C77C18783050D906770A235 /* libPods-performit_15391-tvOSTests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 93F54B9B2B81485B0522A46C /* libPods-performit_15391-tvOSTests.a */; };
+		4C77C18783050D906770A235 /* libPods-Performit-tvOSTests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 93F54B9B2B81485B0522A46C /* libPods-Performit-tvOSTests.a */; };
 		52D122FCEDF243C0AD081366 /* Nunito-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = BEC76DB2CF744E12891E8324 /* Nunito-Regular.ttf */; };
 		6CCF53FD71A04C8EA0B3AACE /* Nunito-SemiBoldItalic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = C353BBAEAE5D44688787C748 /* Nunito-SemiBoldItalic.ttf */; };
 		6DCE0D6D1B994C569750D7E2 /* Nunito-Bold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 0F16A8D0409545D798E6EC5A /* Nunito-Bold.ttf */; };
@@ -31,8 +31,8 @@
 		A364F90C61B3459CAB201F96 /* Nunito-LightItalic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 093B9C9A043F41E7875B75F8 /* Nunito-LightItalic.ttf */; };
 		B04C81DF2329152F00E97C4E /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = B04C81DE2329152F00E97C4E /* GoogleService-Info.plist */; };
 		C98B4A64E6F74B3E8AEFBE12 /* Nunito-Black.ttf in Resources */ = {isa = PBXBuildFile; fileRef = A17DF11D07AA4B669345FA28 /* Nunito-Black.ttf */; };
-		CA277339F11CE26262C17A15 /* libPods-performit_15391-tvOS.a in Frameworks */ = {isa = PBXBuildFile; fileRef = EF9316ACE3687608B33E9EB0 /* libPods-performit_15391-tvOS.a */; };
-		D44699BCD7D9742ED80C7741 /* libPods-performit_15391.a in Frameworks */ = {isa = PBXBuildFile; fileRef = F61A6BD06897C1A3EC3938C9 /* libPods-performit_15391.a */; };
+		CA277339F11CE26262C17A15 /* libPods-Performit-tvOS.a in Frameworks */ = {isa = PBXBuildFile; fileRef = EF9316ACE3687608B33E9EB0 /* libPods-Performit-tvOS.a */; };
+		D44699BCD7D9742ED80C7741 /* libPods-Performit.a in Frameworks */ = {isa = PBXBuildFile; fileRef = F61A6BD06897C1A3EC3938C9 /* libPods-Performit.a */; };
 		E5203DADA98C4C13BA247000 /* Nunito-Italic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 2B8A1F4F00F64B7B8482C5A2 /* Nunito-Italic.ttf */; };
 		F45F5F32A7B54A26ADCC3C72 /* Nunito-ExtraLightItalic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = F4CF00566D0A4A84A578A2FE /* Nunito-ExtraLightItalic.ttf */; };
 /* End PBXBuildFile section */
@@ -43,60 +43,60 @@
 			containerPortal = 83CBB9F71A601CBA00E9B192 /* Project object */;
 			proxyType = 1;
 			remoteGlobalIDString = 13B07F861A680F5B00A75B9A;
-			remoteInfo = performit_15391;
+			remoteInfo = Performit;
 		};
 		2D02E4911E0B4A5D006451C7 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 83CBB9F71A601CBA00E9B192 /* Project object */;
 			proxyType = 1;
 			remoteGlobalIDString = 2D02E47A1E0B4A5D006451C7;
-			remoteInfo = "performit_15391-tvOS";
+			remoteInfo = "Performit-tvOS";
 		};
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
 		008F07F21AC5B25A0029DE68 /* main.jsbundle */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = main.jsbundle; sourceTree = "<group>"; };
-		00E356EE1AD99517003FC87E /* performit_15391Tests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = performit_15391Tests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		00E356EE1AD99517003FC87E /* PerformitTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = PerformitTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		00E356F11AD99517003FC87E /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		00E356F21AD99517003FC87E /* performit_15391Tests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = performit_15391Tests.m; sourceTree = "<group>"; };
+		00E356F21AD99517003FC87E /* PerformitTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = PerformitTests.m; sourceTree = "<group>"; };
 		090A29D5659D4188BD18BF43 /* Nunito-BoldItalic.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "Nunito-BoldItalic.ttf"; path = "../src/assets/fonts/Nunito-BoldItalic.ttf"; sourceTree = "<group>"; };
 		093B9C9A043F41E7875B75F8 /* Nunito-LightItalic.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "Nunito-LightItalic.ttf"; path = "../src/assets/fonts/Nunito-LightItalic.ttf"; sourceTree = "<group>"; };
-		09AF706F01A08611C56BED82 /* Pods-performit_15391Tests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-performit_15391Tests.release.xcconfig"; path = "Target Support Files/Pods-performit_15391Tests/Pods-performit_15391Tests.release.xcconfig"; sourceTree = "<group>"; };
+		09AF706F01A08611C56BED82 /* Pods-PerformitTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-PerformitTests.release.xcconfig"; path = "Target Support Files/Pods-PerformitTests/Pods-PerformitTests.release.xcconfig"; sourceTree = "<group>"; };
 		0D4325BEC1CF46BBBF224417 /* Entypo.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = Entypo.ttf; path = "../node_modules/react-native-vector-icons/Fonts/Entypo.ttf"; sourceTree = "<group>"; };
 		0E0ACF5F340D44AC80850F77 /* AntDesign.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = AntDesign.ttf; path = "../node_modules/react-native-vector-icons/Fonts/AntDesign.ttf"; sourceTree = "<group>"; };
 		0F16A8D0409545D798E6EC5A /* Nunito-Bold.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "Nunito-Bold.ttf"; path = "../src/assets/fonts/Nunito-Bold.ttf"; sourceTree = "<group>"; };
 		12AF490553B3417587ED42E3 /* Ionicons.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = Ionicons.ttf; path = "../node_modules/react-native-vector-icons/Fonts/Ionicons.ttf"; sourceTree = "<group>"; };
-		13B07F961A680F5B00A75B9A /* performit_15391.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = performit_15391.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		13B07FAF1A68108700A75B9A /* AppDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AppDelegate.h; path = performit_15391/AppDelegate.h; sourceTree = "<group>"; };
-		13B07FB01A68108700A75B9A /* AppDelegate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = AppDelegate.m; path = performit_15391/AppDelegate.m; sourceTree = "<group>"; };
+		13B07F961A680F5B00A75B9A /* Performit.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Performit.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		13B07FAF1A68108700A75B9A /* AppDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AppDelegate.h; path = Performit/AppDelegate.h; sourceTree = "<group>"; };
+		13B07FB01A68108700A75B9A /* AppDelegate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = AppDelegate.m; path = Performit/AppDelegate.m; sourceTree = "<group>"; };
 		13B07FB21A68108700A75B9A /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/LaunchScreen.xib; sourceTree = "<group>"; };
-		13B07FB51A68108700A75B9A /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; name = Images.xcassets; path = performit_15391/Images.xcassets; sourceTree = "<group>"; };
-		13B07FB61A68108700A75B9A /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = Info.plist; path = performit_15391/Info.plist; sourceTree = "<group>"; };
-		13B07FB71A68108700A75B9A /* main.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = main.m; path = performit_15391/main.m; sourceTree = "<group>"; };
+		13B07FB51A68108700A75B9A /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; name = Images.xcassets; path = Performit/Images.xcassets; sourceTree = "<group>"; };
+		13B07FB61A68108700A75B9A /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = Info.plist; path = Performit/Info.plist; sourceTree = "<group>"; };
+		13B07FB71A68108700A75B9A /* main.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = main.m; path = Performit/main.m; sourceTree = "<group>"; };
 		1A888DD88FD74F6E85D5A407 /* Feather.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = Feather.ttf; path = "../node_modules/react-native-vector-icons/Fonts/Feather.ttf"; sourceTree = "<group>"; };
 		1FFEB015E96544A0B4C07D0C /* icomoon.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = icomoon.ttf; path = ../src/assets/fonts/icomoon.ttf; sourceTree = "<group>"; };
 		24F5AFB3AE8D4A0BABEF53B4 /* Roboto-Light.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "Roboto-Light.ttf"; path = "../src/assets/fonts/Roboto-Light.ttf"; sourceTree = "<group>"; };
 		2B8A1F4F00F64B7B8482C5A2 /* Nunito-Italic.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "Nunito-Italic.ttf"; path = "../src/assets/fonts/Nunito-Italic.ttf"; sourceTree = "<group>"; };
 		2C3D1B592D47428F880FDEB9 /* FontAwesome5_Regular.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = FontAwesome5_Regular.ttf; path = "../node_modules/react-native-vector-icons/Fonts/FontAwesome5_Regular.ttf"; sourceTree = "<group>"; };
-		2D02E47B1E0B4A5D006451C7 /* performit_15391-tvOS.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "performit_15391-tvOS.app"; sourceTree = BUILT_PRODUCTS_DIR; };
-		2D02E4901E0B4A5D006451C7 /* performit_15391-tvOSTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "performit_15391-tvOSTests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
+		2D02E47B1E0B4A5D006451C7 /* Performit-tvOS.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Performit-tvOS.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		2D02E4901E0B4A5D006451C7 /* Performit-tvOSTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "Performit-tvOSTests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
 		3228C57B062941BD94E8E22F /* Roboto-Bold.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "Roboto-Bold.ttf"; path = "../src/assets/fonts/Roboto-Bold.ttf"; sourceTree = "<group>"; };
-		367A6BF6786D8ED84CED572A /* Pods-performit_15391.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-performit_15391.debug.xcconfig"; path = "Target Support Files/Pods-performit_15391/Pods-performit_15391.debug.xcconfig"; sourceTree = "<group>"; };
+		367A6BF6786D8ED84CED572A /* Pods-Performit.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Performit.debug.xcconfig"; path = "Target Support Files/Pods-Performit/Pods-Performit.debug.xcconfig"; sourceTree = "<group>"; };
 		3704C926F21E45C19B6AF154 /* Zocial.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = Zocial.ttf; path = "../node_modules/react-native-vector-icons/Fonts/Zocial.ttf"; sourceTree = "<group>"; };
 		3827C83A6AA245AAAA9695F4 /* Nunito-ExtraBoldItalic.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "Nunito-ExtraBoldItalic.ttf"; path = "../src/assets/fonts/Nunito-ExtraBoldItalic.ttf"; sourceTree = "<group>"; };
 		3D6D4FF39D544B9C8D631E0A /* Nunito-ExtraBold.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "Nunito-ExtraBold.ttf"; path = "../src/assets/fonts/Nunito-ExtraBold.ttf"; sourceTree = "<group>"; };
-		47833C1AED5F340F95FE12C0 /* Pods-performit_15391Tests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-performit_15391Tests.debug.xcconfig"; path = "Target Support Files/Pods-performit_15391Tests/Pods-performit_15391Tests.debug.xcconfig"; sourceTree = "<group>"; };
+		47833C1AED5F340F95FE12C0 /* Pods-PerformitTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-PerformitTests.debug.xcconfig"; path = "Target Support Files/Pods-PerformitTests/Pods-PerformitTests.debug.xcconfig"; sourceTree = "<group>"; };
 		5328D08F8B234D13B3E1841F /* EvilIcons.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = EvilIcons.ttf; path = "../node_modules/react-native-vector-icons/Fonts/EvilIcons.ttf"; sourceTree = "<group>"; };
 		53B69D5C8A414C20BF04E75D /* SimpleLineIcons.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = SimpleLineIcons.ttf; path = "../node_modules/react-native-vector-icons/Fonts/SimpleLineIcons.ttf"; sourceTree = "<group>"; };
 		5556D2032B5F478D98C0090D /* Roboto-Medium.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "Roboto-Medium.ttf"; path = "../src/assets/fonts/Roboto-Medium.ttf"; sourceTree = "<group>"; };
 		5EB72401C2FF404698E4C0FA /* Nunito-Light.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "Nunito-Light.ttf"; path = "../src/assets/fonts/Nunito-Light.ttf"; sourceTree = "<group>"; };
 		5EEF5B768B984F62BCC41E83 /* FontAwesome5_Solid.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = FontAwesome5_Solid.ttf; path = "../node_modules/react-native-vector-icons/Fonts/FontAwesome5_Solid.ttf"; sourceTree = "<group>"; };
 		63FAFA966C7D4BC08DF6D15B /* Nunito-BlackItalic.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "Nunito-BlackItalic.ttf"; path = "../src/assets/fonts/Nunito-BlackItalic.ttf"; sourceTree = "<group>"; };
-		72ABDF95BBC8C1A25E43E632 /* libPods-performit_15391Tests.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-performit_15391Tests.a"; sourceTree = BUILT_PRODUCTS_DIR; };
-		746F4BBF0DB970A2D42EEC17 /* Pods-performit_15391-tvOSTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-performit_15391-tvOSTests.release.xcconfig"; path = "Target Support Files/Pods-performit_15391-tvOSTests/Pods-performit_15391-tvOSTests.release.xcconfig"; sourceTree = "<group>"; };
-		7C47A149BE5291B60381FB86 /* Pods-performit_15391.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-performit_15391.release.xcconfig"; path = "Target Support Files/Pods-performit_15391/Pods-performit_15391.release.xcconfig"; sourceTree = "<group>"; };
-		90991AC1733B3E0D60E8E77C /* Pods-performit_15391-tvOSTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-performit_15391-tvOSTests.debug.xcconfig"; path = "Target Support Files/Pods-performit_15391-tvOSTests/Pods-performit_15391-tvOSTests.debug.xcconfig"; sourceTree = "<group>"; };
-		93F54B9B2B81485B0522A46C /* libPods-performit_15391-tvOSTests.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-performit_15391-tvOSTests.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		72ABDF95BBC8C1A25E43E632 /* libPods-PerformitTests.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-PerformitTests.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		746F4BBF0DB970A2D42EEC17 /* Pods-Performit-tvOSTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Performit-tvOSTests.release.xcconfig"; path = "Target Support Files/Pods-Performit-tvOSTests/Pods-Performit-tvOSTests.release.xcconfig"; sourceTree = "<group>"; };
+		7C47A149BE5291B60381FB86 /* Pods-Performit.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Performit.release.xcconfig"; path = "Target Support Files/Pods-Performit/Pods-Performit.release.xcconfig"; sourceTree = "<group>"; };
+		90991AC1733B3E0D60E8E77C /* Pods-Performit-tvOSTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Performit-tvOSTests.debug.xcconfig"; path = "Target Support Files/Pods-Performit-tvOSTests/Pods-Performit-tvOSTests.debug.xcconfig"; sourceTree = "<group>"; };
+		93F54B9B2B81485B0522A46C /* libPods-Performit-tvOSTests.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-Performit-tvOSTests.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		95D751254D8644DFA27340CC /* Righteous-Regular.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "Righteous-Regular.ttf"; path = "../src/assets/fonts/Righteous-Regular.ttf"; sourceTree = "<group>"; };
 		A17DF11D07AA4B669345FA28 /* Nunito-Black.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "Nunito-Black.ttf"; path = "../src/assets/fonts/Nunito-Black.ttf"; sourceTree = "<group>"; };
 		A6E631B9E4744D1FB6B58DD4 /* MaterialIcons.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = MaterialIcons.ttf; path = "../node_modules/react-native-vector-icons/Fonts/MaterialIcons.ttf"; sourceTree = "<group>"; };
@@ -107,18 +107,18 @@
 		BEC76DB2CF744E12891E8324 /* Nunito-Regular.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "Nunito-Regular.ttf"; path = "../src/assets/fonts/Nunito-Regular.ttf"; sourceTree = "<group>"; };
 		C2C94222A5ED4DB3AC88DA7F /* Roboto-Regular.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "Roboto-Regular.ttf"; path = "../src/assets/fonts/Roboto-Regular.ttf"; sourceTree = "<group>"; };
 		C353BBAEAE5D44688787C748 /* Nunito-SemiBoldItalic.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "Nunito-SemiBoldItalic.ttf"; path = "../src/assets/fonts/Nunito-SemiBoldItalic.ttf"; sourceTree = "<group>"; };
-		C44963A3BE00A33953091301 /* Pods-performit_15391-tvOS.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-performit_15391-tvOS.debug.xcconfig"; path = "Target Support Files/Pods-performit_15391-tvOS/Pods-performit_15391-tvOS.debug.xcconfig"; sourceTree = "<group>"; };
-		C48B69FA3F87B18FAEBB94F4 /* Pods-performit_15391-tvOS.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-performit_15391-tvOS.release.xcconfig"; path = "Target Support Files/Pods-performit_15391-tvOS/Pods-performit_15391-tvOS.release.xcconfig"; sourceTree = "<group>"; };
+		C44963A3BE00A33953091301 /* Pods-Performit-tvOS.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Performit-tvOS.debug.xcconfig"; path = "Target Support Files/Pods-Performit-tvOS/Pods-Performit-tvOS.debug.xcconfig"; sourceTree = "<group>"; };
+		C48B69FA3F87B18FAEBB94F4 /* Pods-Performit-tvOS.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Performit-tvOS.release.xcconfig"; path = "Target Support Files/Pods-Performit-tvOS/Pods-Performit-tvOS.release.xcconfig"; sourceTree = "<group>"; };
 		CB794B6765154519A50D979F /* FontAwesome.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = FontAwesome.ttf; path = "../node_modules/react-native-vector-icons/Fonts/FontAwesome.ttf"; sourceTree = "<group>"; };
 		D1024EF47CB94F1B9EFCDD76 /* FontAwesome5_Brands.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = FontAwesome5_Brands.ttf; path = "../node_modules/react-native-vector-icons/Fonts/FontAwesome5_Brands.ttf"; sourceTree = "<group>"; };
 		DA6A6CBA978244C6BE2188CB /* Nunito-ExtraLight.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "Nunito-ExtraLight.ttf"; path = "../src/assets/fonts/Nunito-ExtraLight.ttf"; sourceTree = "<group>"; };
 		DF0AA1B00D6D45C880876580 /* Foundation.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = Foundation.ttf; path = "../node_modules/react-native-vector-icons/Fonts/Foundation.ttf"; sourceTree = "<group>"; };
 		ED297162215061F000B7C4FE /* JavaScriptCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = JavaScriptCore.framework; path = System/Library/Frameworks/JavaScriptCore.framework; sourceTree = SDKROOT; };
 		ED2971642150620600B7C4FE /* JavaScriptCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = JavaScriptCore.framework; path = Platforms/AppleTVOS.platform/Developer/SDKs/AppleTVOS12.0.sdk/System/Library/Frameworks/JavaScriptCore.framework; sourceTree = DEVELOPER_DIR; };
-		EF9316ACE3687608B33E9EB0 /* libPods-performit_15391-tvOS.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-performit_15391-tvOS.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		EF9316ACE3687608B33E9EB0 /* libPods-Performit-tvOS.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-Performit-tvOS.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		F4CF00566D0A4A84A578A2FE /* Nunito-ExtraLightItalic.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "Nunito-ExtraLightItalic.ttf"; path = "../src/assets/fonts/Nunito-ExtraLightItalic.ttf"; sourceTree = "<group>"; };
 		F55690C2D53E48B4AF81DFB8 /* fontawesome.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = fontawesome.ttf; path = ../src/assets/fonts/fontawesome.ttf; sourceTree = "<group>"; };
-		F61A6BD06897C1A3EC3938C9 /* libPods-performit_15391.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-performit_15391.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		F61A6BD06897C1A3EC3938C9 /* libPods-Performit.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-Performit.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		FC0A6BBFD2A64614A5B7DBAB /* Octicons.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = Octicons.ttf; path = "../node_modules/react-native-vector-icons/Fonts/Octicons.ttf"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -127,7 +127,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				3A8E8175A044E38D0A99C497 /* libPods-performit_15391Tests.a in Frameworks */,
+				3A8E8175A044E38D0A99C497 /* libPods-PerformitTests.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -135,7 +135,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				D44699BCD7D9742ED80C7741 /* libPods-performit_15391.a in Frameworks */,
+				D44699BCD7D9742ED80C7741 /* libPods-Performit.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -143,7 +143,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				CA277339F11CE26262C17A15 /* libPods-performit_15391-tvOS.a in Frameworks */,
+				CA277339F11CE26262C17A15 /* libPods-Performit-tvOS.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -151,20 +151,20 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				4C77C18783050D906770A235 /* libPods-performit_15391-tvOSTests.a in Frameworks */,
+				4C77C18783050D906770A235 /* libPods-Performit-tvOSTests.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		00E356EF1AD99517003FC87E /* performit_15391Tests */ = {
+		00E356EF1AD99517003FC87E /* PerformitTests */ = {
 			isa = PBXGroup;
 			children = (
-				00E356F21AD99517003FC87E /* performit_15391Tests.m */,
+				00E356F21AD99517003FC87E /* PerformitTests.m */,
 				00E356F01AD99517003FC87E /* Supporting Files */,
 			);
-			path = performit_15391Tests;
+			path = PerformitTests;
 			sourceTree = "<group>";
 		};
 		00E356F01AD99517003FC87E /* Supporting Files */ = {
@@ -175,7 +175,7 @@
 			name = "Supporting Files";
 			sourceTree = "<group>";
 		};
-		13B07FAE1A68108700A75B9A /* performit_15391 */ = {
+		13B07FAE1A68108700A75B9A /* Performit */ = {
 			isa = PBXGroup;
 			children = (
 				008F07F21AC5B25A0029DE68 /* main.jsbundle */,
@@ -186,7 +186,7 @@
 				13B07FB11A68108700A75B9A /* LaunchScreen.xib */,
 				13B07FB71A68108700A75B9A /* main.m */,
 			);
-			name = performit_15391;
+			name = Performit;
 			sourceTree = "<group>";
 		};
 		2D16E6871FA4F8E400B85C8A /* Frameworks */ = {
@@ -194,10 +194,10 @@
 			children = (
 				ED297162215061F000B7C4FE /* JavaScriptCore.framework */,
 				ED2971642150620600B7C4FE /* JavaScriptCore.framework */,
-				F61A6BD06897C1A3EC3938C9 /* libPods-performit_15391.a */,
-				EF9316ACE3687608B33E9EB0 /* libPods-performit_15391-tvOS.a */,
-				93F54B9B2B81485B0522A46C /* libPods-performit_15391-tvOSTests.a */,
-				72ABDF95BBC8C1A25E43E632 /* libPods-performit_15391Tests.a */,
+				F61A6BD06897C1A3EC3938C9 /* libPods-Performit.a */,
+				EF9316ACE3687608B33E9EB0 /* libPods-Performit-tvOS.a */,
+				93F54B9B2B81485B0522A46C /* libPods-Performit-tvOSTests.a */,
+				72ABDF95BBC8C1A25E43E632 /* libPods-PerformitTests.a */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -213,9 +213,9 @@
 			isa = PBXGroup;
 			children = (
 				B04C81DE2329152F00E97C4E /* GoogleService-Info.plist */,
-				13B07FAE1A68108700A75B9A /* performit_15391 */,
+				13B07FAE1A68108700A75B9A /* Performit */,
 				832341AE1AAA6A7D00B99B32 /* Libraries */,
-				00E356EF1AD99517003FC87E /* performit_15391Tests */,
+				00E356EF1AD99517003FC87E /* PerformitTests */,
 				83CBBA001A601CBA00E9B192 /* Products */,
 				2D16E6871FA4F8E400B85C8A /* Frameworks */,
 				AA3F11E466B2FBD805C8C9CA /* Pods */,
@@ -229,10 +229,10 @@
 		83CBBA001A601CBA00E9B192 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				13B07F961A680F5B00A75B9A /* performit_15391.app */,
-				00E356EE1AD99517003FC87E /* performit_15391Tests.xctest */,
-				2D02E47B1E0B4A5D006451C7 /* performit_15391-tvOS.app */,
-				2D02E4901E0B4A5D006451C7 /* performit_15391-tvOSTests.xctest */,
+				13B07F961A680F5B00A75B9A /* Performit.app */,
+				00E356EE1AD99517003FC87E /* PerformitTests.xctest */,
+				2D02E47B1E0B4A5D006451C7 /* Performit-tvOS.app */,
+				2D02E4901E0B4A5D006451C7 /* Performit-tvOSTests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -240,14 +240,14 @@
 		AA3F11E466B2FBD805C8C9CA /* Pods */ = {
 			isa = PBXGroup;
 			children = (
-				367A6BF6786D8ED84CED572A /* Pods-performit_15391.debug.xcconfig */,
-				7C47A149BE5291B60381FB86 /* Pods-performit_15391.release.xcconfig */,
-				C44963A3BE00A33953091301 /* Pods-performit_15391-tvOS.debug.xcconfig */,
-				C48B69FA3F87B18FAEBB94F4 /* Pods-performit_15391-tvOS.release.xcconfig */,
-				90991AC1733B3E0D60E8E77C /* Pods-performit_15391-tvOSTests.debug.xcconfig */,
-				746F4BBF0DB970A2D42EEC17 /* Pods-performit_15391-tvOSTests.release.xcconfig */,
-				47833C1AED5F340F95FE12C0 /* Pods-performit_15391Tests.debug.xcconfig */,
-				09AF706F01A08611C56BED82 /* Pods-performit_15391Tests.release.xcconfig */,
+				367A6BF6786D8ED84CED572A /* Pods-Performit.debug.xcconfig */,
+				7C47A149BE5291B60381FB86 /* Pods-Performit.release.xcconfig */,
+				C44963A3BE00A33953091301 /* Pods-Performit-tvOS.debug.xcconfig */,
+				C48B69FA3F87B18FAEBB94F4 /* Pods-Performit-tvOS.release.xcconfig */,
+				90991AC1733B3E0D60E8E77C /* Pods-Performit-tvOSTests.debug.xcconfig */,
+				746F4BBF0DB970A2D42EEC17 /* Pods-Performit-tvOSTests.release.xcconfig */,
+				47833C1AED5F340F95FE12C0 /* Pods-PerformitTests.debug.xcconfig */,
+				09AF706F01A08611C56BED82 /* Pods-PerformitTests.release.xcconfig */,
 			);
 			path = Pods;
 			sourceTree = "<group>";
@@ -299,9 +299,9 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		00E356ED1AD99517003FC87E /* performit_15391Tests */ = {
+		00E356ED1AD99517003FC87E /* PerformitTests */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 00E357021AD99517003FC87E /* Build configuration list for PBXNativeTarget "performit_15391Tests" */;
+			buildConfigurationList = 00E357021AD99517003FC87E /* Build configuration list for PBXNativeTarget "PerformitTests" */;
 			buildPhases = (
 				7B5E7225E91A7742B2361437 /* [CP] Check Pods Manifest.lock */,
 				00E356EA1AD99517003FC87E /* Sources */,
@@ -313,14 +313,14 @@
 			dependencies = (
 				00E356F51AD99517003FC87E /* PBXTargetDependency */,
 			);
-			name = performit_15391Tests;
-			productName = performit_15391Tests;
-			productReference = 00E356EE1AD99517003FC87E /* performit_15391Tests.xctest */;
+			name = PerformitTests;
+			productName = PerformitTests;
+			productReference = 00E356EE1AD99517003FC87E /* PerformitTests.xctest */;
 			productType = "com.apple.product-type.bundle.unit-test";
 		};
-		13B07F861A680F5B00A75B9A /* performit_15391 */ = {
+		13B07F861A680F5B00A75B9A /* Performit */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 13B07F931A680F5B00A75B9A /* Build configuration list for PBXNativeTarget "performit_15391" */;
+			buildConfigurationList = 13B07F931A680F5B00A75B9A /* Build configuration list for PBXNativeTarget "Performit" */;
 			buildPhases = (
 				750A2F298314BF7E7280B347 /* [CP] Check Pods Manifest.lock */,
 				FD10A7F022414F080027D42C /* Start Packager */,
@@ -334,14 +334,14 @@
 			);
 			dependencies = (
 			);
-			name = performit_15391;
-			productName = performit_15391;
-			productReference = 13B07F961A680F5B00A75B9A /* performit_15391.app */;
+			name = Performit;
+			productName = Performit;
+			productReference = 13B07F961A680F5B00A75B9A /* Performit.app */;
 			productType = "com.apple.product-type.application";
 		};
-		2D02E47A1E0B4A5D006451C7 /* performit_15391-tvOS */ = {
+		2D02E47A1E0B4A5D006451C7 /* Performit-tvOS */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 2D02E4BA1E0B4A5E006451C7 /* Build configuration list for PBXNativeTarget "performit_15391-tvOS" */;
+			buildConfigurationList = 2D02E4BA1E0B4A5E006451C7 /* Build configuration list for PBXNativeTarget "Performit-tvOS" */;
 			buildPhases = (
 				BD9550FEDD788B21C49074C0 /* [CP] Check Pods Manifest.lock */,
 				FD10A7F122414F3F0027D42C /* Start Packager */,
@@ -354,14 +354,14 @@
 			);
 			dependencies = (
 			);
-			name = "performit_15391-tvOS";
-			productName = "performit_15391-tvOS";
-			productReference = 2D02E47B1E0B4A5D006451C7 /* performit_15391-tvOS.app */;
+			name = "Performit-tvOS";
+			productName = "Performit-tvOS";
+			productReference = 2D02E47B1E0B4A5D006451C7 /* Performit-tvOS.app */;
 			productType = "com.apple.product-type.application";
 		};
-		2D02E48F1E0B4A5D006451C7 /* performit_15391-tvOSTests */ = {
+		2D02E48F1E0B4A5D006451C7 /* Performit-tvOSTests */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 2D02E4BB1E0B4A5E006451C7 /* Build configuration list for PBXNativeTarget "performit_15391-tvOSTests" */;
+			buildConfigurationList = 2D02E4BB1E0B4A5E006451C7 /* Build configuration list for PBXNativeTarget "Performit-tvOSTests" */;
 			buildPhases = (
 				EC668F604DCE489E91E855CB /* [CP] Check Pods Manifest.lock */,
 				2D02E48C1E0B4A5D006451C7 /* Sources */,
@@ -373,9 +373,9 @@
 			dependencies = (
 				2D02E4921E0B4A5D006451C7 /* PBXTargetDependency */,
 			);
-			name = "performit_15391-tvOSTests";
-			productName = "performit_15391-tvOSTests";
-			productReference = 2D02E4901E0B4A5D006451C7 /* performit_15391-tvOSTests.xctest */;
+			name = "Performit-tvOSTests";
+			productName = "Performit-tvOSTests";
+			productReference = 2D02E4901E0B4A5D006451C7 /* Performit-tvOSTests.xctest */;
 			productType = "com.apple.product-type.bundle.unit-test";
 		};
 /* End PBXNativeTarget section */
@@ -395,7 +395,7 @@
 					};
 					13B07F861A680F5B00A75B9A = {
 						DevelopmentTeam = 6YKR59QXKM;
-						ProvisioningStyle = Manual;
+						ProvisioningStyle = Automatic;
 					};
 					2D02E47A1E0B4A5D006451C7 = {
 						CreatedOnToolsVersion = 8.2.1;
@@ -410,7 +410,7 @@
 					};
 				};
 			};
-			buildConfigurationList = 83CBB9FA1A601CBA00E9B192 /* Build configuration list for PBXProject "performit_15391" */;
+			buildConfigurationList = 83CBB9FA1A601CBA00E9B192 /* Build configuration list for PBXProject "Performit" */;
 			compatibilityVersion = "Xcode 3.2";
 			developmentRegion = English;
 			hasScannedForEncodings = 0;
@@ -424,10 +424,10 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				13B07F861A680F5B00A75B9A /* performit_15391 */,
-				00E356ED1AD99517003FC87E /* performit_15391Tests */,
-				2D02E47A1E0B4A5D006451C7 /* performit_15391-tvOS */,
-				2D02E48F1E0B4A5D006451C7 /* performit_15391-tvOSTests */,
+				13B07F861A680F5B00A75B9A /* Performit */,
+				00E356ED1AD99517003FC87E /* PerformitTests */,
+				2D02E47A1E0B4A5D006451C7 /* Performit-tvOS */,
+				2D02E48F1E0B4A5D006451C7 /* Performit-tvOSTests */,
 			);
 		};
 /* End PBXProject section */
@@ -525,7 +525,7 @@
 			outputFileListPaths = (
 			);
 			outputPaths = (
-				"$(DERIVED_FILE_DIR)/Pods-performit_15391-checkManifestLockResult.txt",
+				"$(DERIVED_FILE_DIR)/Pods-Performit-checkManifestLockResult.txt",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
@@ -547,7 +547,7 @@
 			outputFileListPaths = (
 			);
 			outputPaths = (
-				"$(DERIVED_FILE_DIR)/Pods-performit_15391Tests-checkManifestLockResult.txt",
+				"$(DERIVED_FILE_DIR)/Pods-PerformitTests-checkManifestLockResult.txt",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
@@ -560,7 +560,7 @@
 			files = (
 			);
 			inputPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-performit_15391/Pods-performit_15391-resources.sh",
+				"${PODS_ROOT}/Target Support Files/Pods-Performit/Pods-Performit-resources.sh",
 				"${PODS_ROOT}/GoogleMaps/Maps/Frameworks/GoogleMaps.framework/Resources/GoogleMaps.bundle",
 				"${PODS_ROOT}/GoogleSignIn/Resources/GoogleSignIn.bundle",
 				"${PODS_ROOT}/../../node_modules/react-native-vector-icons/Fonts/AntDesign.ttf",
@@ -603,7 +603,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-performit_15391/Pods-performit_15391-resources.sh\"\n";
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-Performit/Pods-Performit-resources.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
 		BD9550FEDD788B21C49074C0 /* [CP] Check Pods Manifest.lock */ = {
@@ -621,7 +621,7 @@
 			outputFileListPaths = (
 			);
 			outputPaths = (
-				"$(DERIVED_FILE_DIR)/Pods-performit_15391-tvOS-checkManifestLockResult.txt",
+				"$(DERIVED_FILE_DIR)/Pods-Performit-tvOS-checkManifestLockResult.txt",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
@@ -643,7 +643,7 @@
 			outputFileListPaths = (
 			);
 			outputPaths = (
-				"$(DERIVED_FILE_DIR)/Pods-performit_15391-tvOSTests-checkManifestLockResult.txt",
+				"$(DERIVED_FILE_DIR)/Pods-Performit-tvOSTests-checkManifestLockResult.txt",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
@@ -695,7 +695,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				00E356F31AD99517003FC87E /* performit_15391Tests.m in Sources */,
+				00E356F31AD99517003FC87E /* PerformitTests.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -721,7 +721,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				2DCD954D1E0B4F2C00145EB5 /* performit_15391Tests.m in Sources */,
+				2DCD954D1E0B4F2C00145EB5 /* PerformitTests.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -730,12 +730,12 @@
 /* Begin PBXTargetDependency section */
 		00E356F51AD99517003FC87E /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = 13B07F861A680F5B00A75B9A /* performit_15391 */;
+			target = 13B07F861A680F5B00A75B9A /* Performit */;
 			targetProxy = 00E356F41AD99517003FC87E /* PBXContainerItemProxy */;
 		};
 		2D02E4921E0B4A5D006451C7 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = 2D02E47A1E0B4A5D006451C7 /* performit_15391-tvOS */;
+			target = 2D02E47A1E0B4A5D006451C7 /* Performit-tvOS */;
 			targetProxy = 2D02E4911E0B4A5D006451C7 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
@@ -747,7 +747,7 @@
 				13B07FB21A68108700A75B9A /* Base */,
 			);
 			name = LaunchScreen.xib;
-			path = performit_15391;
+			path = Performit;
 			sourceTree = "<group>";
 		};
 /* End PBXVariantGroup section */
@@ -755,7 +755,7 @@
 /* Begin XCBuildConfiguration section */
 		00E356F61AD99517003FC87E /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 47833C1AED5F340F95FE12C0 /* Pods-performit_15391Tests.debug.xcconfig */;
+			baseConfigurationReference = 47833C1AED5F340F95FE12C0 /* Pods-PerformitTests.debug.xcconfig */;
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				CODE_SIGN_IDENTITY = "iPhone Distribution: Crowdbotics Corporation (6YKR59QXKM)";
@@ -765,7 +765,7 @@
 					"DEBUG=1",
 					"$(inherited)",
 				);
-				INFOPLIST_FILE = performit_15391Tests/Info.plist;
+				INFOPLIST_FILE = PerformitTests/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				OTHER_LDFLAGS = (
@@ -775,20 +775,20 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = "org.reactjs.native.example.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/performit_15391.app/performit_15391";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Performit.app/Performit";
 			};
 			name = Debug;
 		};
 		00E356F71AD99517003FC87E /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 09AF706F01A08611C56BED82 /* Pods-performit_15391Tests.release.xcconfig */;
+			baseConfigurationReference = 09AF706F01A08611C56BED82 /* Pods-PerformitTests.release.xcconfig */;
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				CODE_SIGN_IDENTITY = "iPhone Distribution: Crowdbotics Corporation (6YKR59QXKM)";
 				CODE_SIGN_STYLE = Manual;
 				COPY_PHASE_STRIP = NO;
 				DEVELOPMENT_TEAM = 6YKR59QXKM;
-				INFOPLIST_FILE = performit_15391Tests/Info.plist;
+				INFOPLIST_FILE = PerformitTests/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				OTHER_LDFLAGS = (
@@ -798,58 +798,60 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = "org.reactjs.native.example.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/performit_15391.app/performit_15391";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Performit.app/Performit";
 			};
 			name = Release;
 		};
 		13B07F941A680F5B00A75B9A /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 367A6BF6786D8ED84CED572A /* Pods-performit_15391.debug.xcconfig */;
+			baseConfigurationReference = 367A6BF6786D8ED84CED572A /* Pods-Performit.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = "AppIcon-1";
-				CODE_SIGN_IDENTITY = "iPhone Distribution: Crowdbotics Corporation (6YKR59QXKM)";
-				CODE_SIGN_STYLE = Manual;
+				CODE_SIGN_IDENTITY = "Apple Development";
+				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEAD_CODE_STRIPPING = NO;
-				DEVELOPMENT_TEAM = 6YKR59QXKM;
-				INFOPLIST_FILE = performit_15391/Info.plist;
+				DEVELOPMENT_TEAM = "";
+				INFOPLIST_FILE = Performit/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				OTHER_LDFLAGS = (
 					"$(inherited)",
 					"-ObjC",
 					"-lc++",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = "org.reactjs.native.example.$(PRODUCT_NAME:rfc1034identifier)";
-				PRODUCT_NAME = performit_15391;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.crowdbotics.performit-15391";
+				PRODUCT_NAME = Performit;
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				VERSIONING_SYSTEM = "apple-generic";
 			};
 			name = Debug;
 		};
 		13B07F951A680F5B00A75B9A /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 7C47A149BE5291B60381FB86 /* Pods-performit_15391.release.xcconfig */;
+			baseConfigurationReference = 7C47A149BE5291B60381FB86 /* Pods-Performit.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = "AppIcon-1";
-				CODE_SIGN_IDENTITY = "iPhone Distribution: Crowdbotics Corporation (6YKR59QXKM)";
-				CODE_SIGN_STYLE = Manual;
+				CODE_SIGN_IDENTITY = "Apple Development";
+				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = 6YKR59QXKM;
-				INFOPLIST_FILE = performit_15391/Info.plist;
+				DEVELOPMENT_TEAM = "";
+				INFOPLIST_FILE = Performit/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				OTHER_LDFLAGS = (
 					"$(inherited)",
 					"-ObjC",
 					"-lc++",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = "org.reactjs.native.example.$(PRODUCT_NAME:rfc1034identifier)";
-				PRODUCT_NAME = performit_15391;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.crowdbotics.performit-15391";
+				PRODUCT_NAME = Performit;
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				VERSIONING_SYSTEM = "apple-generic";
 			};
 			name = Release;
 		};
 		2D02E4971E0B4A5E006451C7 /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = C44963A3BE00A33953091301 /* Pods-performit_15391-tvOS.debug.xcconfig */;
+			baseConfigurationReference = C44963A3BE00A33953091301 /* Pods-Performit-tvOS.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = "App Icon & Top Shelf Image";
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
@@ -863,14 +865,14 @@
 				DEVELOPMENT_TEAM = 6YKR59QXKM;
 				ENABLE_TESTABILITY = YES;
 				GCC_NO_COMMON_BLOCKS = YES;
-				INFOPLIST_FILE = "performit_15391-tvOS/Info.plist";
+				INFOPLIST_FILE = "Performit-tvOS/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				OTHER_LDFLAGS = (
 					"$(inherited)",
 					"-ObjC",
 					"-lc++",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = "com.facebook.REACT.performit_15391-tvOS";
+				PRODUCT_BUNDLE_IDENTIFIER = "com.facebook.REACT.Performit-tvOS";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = appletvos;
 				TARGETED_DEVICE_FAMILY = 3;
@@ -880,7 +882,7 @@
 		};
 		2D02E4981E0B4A5E006451C7 /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = C48B69FA3F87B18FAEBB94F4 /* Pods-performit_15391-tvOS.release.xcconfig */;
+			baseConfigurationReference = C48B69FA3F87B18FAEBB94F4 /* Pods-Performit-tvOS.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = "App Icon & Top Shelf Image";
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
@@ -894,14 +896,14 @@
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				DEVELOPMENT_TEAM = 6YKR59QXKM;
 				GCC_NO_COMMON_BLOCKS = YES;
-				INFOPLIST_FILE = "performit_15391-tvOS/Info.plist";
+				INFOPLIST_FILE = "Performit-tvOS/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				OTHER_LDFLAGS = (
 					"$(inherited)",
 					"-ObjC",
 					"-lc++",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = "com.facebook.REACT.performit_15391-tvOS";
+				PRODUCT_BUNDLE_IDENTIFIER = "com.facebook.REACT.Performit-tvOS";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = appletvos;
 				TARGETED_DEVICE_FAMILY = 3;
@@ -911,7 +913,7 @@
 		};
 		2D02E4991E0B4A5E006451C7 /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 90991AC1733B3E0D60E8E77C /* Pods-performit_15391-tvOSTests.debug.xcconfig */;
+			baseConfigurationReference = 90991AC1733B3E0D60E8E77C /* Pods-Performit-tvOSTests.debug.xcconfig */;
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				CLANG_ANALYZER_NONNULL = YES;
@@ -924,24 +926,24 @@
 				DEVELOPMENT_TEAM = 6YKR59QXKM;
 				ENABLE_TESTABILITY = YES;
 				GCC_NO_COMMON_BLOCKS = YES;
-				INFOPLIST_FILE = "performit_15391-tvOSTests/Info.plist";
+				INFOPLIST_FILE = "Performit-tvOSTests/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				OTHER_LDFLAGS = (
 					"$(inherited)",
 					"-ObjC",
 					"-lc++",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = "com.facebook.REACT.performit_15391-tvOSTests";
+				PRODUCT_BUNDLE_IDENTIFIER = "com.facebook.REACT.Performit-tvOSTests";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = appletvos;
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/performit_15391-tvOS.app/performit_15391-tvOS";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Performit-tvOS.app/Performit-tvOS";
 				TVOS_DEPLOYMENT_TARGET = 10.1;
 			};
 			name = Debug;
 		};
 		2D02E49A1E0B4A5E006451C7 /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 746F4BBF0DB970A2D42EEC17 /* Pods-performit_15391-tvOSTests.release.xcconfig */;
+			baseConfigurationReference = 746F4BBF0DB970A2D42EEC17 /* Pods-Performit-tvOSTests.release.xcconfig */;
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				CLANG_ANALYZER_NONNULL = YES;
@@ -954,17 +956,17 @@
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				DEVELOPMENT_TEAM = 6YKR59QXKM;
 				GCC_NO_COMMON_BLOCKS = YES;
-				INFOPLIST_FILE = "performit_15391-tvOSTests/Info.plist";
+				INFOPLIST_FILE = "Performit-tvOSTests/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				OTHER_LDFLAGS = (
 					"$(inherited)",
 					"-ObjC",
 					"-lc++",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = "com.facebook.REACT.performit_15391-tvOSTests";
+				PRODUCT_BUNDLE_IDENTIFIER = "com.facebook.REACT.Performit-tvOSTests";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = appletvos;
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/performit_15391-tvOS.app/performit_15391-tvOS";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Performit-tvOS.app/Performit-tvOS";
 				TVOS_DEPLOYMENT_TARGET = 10.1;
 			};
 			name = Release;
@@ -1071,7 +1073,7 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		00E357021AD99517003FC87E /* Build configuration list for PBXNativeTarget "performit_15391Tests" */ = {
+		00E357021AD99517003FC87E /* Build configuration list for PBXNativeTarget "PerformitTests" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				00E356F61AD99517003FC87E /* Debug */,
@@ -1080,7 +1082,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		13B07F931A680F5B00A75B9A /* Build configuration list for PBXNativeTarget "performit_15391" */ = {
+		13B07F931A680F5B00A75B9A /* Build configuration list for PBXNativeTarget "Performit" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				13B07F941A680F5B00A75B9A /* Debug */,
@@ -1089,7 +1091,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		2D02E4BA1E0B4A5E006451C7 /* Build configuration list for PBXNativeTarget "performit_15391-tvOS" */ = {
+		2D02E4BA1E0B4A5E006451C7 /* Build configuration list for PBXNativeTarget "Performit-tvOS" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				2D02E4971E0B4A5E006451C7 /* Debug */,
@@ -1098,7 +1100,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		2D02E4BB1E0B4A5E006451C7 /* Build configuration list for PBXNativeTarget "performit_15391-tvOSTests" */ = {
+		2D02E4BB1E0B4A5E006451C7 /* Build configuration list for PBXNativeTarget "Performit-tvOSTests" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				2D02E4991E0B4A5E006451C7 /* Debug */,
@@ -1107,7 +1109,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		83CBB9FA1A601CBA00E9B192 /* Build configuration list for PBXProject "performit_15391" */ = {
+		83CBB9FA1A601CBA00E9B192 /* Build configuration list for PBXProject "Performit" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				83CBBA201A601CBA00E9B192 /* Debug */,

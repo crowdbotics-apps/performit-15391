@@ -29,9 +29,9 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "2D02E47A1E0B4A5D006451C7"
-               BuildableName = "performit_15391-tvOS.app"
-               BlueprintName = "performit_15391-tvOS"
-               ReferencedContainer = "container:performit_15391.xcodeproj">
+               BuildableName = "Performit-tvOS.app"
+               BlueprintName = "Performit-tvOS"
+               ReferencedContainer = "container:Performit.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
          <BuildActionEntry
@@ -43,9 +43,9 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "2D02E48F1E0B4A5D006451C7"
-               BuildableName = "performit_15391-tvOSTests.xctest"
-               BlueprintName = "performit_15391-tvOSTests"
-               ReferencedContainer = "container:performit_15391.xcodeproj">
+               BuildableName = "Performit-tvOSTests.xctest"
+               BlueprintName = "Performit-tvOSTests"
+               ReferencedContainer = "container:Performit.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
       </BuildActionEntries>
@@ -61,9 +61,9 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "2D02E48F1E0B4A5D006451C7"
-               BuildableName = "performit_15391-tvOSTests.xctest"
-               BlueprintName = "performit_15391-tvOSTests"
-               ReferencedContainer = "container:performit_15391.xcodeproj">
+               BuildableName = "Performit-tvOSTests.xctest"
+               BlueprintName = "Performit-tvOSTests"
+               ReferencedContainer = "container:Performit.xcodeproj">
             </BuildableReference>
          </TestableReference>
       </Testables>
@@ -71,9 +71,9 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "2D02E47A1E0B4A5D006451C7"
-            BuildableName = "performit_15391-tvOS.app"
-            BlueprintName = "performit_15391-tvOS"
-            ReferencedContainer = "container:performit_15391.xcodeproj">
+            BuildableName = "Performit-tvOS.app"
+            BlueprintName = "Performit-tvOS"
+            ReferencedContainer = "container:Performit.xcodeproj">
          </BuildableReference>
       </MacroExpansion>
       <AdditionalOptions>
@@ -94,9 +94,9 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "2D02E47A1E0B4A5D006451C7"
-            BuildableName = "performit_15391-tvOS.app"
-            BlueprintName = "performit_15391-tvOS"
-            ReferencedContainer = "container:performit_15391.xcodeproj">
+            BuildableName = "Performit-tvOS.app"
+            BlueprintName = "Performit-tvOS"
+            ReferencedContainer = "container:Performit.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
       <AdditionalOptions>
@@ -113,9 +113,9 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "2D02E47A1E0B4A5D006451C7"
-            BuildableName = "performit_15391-tvOS.app"
-            BlueprintName = "performit_15391-tvOS"
-            ReferencedContainer = "container:performit_15391.xcodeproj">
+            BuildableName = "Performit-tvOS.app"
+            BlueprintName = "Performit-tvOS"
+            ReferencedContainer = "container:Performit.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
    </ProfileAction>
