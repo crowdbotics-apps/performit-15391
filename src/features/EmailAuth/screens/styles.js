@@ -10,7 +10,8 @@ export const styles = StyleSheet.create({
   },
 
   signUpScreen: {
-    flex: 1,
+    flex: 0,
+    minHeight: '100%',
     flexDirection: 'column',
     justifyContent: 'flex-start',
     alignItems: 'center',
@@ -26,6 +27,50 @@ export const styles = StyleSheet.create({
     alignItems: 'center',
     backgroundColor: '#111111',
     marginBottom: scaleModerate(24),
+  },
+
+  signUpButtonContainer: {
+    width: '95%',
+    height: scaleModerate(46),
+    borderRadius: scaleModerate(23),
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: '#b88746',
+    marginBottom: scaleModerate(24),
+    marginTop: scaleModerate(3),
+  },
+
+  signUpButtonText: {
+    color: '#ffffff',
+    fontSize: scaleModerate(16),
+    fontFamily: 'Nunito-Bold',
+  },
+
+  tncContainer: {
+    width: '95%',
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginBottom: scaleModerate(24),
+  },
+
+  tncText1: {
+    color: '#ffffff',
+    fontSize: scaleModerate(14),
+    fontFamily: 'Nunito-Regular',
+  },
+
+  tncText2Container: {
+    height: scaleModerate(17),
+    borderBottomWidth: scaleModerate(1),
+    borderColor: '#b88746',
+  },
+
+  tncText2: {
+    color: '#b88746',
+    fontSize: scaleModerate(14),
+    fontFamily: 'Nunito-Regular',
   },
 
   inputEmailImage: {

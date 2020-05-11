@@ -7,6 +7,7 @@ import ProtectedScreen from './screens/ProtectedScreen';
 import ConfirmationRequiredScreen from './screens/ConfirmationRequired';
 import Home from './screens/';
 import Onboarding from './Onboarding';
+import TermsAndConditions from './TermsAndConditions';
 
 export default (EmailAuthNavigator = createStackNavigator(
   {
@@ -17,6 +18,7 @@ export default (EmailAuthNavigator = createStackNavigator(
     ProtectedRoute: {screen: ProtectedScreen},
     ConfirmationRequired: {screen: ConfirmationRequiredScreen},
     Onboarding: {screen: Onboarding},
+    TermsAndConditions: {screen: TermsAndConditions},
   },
   {
     initialRouteName: 'Home',

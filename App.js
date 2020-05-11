@@ -32,7 +32,7 @@ export default class App extends React.Component {
      * Read above commments above adding async requests here
      */
     NavigationService.setNavigator(this.navigator);
-    SplashScreen.hide();
+    SplashScreen && SplashScreen.hide();
   }
 
   loadAssets = async () => {

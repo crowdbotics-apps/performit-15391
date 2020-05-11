@@ -8,6 +8,7 @@ import {
   Text,
   TextInput,
   TouchableOpacity,
+  ScrollView,
 } from 'react-native';
 import {Button, Input} from 'react-native-ui-kitten';
 
@@ -15,6 +16,7 @@ import {scaleModerate} from '../../../../utils/scale';
 import {styles} from '../styles';
 import * as emailAuthActions from '../../redux/actions';
 import ErrorBox from '../../../../components/ErrorBox';
+import TermsAndConditions from '../../TermsAndConditions';
 
 class SignUp extends Component {
   constructor(props) {
@@ -31,7 +33,9 @@ class SignUp extends Component {
 
     this.handleEmailChange = this.handleEmailChange.bind(this);
     this.handlePasswordChange = this.handlePasswordChange.bind(this);
-    this.handleConfirmPasswordChange = this.handleConfirmPasswordChange.bind(this);
+    this.handleConfirmPasswordChange = this.handleConfirmPasswordChange.bind(
+      this,
+    );
     this.handleUsernameChange = this.handleUsernameChange.bind(this);
     this.submitSignUp = this.submitSignUp.bind(this);
   }
@@ -101,6 +105,16 @@ class SignUp extends Component {
     this.setState({email: '', password: '', username: ''});
   }
 
+  goToSignIn() {
+    const {navigation} = this.props;
+    navigation.navigate('SignIn');
+  }
+
+  goToTermsAndConditions() {
+    const {navigation} = this.props;
+    navigation.navigate('TermsAndConditions');
+  }
+
   render() {
     const {
       email,
@@ -113,7 +127,9 @@ class SignUp extends Component {
     const {errors} = this.props;
 
     return (
-      <View style={[styles.signUpScreen]}>
+      <ScrollView
+        contentContainerStyle={styles.signUpScreen}
+        style={{backgroundColor: 'black'}}>
         {this.renderImage()}
         <View style={styles.inputContainer}>
           <View style={[styles.inputEmailImage]}>
@@ -209,12 +225,32 @@ class SignUp extends Component {
           </TouchableOpacity>
         </View>
 
-        <Button style={styles.actionButon} onPress={this.submitSignUp}>
-          Sign up
-        </Button>
+        <View style={styles.tncContainer}>
+          <Text style={styles.tncText1}>
+            By Signing up, you agree to all our{' '}
+          </Text>
+          <TouchableOpacity
+            style={styles.tncText2Container}
+            onPress={() => this.goToTermsAndConditions()}>
+            <Text style={styles.tncText2}>Terms and Conditions</Text>
+          </TouchableOpacity>
+        </View>
+
+        <TouchableOpacity style={styles.signUpButtonContainer}>
+          <Text style={styles.signUpButtonText}>SIGN UP</Text>
+        </TouchableOpacity>
+
+        <View style={[styles.tncContainer, {marginTop: scaleModerate(75)}]}>
+          <Text style={styles.tncText1}>Already have an account? </Text>
+          <TouchableOpacity
+            style={styles.tncText2Container}
+            onPress={() => this.goToSignIn()}>
+            <Text style={styles.tncText2}>Login</Text>
+          </TouchableOpacity>
+        </View>
 
         {this.renderErrors()}
-      </View>
+      </ScrollView>
     );
   }
 }
