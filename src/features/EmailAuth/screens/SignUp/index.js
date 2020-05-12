@@ -100,7 +100,7 @@ class SignUp extends Component {
 
     const {email, password, username} = this.state;
     // todo add disable buttons on submit
-    signUp({email, password, username});
+    signUp({phone_number: email, password, username, type: 'phone'});
 
     this.setState({email: '', password: '', username: ''});
   }
@@ -236,15 +236,13 @@ class SignUp extends Component {
           </TouchableOpacity>
         </View>
 
-        <TouchableOpacity style={styles.signUpButtonContainer}>
+        <TouchableOpacity style={styles.signUpButtonContainer} onPress={() => this.submitSignUp()}>
           <Text style={styles.signUpButtonText}>SIGN UP</Text>
         </TouchableOpacity>
 
         <View style={[styles.tncContainer, {marginTop: scaleModerate(75)}]}>
           <Text style={styles.tncText1}>Already have an account? </Text>
-          <TouchableOpacity
-            style={styles.tncText2Container}
-            onPress={() => this.goToSignIn()}>
+          <TouchableOpacity style={styles.tncText2Container} onPress={() => {this.props.navigation.navigate('SignIn');}}>
             <Text style={styles.tncText2}>Login</Text>
           </TouchableOpacity>
         </View>
@@ -261,8 +259,8 @@ const mapStateToProps = state => ({
 
 const mapDispatchToProps = dispatch => ({
   actions: {
-    signUp: ({email, password, username}) => {
-      dispatch(emailAuthActions.signUp({email, password, username}));
+    signUp: user => {
+      dispatch(emailAuthActions.signUp(user));
     },
   },
 });

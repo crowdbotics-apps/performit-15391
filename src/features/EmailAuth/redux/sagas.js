@@ -20,21 +20,19 @@ import {
 } from './constants';
 import {request} from '../../../utils/http';
 
-function sendLogin({email, password}) {
-  return request.post('/api/v1/login/', {
-    username: email,
+function sendLogin({username, password}) {
+  return request.post('/rest-auth/login/', {
+    username: username,
     password,
   });
 }
 
-function sendSignUp({email, password}) {
-  return request.post('/api/v1/signup/', {
-    email,
-    password,
-  });
+function sendSignUp(user) {
+  return request.post('/sign-up/', user);
 }
 
 function sendPasswordRecovery(email) {
+  // https://performit-15391.botics.co/sign-up/
   //There is no reset password endpoint in backend, it's just a fake url
   return request.post('/api/v1/password-reset/', {
     email,
@@ -65,7 +63,8 @@ function* handleLogin(action) {
     if (status === 200) {
       yield put({
         type: EMAIL_AUTH_LOGIN_SUCCESS,
-        accessToken: data.token,
+        accessToken: data.key,
+        user: data.user,
       });
 
       // you can change the navigate for navigateAndResetStack to go to a protected route
@@ -78,6 +77,7 @@ function* handleLogin(action) {
     }
   } catch (error) {
     // todo add errors with similar structure in backend
+    console.dir(error)
     yield put({
       type: EMAIL_AUTH_LOGIN_ERROR,
       error: "Can't sign in with provided credentials",
@@ -86,20 +86,18 @@ function* handleLogin(action) {
 }
 
 function* handleSignUp(action) {
-  const {
-    user: {email, password, username},
-  } = action;
+  const {user} = action;
   try {
-    const {status, data} = yield call(sendSignUp, {email, password});
-
-    if (status === 201) {
+    const {status, data} = yield call(sendSignUp, user);
+    console.log(status, data);
+    if (status === 200) {
       yield put({
         type: EMAIL_AUTH_SIGNUP_SUCCESS,
-        user: data.user,
+        // user: data,
       });
 
       // you can change the navigate for navigateAndResetStack to go to a protected route
-      NavigationService.navigate('ConfirmationRequired');
+      NavigationService.navigate('ForgotPassword');
     } else {
       yield put({
         type: EMAIL_AUTH_SIGNUP_ERROR,
@@ -107,6 +105,7 @@ function* handleSignUp(action) {
       });
     }
   } catch (error) {
+    console.dir(error)
     // todo add errors with similar structure in backend
     yield put({
       type: EMAIL_AUTH_SIGNUP_ERROR,

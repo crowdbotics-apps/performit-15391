@@ -79,7 +79,7 @@ export default class Onboarding extends Component {
             <View style={styles.circleBG} />
             <TouchableOpacity
               onPress={() => {
-                console.log();
+                this.props.navigation.navigate('SignUp')
               }}>
               <View style={styles.button}>
                 <Text style={styles.buttonText}>

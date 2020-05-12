@@ -169,7 +169,9 @@ class SignIn extends Component {
           </TouchableOpacity>
         </View>
 
-        <TouchableOpacity style={styles.signUpButtonContainer}>
+        <TouchableOpacity style={styles.signUpButtonContainer} onPress={() => {
+          this.submitLogin()
+        }}>
           <Text style={styles.signUpButtonText}>LOGIN</Text>
         </TouchableOpacity>
 
