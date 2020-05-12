@@ -1,6 +1,6 @@
 import {StyleSheet} from 'react-native';
 
-import {scaleVertical, scaleModerate, scale} from '../../../utils/scale';
+import {scaleVertical, scale, scaleModerate} from '../../../utils/scale';
 
 export const styles = StyleSheet.create({
   screen: {
@@ -20,13 +20,14 @@ export const styles = StyleSheet.create({
 
   inputContainer: {
     width: '95%',
-    height: scaleModerate(46),
-    borderRadius: scaleModerate(23),
+    height: scaleVertical(46),
+    borderRadius: scaleVertical(23),
     flexDirection: 'row',
     justifyContent: 'center',
     alignItems: 'center',
     backgroundColor: '#111111',
-    marginBottom: scaleModerate(24),
+    marginBottom: scaleVertical(24),
+    overflow: 'hidden',
   },
 
   signUpButtonContainer: {
@@ -37,13 +38,13 @@ export const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     backgroundColor: '#b88746',
-    marginBottom: scaleModerate(24),
-    marginTop: scaleModerate(3),
+    marginBottom: scaleVertical(24),
+    marginTop: scaleVertical(3),
   },
 
   signUpButtonText: {
     color: '#ffffff',
-    fontSize: scaleModerate(16),
+    fontSize: scaleVertical(16),
     fontFamily: 'Nunito-Bold',
   },
 
@@ -52,55 +53,56 @@ export const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'center',
     alignItems: 'center',
-    marginBottom: scaleModerate(24),
+    marginBottom: scaleVertical(24),
   },
 
   tncText1: {
     color: '#ffffff',
-    fontSize: scaleModerate(14),
+    fontSize: scaleVertical(14),
     fontFamily: 'Nunito-Regular',
   },
 
   tncText2Container: {
-    height: scaleModerate(19),
-    borderBottomWidth: scaleModerate(1),
+    height: scaleVertical(19),
+    borderBottomWidth: scaleVertical(1),
     borderColor: '#b88746',
   },
 
   tncText2: {
     color: '#b88746',
-    fontSize: scaleModerate(14),
+    fontSize: scaleVertical(14),
     fontFamily: 'Nunito-Regular',
   },
 
   inputEmailImage: {
     flex: 1,
-    width: scaleModerate(20),
-    height: scaleModerate(22),
-    marginLeft: scaleModerate(10),
+    width: scaleVertical(20),
+    height: scaleVertical(22),
+    marginLeft: scaleVertical(10),
   },
 
   inputEyeImage: {
     flex: 1,
-    width: scaleModerate(22),
-    height: scaleModerate(18),
-    marginRight: scaleModerate(10),
+    width: scaleVertical(22),
+    height: scaleVertical(18),
+    marginRight: scaleVertical(10),
   },
 
   inputUserNameImage: {
     flex: 1,
-    width: scaleModerate(22),
-    height: scaleModerate(22),
-    marginLeft: scaleModerate(10),
+    width: scaleVertical(22),
+    height: scaleVertical(22),
+    marginLeft: scaleVertical(10),
   },
 
   signUpInput: {
-    flex: 9,
+    flex: 8,
     backgroundColor: '#111111',
     color: '#989ba5',
-    marginLeft: scaleModerate(17),
-    fontSize: scaleModerate(16),
+    marginLeft: scaleVertical(17),
+    fontSize: scaleVertical(16),
     fontFamily: 'Nunito-Regular',
+    // width: '90%'
   },
 
   input: {
@@ -135,7 +137,6 @@ export const styles = StyleSheet.create({
   },
 
   imageBackground: {
-    resizeMode: 'cover',
     marginBottom: scale(10),
     flexDirection: 'column',
     justifyContent: 'center',
@@ -144,7 +145,7 @@ export const styles = StyleSheet.create({
   },
 
   titleTextContainer: {
-    paddingTop: scaleModerate(20),
+    paddingTop: scaleVertical(20),
     flexDirection: 'column',
     justifyContent: 'center',
     alignItems: 'center',
@@ -153,7 +154,7 @@ export const styles = StyleSheet.create({
   titleText: {
     color: '#ffffff',
     fontWeight: 'bold',
-    fontSize: scaleModerate(34),
+    fontSize: scaleVertical(34),
     fontFamily: 'Nunito-Bold',
   },
 
@@ -197,31 +198,31 @@ export const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'center',
     alignItems: 'center',
-    marginBottom: scaleModerate(24),
+    marginBottom: scaleVertical(24),
   },
 
   forgetPasswordDescText: {
     color: '#ffffff',
-    fontSize: scaleModerate(16),
+    fontSize: scaleVertical(16),
     fontFamily: 'Nunito-Regular',
     textAlign: 'center',
   },
 
   forgetPassTitleTextContainer: {
-    paddingTop: scaleModerate(50),
+    paddingTop: scaleVertical(50),
     flexDirection: 'column',
     justifyContent: 'center',
     alignItems: 'center',
   },
 
   underlineStyleBase: {
-    width: scaleModerate(50),
-    height: scaleModerate(50),
-    borderRadius: scaleModerate(25),
+    width: scaleModerate(56),
+    height: scaleModerate(56),
+    borderRadius: scaleModerate(28),
     color: '#ffffff',
-    fontSize: scaleModerate(32),
+    fontSize: scaleVertical(32),
     fontFamily: 'Audiowide-Regular',
-    marginTop: scaleModerate(6),
+    marginTop: scaleVertical(6),
   },
 
   underlineStyleHighLighted: {
