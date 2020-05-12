@@ -25,6 +25,8 @@ class ResetPassword extends Component {
       showPassword: false,
       confirmPassword: '',
       showConfirmPassword: false,
+      error: '',
+      showError: true,
     };
 
     this.handlePasswordChange = this.handlePasswordChange.bind(this);
@@ -74,20 +76,61 @@ class ResetPassword extends Component {
   }
 
   renderErrors() {
-    const {signInErrors} = this.props;
-    if (signInErrors) {
-      return <ErrorBox errorText={signInErrors} />;
+    const {resetPasswordErrors} = this.props;
+    const {error} = this.state;
+    if (this.state.showError) {
+      if (error) {
+        return <ErrorBox errorText={error} />;
+      } else if (resetPasswordErrors) {
+        return <ErrorBox errorText={resetPasswordErrors} />;
+      }
+    } else {
+      return;
     }
   }
 
-  submitResetPassword() {
+  async submitResetPassword() {
+    let validation = true;
+    this.setState({error: ''});
     const {
       actions: {resetPassword},
+      token,
     } = this.props;
 
-    const {password} = this.state;
+    const {password, confirmPassword} = this.state;
 
-    resetPassword(password);
+    if (!password) {
+      this.setState({showError: true});
+      this.setState({error: 'Please enter a password'});
+      validation = false;
+    } else if (!confirmPassword) {
+      this.setState({showError: true});
+      this.setState({error: 'Please enter confirm password'});
+      validation = false;
+    }
+
+    if (password !== confirmPassword) {
+      this.setState({showError: true});
+      this.setState({error: 'Password and  confirm password do not match'});
+      validation = false;
+    }
+    if (validation) {
+      await resetPassword(password, token);
+      setTimeout(() => {
+        this.setState({showError: true});
+      }, 500);
+      setTimeout(() => {
+        this.setState({
+          showError: false,
+        });
+      }, 4000);
+    } else {
+      setTimeout(() => {
+        this.setState({
+          showError: false,
+        });
+      }, 2000);
+    }
   }
 
   render() {
@@ -170,7 +213,9 @@ class ResetPassword extends Component {
           </TouchableOpacity>
         </View>
 
-        <TouchableOpacity style={styles.signUpButtonContainer}>
+        <TouchableOpacity
+          style={styles.signUpButtonContainer}
+          onPress={() => this.submitResetPassword()}>
           <Text style={styles.signUpButtonText}>RESET PASSWORD</Text>
         </TouchableOpacity>
 
@@ -182,12 +227,13 @@ class ResetPassword extends Component {
 
 const mapStateToProps = state => ({
   resetPasswordErrors: state.EmailAuth.errors.ResetPassword,
+  token: state.EmailAuth.accessToken,
 });
 
 const mapDispatchToProps = dispatch => ({
   actions: {
-    resetPassword: email => {
-      dispatch(emailAuthActions.resetPassword(email));
+    resetPassword: (password, token) => {
+      dispatch(emailAuthActions.resetPassword(password, token));
     },
   },
 });

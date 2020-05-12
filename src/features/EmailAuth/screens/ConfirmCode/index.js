@@ -25,19 +25,44 @@ class ConfirmCode extends Component {
       validationErrors: {},
       showPassword: false,
       showVerify: true,
-      showResendText: false,
+      showResendText: true,
       showResendButton: false,
       timer: null,
       counter: 30,
+      error: '',
+      showError: true,
+      type: '',
+      origin: '',
     };
 
-    this.handleEmailChange = this.handleEmailChange.bind(this);
     this.submitVerifyCode = this.submitVerifyCode.bind(this);
     this.resendCode = this.resendCode.bind(this);
   }
 
+  componentDidMount() {
+    const user = this.props.navigation.getParam('user', {});
+    const origin = this.props.navigation.getParam('origin', '');
+    this.setState({
+      type: user && user.type,
+      email: user && user.email,
+      origin,
+    });
+
+    let timer = setInterval(this.tick, 1000);
+    this.setState({
+      timer,
+    });
+    setTimeout(() => {
+      clearInterval(this.state.timer);
+      this.setState({
+        showResendButton: true,
+        counter: 30,
+      });
+    }, 30000);
+  }
+
   componentWillUnmount() {
-    this.clearInterval(this.state.timer);
+    clearInterval(this.state.timer);
   }
 
   renderImage = () => {
@@ -69,45 +94,66 @@ class ConfirmCode extends Component {
     );
   };
 
-  handleEmailChange(email) {
-    this.setState({email});
-    // todo add email validation
-  }
-
   resendCode() {
     // write code here
-  }
-
-  renderErrors() {
-    const {signInErrors} = this.props;
-    if (signInErrors) {
-      return <ErrorBox errorText={signInErrors} />;
-    }
-  }
-
-  submitVerifyCode() {
+    this.setState({
+      showResendButton: false,
+    });
+    clearInterval(this.state.timer);
     let timer = setInterval(this.tick, 1000);
     this.setState({
-      showVerify: false,
-      showResendText: true,
-      showResendButton: false,
       timer,
     });
     setTimeout(() => {
       clearInterval(this.state.timer);
       this.setState({
-        showVerify: true,
         showResendButton: true,
         counter: 30,
       });
     }, 30000);
-    // const {
-    //   actions: {forgotPassword},
-    // } = this.props;
-    //
-    // const {email} = this.state;
-    //
-    // forgotPassword(email);
+  }
+
+  renderErrors() {
+    const {confirmCodeErrors} = this.props;
+    const {error} = this.state;
+    if (this.state.showError) {
+      if (error) {
+        return <ErrorBox errorText={error} />;
+      } else if (confirmCodeErrors) {
+        return <ErrorBox errorText={confirmCodeErrors} />;
+      }
+    } else {
+      return;
+    }
+  }
+
+  async submitVerifyCode() {
+    const {code, type, email, origin} = this.state;
+    this.setState({error: '', showError: true});
+    if (!code) {
+      this.setState({error: 'Please enter the verification code'});
+    }
+
+    this.setState({
+      showVerify: false,
+      showResendText: true,
+    });
+    const {
+      actions: {confirmCode},
+    } = this.props;
+    if (type === 'phone') {
+      await confirmCode({code, type, phone_number: email, origin});
+    } else if (type === 'email') {
+      await confirmCode({code, type, email, origin});
+    }
+    this.setState({
+      showVerify: true,
+    });
+    setTimeout(() => {
+      this.setState({
+        showError: false,
+      });
+    }, 4000);
   }
 
   tick = () => {
@@ -146,6 +192,9 @@ class ConfirmCode extends Component {
           codeInputFieldStyle={styles.underlineStyleBase}
           codeInputHighlightStyle={styles.underlineStyleHighLighted}
           keyboardAppearance={'dark'}
+          onCodeFilled={code => {
+            this.setState({code});
+          }}
         />
 
         <TouchableOpacity
@@ -169,7 +218,7 @@ class ConfirmCode extends Component {
             {showResendButton && (
               <TouchableOpacity
                 style={styles.tncText2Container}
-                onPress={() => showVerify && this.resendCode()}>
+                onPress={() => this.resendCode()}>
                 <Text style={styles.tncText2}>Resend</Text>
               </TouchableOpacity>
             )}
@@ -183,13 +232,13 @@ class ConfirmCode extends Component {
 }
 
 const mapStateToProps = state => ({
-  forgotPasswordErrors: state.EmailAuth.errors.ForgotPassword,
+  confirmCodeErrors: state.EmailAuth.errors.ConfirmCode,
 });
 
 const mapDispatchToProps = dispatch => ({
   actions: {
-    forgotPassword: email => {
-      dispatch(emailAuthActions.forgotPassword(email));
+    confirmCode: data => {
+      dispatch(emailAuthActions.confirmCode(data));
     },
   },
 });

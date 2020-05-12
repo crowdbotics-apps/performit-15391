@@ -48,6 +48,16 @@ export const styles = StyleSheet.create({
     marginBottom: scaleModerate(20),
   },
 
+  inputLeftArrowContainer: {
+    flex: 1,
+    width: scaleModerate(20),
+    height: scaleModerate(50),
+    marginLeft: scaleModerate(10),
+    flexDirection: 'row',
+    justifyContent: 'flex-start',
+    alignItems: 'center',
+  },
+
   inputLeftArrow: {
     flex: 1,
     width: scaleModerate(20),

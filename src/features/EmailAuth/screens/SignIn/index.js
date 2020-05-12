@@ -25,6 +25,8 @@ class SignIn extends Component {
       password: '',
       validationErrors: {},
       showPassword: false,
+      error: '',
+      showError: true,
     };
 
     this.handleUsernameChange = this.handleUsernameChange.bind(this);
@@ -73,21 +75,53 @@ class SignIn extends Component {
 
   renderErrors() {
     const {signInErrors} = this.props;
-    if (signInErrors) {
-      return <ErrorBox errorText={signInErrors} />;
+    const {error} = this.state;
+    if (this.state.showError) {
+      if (error) {
+        return <ErrorBox errorText={error} />;
+      } else if (signInErrors) {
+        return <ErrorBox errorText={signInErrors} />;
+      }
+    } else {
+      return;
     }
   }
 
-  submitLogin() {
+  async submitLogin() {
+    let validation = true;
+    this.setState({error: ''});
     const {
       actions: {login},
     } = this.props;
 
     const {username, password} = this.state;
-    // todo add disable buttons on submit
-    login({username, password});
+    if (!username) {
+      this.setState({showError: true});
+      this.setState({error: 'Please enter a username'});
+      validation = false;
+    } else if (!password) {
+      this.setState({showError: true});
+      this.setState({error: 'Please enter a password'});
+      validation = false;
+    }
 
-    this.setState({username: '', password: ''});
+    if (validation) {
+      await login({username, password});
+      setTimeout(() => {
+        this.setState({showError: true});
+      }, 500);
+      setTimeout(() => {
+        this.setState({
+          showError: false,
+        });
+      }, 4000);
+    } else {
+      setTimeout(() => {
+        this.setState({
+          showError: false,
+        });
+      }, 2000);
+    }
   }
 
   goToPasswordRecover() {
@@ -169,9 +203,11 @@ class SignIn extends Component {
           </TouchableOpacity>
         </View>
 
-        <TouchableOpacity style={styles.signUpButtonContainer} onPress={() => {
-          this.submitLogin()
-        }}>
+        <TouchableOpacity
+          style={styles.signUpButtonContainer}
+          onPress={() => {
+            this.submitLogin();
+          }}>
           <Text style={styles.signUpButtonText}>LOGIN</Text>
         </TouchableOpacity>
 

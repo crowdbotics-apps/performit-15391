@@ -24,6 +24,8 @@ class ForgotPassword extends Component {
       password: '',
       validationErrors: {},
       showPassword: false,
+      error: '',
+      showError: true,
     };
 
     this.handleEmailChange = this.handleEmailChange.bind(this);
@@ -65,24 +67,77 @@ class ForgotPassword extends Component {
   }
 
   renderErrors() {
-    const {signInErrors} = this.props;
-    if (signInErrors) {
-      return <ErrorBox errorText={signInErrors} />;
+    const {forgotPasswordErrors} = this.props;
+    const {error} = this.state;
+    if (this.state.showError) {
+      if (error) {
+        return <ErrorBox errorText={error} />;
+      } else if (forgotPasswordErrors) {
+        return <ErrorBox errorText={forgotPasswordErrors} />;
+      }
+    } else {
+      return;
     }
   }
 
-  submitForgotPassword() {
+  async submitForgotPassword() {
+    let validation = true;
+    let type;
+    this.setState({error: ''});
     const {
       actions: {forgotPassword},
     } = this.props;
 
     const {email} = this.state;
+    if (!email) {
+      this.setState({showError: true});
+      this.setState({error: 'Please enter a email or phone number'});
+      validation = false;
+    }
 
-    forgotPassword(email);
+    if (validation) {
+      if (/[a-z]/i.test(email)) {
+        type = 'email';
+      } else {
+        type = 'phone';
+      }
+      if (type) {
+        // todo add disable buttons on submit
+        if (type === 'phone') {
+          await forgotPassword({phone_number: email, type});
+          setTimeout(() => {
+            this.setState({showError: true});
+          }, 500);
+        } else {
+          await forgotPassword({email, type});
+          setTimeout(() => {
+            this.setState({showError: true});
+          }, 500);
+        }
+        setTimeout(() => {
+          this.setState({
+            showError: false,
+          });
+        }, 4000);
+      } else {
+        this.setState({error: 'Please enter a valid email or phone number'});
+        setTimeout(() => {
+          this.setState({
+            showError: false,
+          });
+        }, 2000);
+      }
+    } else {
+      setTimeout(() => {
+        this.setState({
+          showError: false,
+        });
+      }, 2000);
+    }
   }
 
   render() {
-    const {email, showPassword} = this.state;
+    const {email} = this.state;
     const {errors} = this.props;
 
     return (
@@ -93,7 +148,8 @@ class ForgotPassword extends Component {
 
         <View style={styles.forgetPasswordDescContainer}>
           <Text style={styles.forgetPasswordDescText}>
-            Please insert the associated email address or mobile number for your account
+            Please insert the associated email address or mobile number for your
+            account
           </Text>
         </View>
 
@@ -115,7 +171,9 @@ class ForgotPassword extends Component {
           />
         </View>
 
-        <TouchableOpacity style={styles.signUpButtonContainer}>
+        <TouchableOpacity
+          onPress={() => this.submitForgotPassword()}
+          style={styles.signUpButtonContainer}>
           <Text style={styles.signUpButtonText}>SUBMIT</Text>
         </TouchableOpacity>
 
@@ -131,8 +189,8 @@ const mapStateToProps = state => ({
 
 const mapDispatchToProps = dispatch => ({
   actions: {
-    forgotPassword: email => {
-      dispatch(emailAuthActions.forgotPassword(email));
+    forgotPassword: data => {
+      dispatch(emailAuthActions.forgotPassword(data));
     },
   },
 });

@@ -19,12 +19,18 @@ export const logout = _ => ({
 //   email,
 // });
 
-export const forgotPassword = email => ({
+export const forgotPassword = data => ({
   type: actions.EMAIL_AUTH_FORGOT_PASSWORD_REQUEST,
-  email,
+  data,
 });
 
-export const resetPassword = email => ({
+export const resetPassword = (password, token) => ({
   type: actions.EMAIL_AUTH_RESET_PASSWORD_REQUEST,
-  email,
+  password,
+  token,
+});
+
+export const confirmCode = data => ({
+  type: actions.EMAIL_AUTH_CONFIRM_CODE_REQUEST,
+  data,
 });

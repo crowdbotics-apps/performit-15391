@@ -29,6 +29,8 @@ class SignUp extends Component {
       showPassword: false,
       confirmPassword: '',
       showConfirmPassword: false,
+      error: '',
+      showError: true,
     };
 
     this.handleEmailChange = this.handleEmailChange.bind(this);
@@ -88,21 +90,102 @@ class SignUp extends Component {
 
   renderErrors() {
     const {signUpErrors} = this.props;
-    if (signUpErrors) {
-      return <ErrorBox errorText={signUpErrors} />;
+    const {error} = this.state;
+    if (this.state.showError) {
+      if (error) {
+        return <ErrorBox errorText={error} />;
+      } else if (signUpErrors) {
+        return <ErrorBox errorText={signUpErrors} />;
+      }
+    } else {
+      return;
     }
   }
 
-  submitSignUp() {
+  async submitSignUp() {
+    let validation = true;
+    this.setState({error: ''});
     const {
       actions: {signUp},
     } = this.props;
 
-    const {email, password, username} = this.state;
-    // todo add disable buttons on submit
-    signUp({phone_number: email, password, username, type: 'phone'});
+    let type;
 
-    this.setState({email: '', password: '', username: ''});
+    const {email, password, username, confirmPassword} = this.state;
+
+    if (!email) {
+      this.setState({showError: true});
+      this.setState({error: 'Please enter a email or phone number'});
+      validation = false;
+    } else if (!username) {
+      this.setState({showError: true});
+      this.setState({error: 'Please enter a username'});
+      validation = false;
+    } else if (!password) {
+      this.setState({showError: true});
+      this.setState({error: 'Please enter a password'});
+      validation = false;
+    } else if (!confirmPassword) {
+      this.setState({showError: true});
+      this.setState({error: 'Please enter confirm password'});
+      validation = false;
+    }
+
+    if (password !== confirmPassword) {
+      this.setState({showError: true});
+      this.setState({error: 'Password and  confirm password do not match'});
+      validation = false;
+    }
+
+    if (validation) {
+      if (/[a-z]/i.test(email)) {
+        type = 'email';
+      } else {
+        type = 'phone';
+      }
+      // const emailRegex = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+      // if (email.match(emailRegex)) {
+      //   type = 'email';
+      // } else {
+      //   type = 'phone';
+      // }
+
+      if (type) {
+        // todo add disable buttons on submit
+        if (type === 'phone') {
+          await signUp({phone_number: email, password, username, type});
+          setTimeout(() => {
+            this.setState({showError: true});
+          }, 500);
+        } else {
+          await signUp({email, password, username, type});
+          setTimeout(() => {
+            this.setState({showError: true});
+          }, 500);
+        }
+        this.setState({
+          error: '',
+        });
+        setTimeout(() => {
+          this.setState({
+            showError: false,
+          });
+        }, 4000);
+      } else {
+        this.setState({error: 'Please enter a valid email or phone number'});
+        setTimeout(() => {
+          this.setState({
+            showError: false,
+          });
+        }, 2000);
+      }
+    } else {
+      setTimeout(() => {
+        this.setState({
+          showError: false,
+        });
+      }, 2000);
+    }
   }
 
   goToSignIn() {
@@ -123,9 +206,9 @@ class SignUp extends Component {
       showPassword,
       confirmPassword,
       showConfirmPassword,
+      showError,
     } = this.state;
     const {errors} = this.props;
-
     return (
       <ScrollView
         contentContainerStyle={styles.signUpScreen}
@@ -236,13 +319,19 @@ class SignUp extends Component {
           </TouchableOpacity>
         </View>
 
-        <TouchableOpacity style={styles.signUpButtonContainer} onPress={() => this.submitSignUp()}>
+        <TouchableOpacity
+          style={styles.signUpButtonContainer}
+          onPress={() => this.submitSignUp()}>
           <Text style={styles.signUpButtonText}>SIGN UP</Text>
         </TouchableOpacity>
 
         <View style={[styles.tncContainer, {marginTop: scaleModerate(75)}]}>
           <Text style={styles.tncText1}>Already have an account? </Text>
-          <TouchableOpacity style={styles.tncText2Container} onPress={() => {this.props.navigation.navigate('SignIn');}}>
+          <TouchableOpacity
+            style={styles.tncText2Container}
+            onPress={() => {
+              this.goToSignIn();
+            }}>
             <Text style={styles.tncText2}>Login</Text>
           </TouchableOpacity>
         </View>

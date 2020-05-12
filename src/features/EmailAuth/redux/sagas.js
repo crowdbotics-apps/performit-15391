@@ -8,6 +8,7 @@ import {
   EMAIL_AUTH_PASSWORD_RECOVER_REQUEST,
   EMAIL_AUTH_FORGOT_PASSWORD_REQUEST,
   EMAIL_AUTH_RESET_PASSWORD_REQUEST,
+  EMAIL_AUTH_CONFIRM_CODE_REQUEST,
   EMAIL_AUTH_LOGIN_SUCCESS,
   EMAIL_AUTH_SIGNUP_ERROR,
   EMAIL_AUTH_SIGNUP_SUCCESS,
@@ -17,6 +18,8 @@ import {
   EMAIL_AUTH_FORGOT_PASSWORD_ERROR,
   EMAIL_AUTH_RESET_PASSWORD_SUCCESS,
   EMAIL_AUTH_RESET_PASSWORD_ERROR,
+  EMAIL_AUTH_CONFIRM_CODE_SUCCESS,
+  EMAIL_AUTH_CONFIRM_CODE_ERROR,
 } from './constants';
 import {request} from '../../../utils/http';
 
@@ -39,18 +42,28 @@ function sendPasswordRecovery(email) {
   });
 }
 
-function sendForgotPassword(email) {
+function sendForgotPassword(data) {
   //There is no reset password endpoint in backend, it's just a fake url
-  return request.post('/send-forgot-password-code/', {
-    email,
-  });
+  return request.post('/send-forgot-password-code/', data);
 }
 
-function sendResetPassword(password) {
+function sendResetPassword(password, token) {
   //There is no reset password endpoint in backend, it's just a fake url
-  return request.post('/send-forgot-password-code/', {
-    password,
-  });
+  return request.post(
+    '/reset-password/',
+    {
+      password,
+    },
+    {
+      headers: {
+        Authorization: `Token ${token}`,
+      },
+    },
+  );
+}
+
+function sendConfirmCode(data) {
+  return request.post('/confirm-code/', data);
 }
 
 function* handleLogin(action) {
@@ -77,7 +90,7 @@ function* handleLogin(action) {
     }
   } catch (error) {
     // todo add errors with similar structure in backend
-    console.dir(error)
+    const {data} = error && error.response;
     yield put({
       type: EMAIL_AUTH_LOGIN_ERROR,
       error: "Can't sign in with provided credentials",
@@ -89,7 +102,6 @@ function* handleSignUp(action) {
   const {user} = action;
   try {
     const {status, data} = yield call(sendSignUp, user);
-    console.log(status, data);
     if (status === 200) {
       yield put({
         type: EMAIL_AUTH_SIGNUP_SUCCESS,
@@ -97,7 +109,7 @@ function* handleSignUp(action) {
       });
 
       // you can change the navigate for navigateAndResetStack to go to a protected route
-      NavigationService.navigate('ForgotPassword');
+      NavigationService.navigate('ConfirmCode', {user, origin: 'signup'});
     } else {
       yield put({
         type: EMAIL_AUTH_SIGNUP_ERROR,
@@ -105,7 +117,30 @@ function* handleSignUp(action) {
       });
     }
   } catch (error) {
-    console.dir(error)
+    const {data} = error && error.response;
+    if (data && data.message) {
+      if (data.message.email && data.message.email.length > 0) {
+        yield put({
+          type: EMAIL_AUTH_SIGNUP_ERROR,
+          error: data.message.email[0],
+        });
+        return;
+      }
+      if (data.message.phone_number && data.message.phone_number.length > 0) {
+        yield put({
+          type: EMAIL_AUTH_SIGNUP_ERROR,
+          error: data.message.phone_number[0],
+        });
+        return;
+      }
+      if (data.message.username && data.message.username.length > 0) {
+        yield put({
+          type: EMAIL_AUTH_SIGNUP_ERROR,
+          error: data.message.username[0],
+        });
+        return;
+      }
+    }
     // todo add errors with similar structure in backend
     yield put({
       type: EMAIL_AUTH_SIGNUP_ERROR,
@@ -143,19 +178,20 @@ function* handlePasswordRecovery(action) {
 }
 
 function* handleForgotPassword(action) {
-  const {email} = action;
-
+  const {data} = action;
   try {
-    const {status} = yield call(sendForgotPassword, email);
+    const {status} = yield call(sendForgotPassword, data);
 
     if (status === 200) {
       yield put({
         type: EMAIL_AUTH_FORGOT_PASSWORD_SUCCESS,
-        email,
       });
 
       // you can change the navigate for navigateAndResetStack to go to a protected route
-      NavigationService.navigate('ConfirmationRequired');
+      NavigationService.navigate('ConfirmCode', {
+        user: data,
+        origin: 'forgotpass',
+      });
     } else {
       yield put({
         type: EMAIL_AUTH_FORGOT_PASSWORD_ERROR,
@@ -163,6 +199,14 @@ function* handleForgotPassword(action) {
       });
     }
   } catch (error) {
+    const {data} = error && error.response;
+    if (data && data.message) {
+      yield put({
+        type: EMAIL_AUTH_FORGOT_PASSWORD_ERROR,
+        error: data.message,
+      });
+      return;
+    }
     yield put({
       type: EMAIL_AUTH_FORGOT_PASSWORD_ERROR,
       error: "Can't recover password with provided email",
@@ -171,19 +215,17 @@ function* handleForgotPassword(action) {
 }
 
 function* handleResetPassword(action) {
-  const {password} = action;
-
+  const {password, token} = action;
   try {
-    const {status} = yield call(sendResetPassword, email);
+    const {status} = yield call(sendResetPassword, password, token);
 
     if (status === 200) {
       yield put({
         type: EMAIL_AUTH_RESET_PASSWORD_SUCCESS,
-        email,
       });
 
       // you can change the navigate for navigateAndResetStack to go to a protected route
-      NavigationService.navigate('ConfirmationRequired');
+      NavigationService.navigate('ProtectedRoute');
     } else {
       yield put({
         type: EMAIL_AUTH_RESET_PASSWORD_ERROR,
@@ -198,10 +240,47 @@ function* handleResetPassword(action) {
   }
 }
 
+function* handleConfirmCode(action) {
+  const {data} = action;
+
+  try {
+    const {status, data: backendData} = yield call(sendConfirmCode, data);
+
+    if (status === 200) {
+      yield put({
+        type: EMAIL_AUTH_CONFIRM_CODE_SUCCESS,
+      });
+      yield put({
+        type: EMAIL_AUTH_LOGIN_SUCCESS,
+        accessToken: backendData.user && backendData.user.key,
+        user: backendData.user && backendData.user.user,
+      });
+      if (data.origin === 'signup') {
+        // you can change the navigate for navigateAndResetStack to go to a protected route
+        NavigationService.navigate('ProtectedRoute');
+      } else {
+        NavigationService.navigate('ResetPassword', {data});
+      }
+    } else {
+      yield put({
+        type: EMAIL_AUTH_CONFIRM_CODE_ERROR,
+        error: 'Unknown Error',
+      });
+    }
+  } catch (error) {
+    const {data} = error && error.response;
+    yield put({
+      type: EMAIL_AUTH_CONFIRM_CODE_ERROR,
+      error: 'Invalid verification code provided.',
+    });
+  }
+}
+
 export default all([
   takeLatest(EMAIL_AUTH_LOGIN_REQUEST, handleLogin),
   takeLatest(EMAIL_AUTH_SIGNUP_REQUEST, handleSignUp),
   takeLatest(EMAIL_AUTH_PASSWORD_RECOVER_REQUEST, handlePasswordRecovery),
   takeLatest(EMAIL_AUTH_FORGOT_PASSWORD_REQUEST, handleForgotPassword),
   takeLatest(EMAIL_AUTH_RESET_PASSWORD_REQUEST, handleResetPassword),
+  takeLatest(EMAIL_AUTH_CONFIRM_CODE_REQUEST, handleConfirmCode),
 ]);

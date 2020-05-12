@@ -24,12 +24,14 @@ class TermsAndConditions extends Component {
         style={{backgroundColor: 'black'}}>
         <View style={styles.headerContainer}>
           <TouchableOpacity
-            style={[styles.inputLeftArrow]}
+            style={[styles.inputLeftArrowContainer]}
             onPress={() => navigation.goBack()}>
-            <Image
-              style={[styles.inputLeftArrow]}
-              source={require('../../../assets/images/left-arrow.png')}
-            />
+            <View style={[styles.inputLeftArrow]}>
+              <Image
+                style={[styles.inputLeftArrow]}
+                source={require('../../../assets/images/left-arrow.png')}
+              />
+            </View>
           </TouchableOpacity>
           <View style={styles.headerTextContainer}>
             <Text style={styles.headerText}>Terms & Conditions</Text>
