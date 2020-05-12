@@ -213,4 +213,18 @@ export const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
   },
+
+  underlineStyleBase: {
+    width: scaleModerate(50),
+    height: scaleModerate(50),
+    borderRadius: scaleModerate(25),
+    color: '#ffffff',
+    fontSize: scaleModerate(32),
+    fontFamily: 'Audiowide-Regular',
+    marginTop: scaleModerate(6),
+  },
+
+  underlineStyleHighLighted: {
+    borderColor: '#c08637',
+  },
 });

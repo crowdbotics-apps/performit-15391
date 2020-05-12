@@ -35,6 +35,7 @@
 		D44699BCD7D9742ED80C7741 /* libPods-Performit.a in Frameworks */ = {isa = PBXBuildFile; fileRef = F61A6BD06897C1A3EC3938C9 /* libPods-Performit.a */; };
 		E5203DADA98C4C13BA247000 /* Nunito-Italic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 2B8A1F4F00F64B7B8482C5A2 /* Nunito-Italic.ttf */; };
 		F45F5F32A7B54A26ADCC3C72 /* Nunito-ExtraLightItalic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = F4CF00566D0A4A84A578A2FE /* Nunito-ExtraLightItalic.ttf */; };
+		230D2F58BB1044E58754688A /* Audiowide-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = BB993DC8E1B941568947DA22 /* Audiowide-Regular.ttf */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -120,6 +121,7 @@
 		F55690C2D53E48B4AF81DFB8 /* fontawesome.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = fontawesome.ttf; path = ../src/assets/fonts/fontawesome.ttf; sourceTree = "<group>"; };
 		F61A6BD06897C1A3EC3938C9 /* libPods-Performit.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-Performit.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		FC0A6BBFD2A64614A5B7DBAB /* Octicons.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = Octicons.ttf; path = "../node_modules/react-native-vector-icons/Fonts/Octicons.ttf"; sourceTree = "<group>"; };
+		BB993DC8E1B941568947DA22 /* Audiowide-Regular.ttf */ = {isa = PBXFileReference; name = "Audiowide-Regular.ttf"; path = "../src/assets/fonts/Audiowide-Regular.ttf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -292,6 +294,7 @@
 				24F5AFB3AE8D4A0BABEF53B4 /* Roboto-Light.ttf */,
 				5556D2032B5F478D98C0090D /* Roboto-Medium.ttf */,
 				C2C94222A5ED4DB3AC88DA7F /* Roboto-Regular.ttf */,
+				BB993DC8E1B941568947DA22 /* Audiowide-Regular.ttf */,
 			);
 			name = Resources;
 			sourceTree = "<group>";
@@ -461,6 +464,7 @@
 				52D122FCEDF243C0AD081366 /* Nunito-Regular.ttf in Resources */,
 				45446341DB454FFE96D5D4D9 /* Nunito-SemiBold.ttf in Resources */,
 				6CCF53FD71A04C8EA0B3AACE /* Nunito-SemiBoldItalic.ttf in Resources */,
+				230D2F58BB1044E58754688A /* Audiowide-Regular.ttf in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

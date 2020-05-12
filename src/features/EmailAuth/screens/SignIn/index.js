@@ -173,7 +173,7 @@ class SignIn extends Component {
           <Text style={styles.signUpButtonText}>LOGIN</Text>
         </TouchableOpacity>
 
-        <View style={[styles.tncContainer, {marginTop: scaleModerate(75)}]}>
+        <View style={[styles.tncContainer, {marginTop: scaleModerate(205)}]}>
           <Text style={styles.tncText1}>Don’t have an account? </Text>
           <TouchableOpacity
             style={styles.tncText2Container}

@@ -10,6 +10,7 @@ import Onboarding from './Onboarding';
 import TermsAndConditions from './TermsAndConditions';
 import ForgotPassword from './screens/ForgotPassword';
 import ResetPassword from './screens/ResetPassword';
+import ConfirmCode from './screens/ConfirmCode';
 
 export default (EmailAuthNavigator = createStackNavigator(
   {
@@ -23,8 +24,9 @@ export default (EmailAuthNavigator = createStackNavigator(
     TermsAndConditions: {screen: TermsAndConditions},
     ForgotPassword: {screen: ForgotPassword},
     ResetPassword: {screen: ResetPassword},
+    ConfirmCode: {screen: ConfirmCode},
   },
   {
-    initialRouteName: 'ResetPassword',
+    initialRouteName: 'ConfirmCode',
   },
 ));
