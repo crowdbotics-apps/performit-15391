@@ -42,11 +42,20 @@ class ConfirmCode extends Component {
   componentDidMount() {
     const user = this.props.navigation.getParam('user', {});
     const origin = this.props.navigation.getParam('origin', '');
-    this.setState({
-      type: user && user.type,
-      email: user && user.email,
-      origin,
-    });
+
+    if (user && user.type === 'phone') {
+      this.setState({
+        type: user && user.type,
+        email: user && user.phone_number,
+        origin,
+      });
+    } else {
+      this.setState({
+        type: user && user.type,
+        email: user && user.email,
+        origin,
+      });
+    }
 
     let timer = setInterval(this.tick, 1000);
     this.setState({

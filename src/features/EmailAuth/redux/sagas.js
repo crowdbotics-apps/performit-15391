@@ -80,6 +80,11 @@ function* handleLogin(action) {
         user: data.user,
       });
 
+      yield put({
+        type: EMAIL_AUTH_LOGIN_ERROR,
+        error: '',
+      });
+
       // you can change the navigate for navigateAndResetStack to go to a protected route
       NavigationService.navigate('ProtectedRoute');
     } else {
@@ -107,7 +112,6 @@ function* handleSignUp(action) {
         type: EMAIL_AUTH_SIGNUP_SUCCESS,
         // user: data,
       });
-
       // you can change the navigate for navigateAndResetStack to go to a protected route
       NavigationService.navigate('ConfirmCode', {user, origin: 'signup'});
     } else {
@@ -117,30 +121,37 @@ function* handleSignUp(action) {
       });
     }
   } catch (error) {
-    const {data} = error && error.response;
-    if (data && data.message) {
-      if (data.message.email && data.message.email.length > 0) {
-        yield put({
-          type: EMAIL_AUTH_SIGNUP_ERROR,
-          error: data.message.email[0],
-        });
-        return;
-      }
-      if (data.message.phone_number && data.message.phone_number.length > 0) {
-        yield put({
-          type: EMAIL_AUTH_SIGNUP_ERROR,
-          error: data.message.phone_number[0],
-        });
-        return;
-      }
-      if (data.message.username && data.message.username.length > 0) {
-        yield put({
-          type: EMAIL_AUTH_SIGNUP_ERROR,
-          error: data.message.username[0],
-        });
-        return;
+    yield put({
+      type: EMAIL_AUTH_SIGNUP_ERROR,
+      error: 'Something went wrong',
+    });
+    if (error && error.response) {
+      const {data} = error.response;
+      if (data && data.message) {
+        if (data.message.email && data.message.email.length > 0) {
+          yield put({
+            type: EMAIL_AUTH_SIGNUP_ERROR,
+            error: data.message.email[0],
+          });
+          return;
+        }
+        if (data.message.phone_number && data.message.phone_number.length > 0) {
+          yield put({
+            type: EMAIL_AUTH_SIGNUP_ERROR,
+            error: data.message.phone_number[0],
+          });
+          return;
+        }
+        if (data.message.username && data.message.username.length > 0) {
+          yield put({
+            type: EMAIL_AUTH_SIGNUP_ERROR,
+            error: data.message.username[0],
+          });
+          return;
+        }
       }
     }
+
     // todo add errors with similar structure in backend
     yield put({
       type: EMAIL_AUTH_SIGNUP_ERROR,
@@ -242,7 +253,6 @@ function* handleResetPassword(action) {
 
 function* handleConfirmCode(action) {
   const {data} = action;
-
   try {
     const {status, data: backendData} = yield call(sendConfirmCode, data);
 
@@ -268,7 +278,6 @@ function* handleConfirmCode(action) {
       });
     }
   } catch (error) {
-    const {data} = error && error.response;
     yield put({
       type: EMAIL_AUTH_CONFIRM_CODE_ERROR,
       error: 'Invalid verification code provided.',

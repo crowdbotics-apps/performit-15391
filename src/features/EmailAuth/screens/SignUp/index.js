@@ -31,6 +31,7 @@ class SignUp extends Component {
       showConfirmPassword: false,
       error: '',
       showError: true,
+      updateForm: false,
     };
 
     this.handleEmailChange = this.handleEmailChange.bind(this);
@@ -40,6 +41,23 @@ class SignUp extends Component {
     );
     this.handleUsernameChange = this.handleUsernameChange.bind(this);
     this.submitSignUp = this.submitSignUp.bind(this);
+  }
+
+  componentDidUpdate(prevProps) {
+    if (this.props.signUpErrors !== prevProps.signUpErrors) {
+      this.setState({
+        showError: true,
+      });
+      if (!this.props.signUpErrors) {
+        this.setState({
+          updateForm: true,
+        });
+      } else {
+        this.setState({
+          updateForm: false,
+        });
+      }
+    }
   }
 
   renderImage = () => {
@@ -107,6 +125,7 @@ class SignUp extends Component {
     this.setState({error: ''});
     const {
       actions: {signUp},
+      signUpErrors,
     } = this.props;
 
     let type;
@@ -129,9 +148,7 @@ class SignUp extends Component {
       this.setState({showError: true});
       this.setState({error: 'Please enter confirm password'});
       validation = false;
-    }
-
-    if (password !== confirmPassword) {
+    } else if (password !== confirmPassword) {
       this.setState({showError: true});
       this.setState({error: 'Password and  confirm password do not match'});
       validation = false;
@@ -154,26 +171,25 @@ class SignUp extends Component {
         // todo add disable buttons on submit
         if (type === 'phone') {
           await signUp({phone_number: email, password, username, type});
-          setTimeout(() => {
-            this.setState({showError: true});
-          }, 1000);
         } else {
           await signUp({email, password, username, type});
-          setTimeout(() => {
-            this.setState({showError: true});
-          }, 1000);
         }
+
         this.setState({
           error: '',
-          email: '',
-          username: '',
-          password: '',
-          confirmPassword: '',
         });
         setTimeout(() => {
           this.setState({
             showError: false,
           });
+          if (this.state.updateForm) {
+            this.setState({
+              email: '',
+              username: '',
+              password: '',
+              confirmPassword: '',
+            });
+          }
         }, 4000);
       } else {
         this.setState({error: 'Please enter a valid email or phone number'});
