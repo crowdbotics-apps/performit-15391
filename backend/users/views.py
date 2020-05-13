@@ -242,7 +242,8 @@ class ResetPassword(APIView):
         elif user.phone_number is not "":
             if user.phone_number_verified:
                 pass
-            return Response({"success": False, "message": "Phone number is not verified."}, status=400)
+            else:
+                return Response({"success": False, "message": "Phone number is not verified."}, status=400)
         #check for password reset code verification.
         user.set_password(password)
         user.save()
