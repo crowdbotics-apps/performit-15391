@@ -128,8 +128,8 @@ class ConfirmCode(APIView):
                 return Response({"success": False, "message": "Email Address does not exist."}, status=400)
             email.verified = True
             email.save()
-            token = TokenModel.objects.get(user=user)
-            serializer = CustomTokenSerializer(token, many=False)
+        token = TokenModel.objects.get(user=user)
+        serializer = CustomTokenSerializer(token, many=False)
         return Response({"success": True, "message": "Code Verified.", "user": serializer.data })
 
 
