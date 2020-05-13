@@ -108,7 +108,9 @@ class SignIn extends Component {
     if (validation) {
       await login({username, password});
       setTimeout(() => {
-        this.setState({showError: true});
+        this.setState({
+          showError: true,
+        });
       }, 500);
       setTimeout(() => {
         this.setState({

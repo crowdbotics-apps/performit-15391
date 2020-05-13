@@ -146,9 +146,11 @@ class ConfirmCode extends Component {
     } else if (type === 'email') {
       await confirmCode({code, type, email, origin});
     }
-    this.setState({
-      showVerify: true,
-    });
+    setTimeout(() => {
+      this.setState({
+        showError: true,
+      });
+    }, 1000);
     setTimeout(() => {
       this.setState({
         showError: false,
@@ -163,7 +165,7 @@ class ConfirmCode extends Component {
   };
 
   render() {
-    const {showVerify, showResendText, showResendButton} = this.state;
+    const {showVerify, showResendText, showResendButton, email} = this.state;
     const {errors} = this.props;
 
     return (
@@ -181,7 +183,7 @@ class ConfirmCode extends Component {
             Please insert the verification code sent to
           </Text>
           <Text style={[styles.forgetPasswordDescText, {color: '#c08637'}]}>
-            example@crowdbotics.com
+            {email}
           </Text>
         </View>
 

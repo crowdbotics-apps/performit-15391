@@ -31,12 +31,11 @@ const AppNavigator = {
   /** new navigators can be added here */
 };
 
-const DrawerAppNavigator = createDrawerNavigator(
+const DrawerAppNavigator = createStackNavigator(
   {
     ...AppNavigator,
   },
   {
-    contentComponent: SideMenu,
     initialRouteName: 'EmailAuth',
   },
 );

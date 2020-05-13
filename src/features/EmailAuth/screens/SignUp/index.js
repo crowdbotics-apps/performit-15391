@@ -156,15 +156,19 @@ class SignUp extends Component {
           await signUp({phone_number: email, password, username, type});
           setTimeout(() => {
             this.setState({showError: true});
-          }, 500);
+          }, 1000);
         } else {
           await signUp({email, password, username, type});
           setTimeout(() => {
             this.setState({showError: true});
-          }, 500);
+          }, 1000);
         }
         this.setState({
           error: '',
+          email: '',
+          username: '',
+          password: '',
+          confirmPassword: '',
         });
         setTimeout(() => {
           this.setState({

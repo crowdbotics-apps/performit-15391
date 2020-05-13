@@ -225,7 +225,7 @@ function* handleResetPassword(action) {
       });
 
       // you can change the navigate for navigateAndResetStack to go to a protected route
-      NavigationService.navigate('ProtectedRoute');
+      NavigationService.navigate('SignIn');
     } else {
       yield put({
         type: EMAIL_AUTH_RESET_PASSWORD_ERROR,

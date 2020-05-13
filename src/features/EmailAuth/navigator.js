@@ -28,5 +28,8 @@ export default (EmailAuthNavigator = createStackNavigator(
   },
   {
     initialRouteName: 'Onboarding',
+    navigationOptions: {
+      header: null,
+    },
   },
 ));
