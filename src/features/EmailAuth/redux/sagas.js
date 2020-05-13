@@ -9,6 +9,7 @@ import {
   EMAIL_AUTH_FORGOT_PASSWORD_REQUEST,
   EMAIL_AUTH_RESET_PASSWORD_REQUEST,
   EMAIL_AUTH_CONFIRM_CODE_REQUEST,
+  EMAIL_AUTH_RESEND_CODE_REQUEST,
   EMAIL_AUTH_LOGIN_SUCCESS,
   EMAIL_AUTH_SIGNUP_ERROR,
   EMAIL_AUTH_SIGNUP_SUCCESS,
@@ -20,6 +21,8 @@ import {
   EMAIL_AUTH_RESET_PASSWORD_ERROR,
   EMAIL_AUTH_CONFIRM_CODE_SUCCESS,
   EMAIL_AUTH_CONFIRM_CODE_ERROR,
+  EMAIL_AUTH_RESEND_CODE_SUCCESS,
+  EMAIL_AUTH_RESEND_CODE_ERROR,
 } from './constants';
 import {request} from '../../../utils/http';
 
@@ -64,6 +67,10 @@ function sendResetPassword(password, token) {
 
 function sendConfirmCode(data) {
   return request.post('/confirm-code/', data);
+}
+
+function sendResendCode(data) {
+  return request.post('/resend-code/', data);
 }
 
 function* handleLogin(action) {
@@ -244,6 +251,9 @@ function* handleResetPassword(action) {
       });
     }
   } catch (error) {
+    if (error && error.response) {
+      const {data} = error && error.response;
+    }
     yield put({
       type: EMAIL_AUTH_RESET_PASSWORD_ERROR,
       error: "Can't recover password with provided email",
@@ -285,6 +295,32 @@ function* handleConfirmCode(action) {
   }
 }
 
+function* handleResendCode(action) {
+  const {data} = action;
+  try {
+    const {status, data: backendData} = yield call(sendResendCode, data);
+
+    if (status === 200) {
+      yield put({
+        type: EMAIL_AUTH_RESEND_CODE_SUCCESS,
+      });
+    } else {
+      yield put({
+        type: EMAIL_AUTH_RESEND_CODE_ERROR,
+        error: 'Unknown Error',
+      });
+    }
+  } catch (error) {
+    if (error && error.response) {
+      const {data} = error && error.response;
+    }
+    yield put({
+      type: EMAIL_AUTH_RESEND_CODE_ERROR,
+      error: 'Failed to send code',
+    });
+  }
+}
+
 export default all([
   takeLatest(EMAIL_AUTH_LOGIN_REQUEST, handleLogin),
   takeLatest(EMAIL_AUTH_SIGNUP_REQUEST, handleSignUp),
@@ -292,4 +328,5 @@ export default all([
   takeLatest(EMAIL_AUTH_FORGOT_PASSWORD_REQUEST, handleForgotPassword),
   takeLatest(EMAIL_AUTH_RESET_PASSWORD_REQUEST, handleResetPassword),
   takeLatest(EMAIL_AUTH_CONFIRM_CODE_REQUEST, handleConfirmCode),
+  takeLatest(EMAIL_AUTH_RESEND_CODE_REQUEST, handleResendCode),
 ]);

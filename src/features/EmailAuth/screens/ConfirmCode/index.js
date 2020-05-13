@@ -103,7 +103,7 @@ class ConfirmCode extends Component {
     );
   };
 
-  resendCode() {
+  async resendCode() {
     // write code here
     this.setState({
       showResendButton: false,
@@ -120,6 +120,25 @@ class ConfirmCode extends Component {
         counter: 30,
       });
     }, 30000);
+    const {type, email} = this.state;
+    const {
+      actions: {resendCode},
+    } = this.props;
+    if (type === 'phone') {
+      await resendCode({type, phone_number: email});
+    } else if (type === 'email') {
+      await resendCode({type, email});
+    }
+    setTimeout(() => {
+      this.setState({
+        showError: true,
+      });
+    }, 1000);
+    setTimeout(() => {
+      this.setState({
+        showError: false,
+      });
+    }, 4000);
   }
 
   renderErrors() {
@@ -250,6 +269,9 @@ const mapDispatchToProps = dispatch => ({
   actions: {
     confirmCode: data => {
       dispatch(emailAuthActions.confirmCode(data));
+    },
+    resendCode: data => {
+      dispatch(emailAuthActions.resendCode(data));
     },
   },
 });

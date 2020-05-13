@@ -34,3 +34,8 @@ export const confirmCode = data => ({
   type: actions.EMAIL_AUTH_CONFIRM_CODE_REQUEST,
   data,
 });
+
+export const resendCode = data => ({
+  type: actions.EMAIL_AUTH_RESEND_CODE_REQUEST,
+  data,
+});

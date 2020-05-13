@@ -107,9 +107,7 @@ class ResetPassword extends Component {
       this.setState({showError: true});
       this.setState({error: 'Please enter confirm password'});
       validation = false;
-    }
-
-    if (password !== confirmPassword) {
+    } else if (password !== confirmPassword) {
       this.setState({showError: true});
       this.setState({error: 'Password and  confirm password do not match'});
       validation = false;
