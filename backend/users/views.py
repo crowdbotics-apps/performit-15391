@@ -128,8 +128,8 @@ class ConfirmCode(APIView):
                 return Response({"success": False, "message": "Email Address does not exist."}, status=400)
             email.verified = True
             email.save()
-            token = TokenModel.objects.get(user=user)
-            serializer = CustomTokenSerializer(token, many=False)
+        token = TokenModel.objects.get(user=user)
+        serializer = CustomTokenSerializer(token, many=False)
         return Response({"success": True, "message": "Code Verified.", "user": serializer.data })
 
 
@@ -200,11 +200,21 @@ class ResendCode(APIView):
                 user = User.objects.get(email=email)
             except User.DoesNotExist:
                 return Response({"success": False, "message": "Invalid Email Address Provided."})
+        elif type == 'phone':
+            phone = request.data.get('phone_number')
+            if phone is None:
+                return Response({"success": False, "message": "email param is missing"}, status=400)
             try:
-                existing_code = VerificationCode.objects.get(user=user, verified=True)
-                existing_code.delete()
-            except VerificationCode.DoesNotExist:
-                pass
+                user = User.objects.get(phone_number=phone)
+            except User.DoesNotExist:
+                return Response({"success": False, "message": "Invalid Phone Number Provided."}, status=400)
+        else:
+            return Response({"success": False, "message": "Invalid Type provided."}, status=400)
+        try:
+            existing_code = VerificationCode.objects.get(user=user)
+            existing_code.delete()
+        except VerificationCode.DoesNotExist:
+            pass
         code = VerificationCodeGenerator.random_with_N_digits(5)
         code_for_user = VerificationCode(user=user, code=code)
         response = SendVerificationCode.send_code(code, type, user)
