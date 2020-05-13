@@ -70,6 +70,14 @@ class ConfirmCode extends Component {
     }, 30000);
   }
 
+  componentDidUpdate(prevProps) {
+    if (this.props.confirmCodeErrors !== prevProps.confirmCodeErrors) {
+      this.setState({
+        showError: true,
+      });
+    }
+  }
+
   componentWillUnmount() {
     clearInterval(this.state.timer);
   }
@@ -131,11 +139,6 @@ class ConfirmCode extends Component {
     }
     setTimeout(() => {
       this.setState({
-        showError: true,
-      });
-    }, 1000);
-    setTimeout(() => {
-      this.setState({
         showError: false,
       });
     }, 4000);
@@ -157,13 +160,13 @@ class ConfirmCode extends Component {
 
   async submitVerifyCode() {
     const {code, type, email, origin} = this.state;
-    this.setState({error: '', showError: true});
+    this.setState({error: ''});
     if (!code) {
+      this.setState({showError: true});
       this.setState({error: 'Please enter the verification code'});
     }
 
     this.setState({
-      showVerify: false,
       showResendText: true,
     });
     const {
@@ -174,11 +177,6 @@ class ConfirmCode extends Component {
     } else if (type === 'email') {
       await confirmCode({code, type, email, origin});
     }
-    setTimeout(() => {
-      this.setState({
-        showError: true,
-      });
-    }, 1000);
     setTimeout(() => {
       this.setState({
         showError: false,

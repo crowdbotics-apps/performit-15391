@@ -27,6 +27,7 @@ class SignIn extends Component {
       showPassword: false,
       error: '',
       showError: true,
+      updateForm: false,
     };
 
     this.handleUsernameChange = this.handleUsernameChange.bind(this);
@@ -34,6 +35,23 @@ class SignIn extends Component {
     this.goToPasswordRecover = this.goToPasswordRecover.bind(this);
     this.goToSignUp = this.goToSignUp.bind(this);
     this.submitLogin = this.submitLogin.bind(this);
+  }
+
+  componentDidUpdate(prevProps) {
+    if (this.props.signInErrors !== prevProps.signInErrors) {
+      this.setState({
+        showError: true,
+      });
+      if (!this.props.signInErrors) {
+        this.setState({
+          updateForm: true,
+        });
+      } else {
+        this.setState({
+          updateForm: false,
+        });
+      }
+    }
   }
 
   renderImage = () => {
@@ -108,10 +126,13 @@ class SignIn extends Component {
     if (validation) {
       await login({username, password});
       setTimeout(() => {
-        this.setState({
-          showError: true,
-        });
-      }, 500);
+        if (this.state.updateForm) {
+          this.setState({
+            username: '',
+            password: '',
+          });
+        }
+      }, 1000);
       setTimeout(() => {
         this.setState({
           showError: false,

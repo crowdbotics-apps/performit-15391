@@ -101,8 +101,11 @@ function* handleLogin(action) {
       });
     }
   } catch (error) {
+    yield put({
+      type: EMAIL_AUTH_LOGIN_ERROR,
+      error: 'Something went wrong',
+    });
     // todo add errors with similar structure in backend
-    const {data} = error && error.response;
     yield put({
       type: EMAIL_AUTH_LOGIN_ERROR,
       error: "Can't sign in with provided credentials",
@@ -118,6 +121,10 @@ function* handleSignUp(action) {
       yield put({
         type: EMAIL_AUTH_SIGNUP_SUCCESS,
         // user: data,
+      });
+      yield put({
+        type: EMAIL_AUTH_SIGNUP_ERROR,
+        error: '',
       });
       // you can change the navigate for navigateAndResetStack to go to a protected route
       NavigationService.navigate('ConfirmCode', {user, origin: 'signup'});
@@ -275,6 +282,10 @@ function* handleConfirmCode(action) {
         accessToken: backendData.user && backendData.user.key,
         user: backendData.user && backendData.user.user,
       });
+      yield put({
+        type: EMAIL_AUTH_CONFIRM_CODE_ERROR,
+        error: '',
+      });
       if (data.origin === 'signup') {
         // you can change the navigate for navigateAndResetStack to go to a protected route
         NavigationService.navigate('ProtectedRoute');
@@ -288,6 +299,10 @@ function* handleConfirmCode(action) {
       });
     }
   } catch (error) {
+    yield put({
+      type: EMAIL_AUTH_CONFIRM_CODE_ERROR,
+      error: 'Something went wrong',
+    });
     yield put({
       type: EMAIL_AUTH_CONFIRM_CODE_ERROR,
       error: 'Invalid verification code provided.',
