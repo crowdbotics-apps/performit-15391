@@ -27,7 +27,7 @@ const mapDispatchToProps = dispatch => ({
     logoutAction: _ => {
       //this does not need a saga, it is sync action
       dispatch(logout());
-      NavigationService.navigateAndResetStack('SignIn');
+      NavigationService.navigate('SignIn');
     },
   },
 });
