@@ -1,4 +1,4 @@
-import { NavigationActions, StackActions } from "react-navigation";
+import {NavigationActions, StackActions} from 'react-navigation';
 
 const config = {};
 export function setNavigator(nav) {
@@ -14,7 +14,7 @@ export function setNavigator(nav) {
  */
 export function navigate(routeName, params) {
   if (config.navigator && routeName) {
-    let action = NavigationActions.navigate({ routeName, params });
+    let action = NavigationActions.navigate({routeName, params});
     config.navigator.dispatch(action);
   }
 }
@@ -27,13 +27,13 @@ export function goBack() {
 
 export function navigateAndResetStack(routeName, params) {
   if (config.navigator && routeName) {
-    let action = NavigationActions.navigate({ routeName, params });
+    let action = NavigationActions.navigate({routeName, params});
 
     config.navigator.dispatch(
       StackActions.reset({
         index: 0,
-        actions: [action]
-      })
+        actions: [action],
+      }),
     );
   }
 }
