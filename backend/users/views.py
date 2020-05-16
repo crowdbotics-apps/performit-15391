@@ -92,12 +92,14 @@ class SignUp(APIView):
             code = VerificationCodeGenerator.random_with_N_digits(5)
             code_for_user = VerificationCode(user=instance, code=code)
             response = SendVerificationCode.send_code(code, type, instance)
-            if response:
+            error = None
+            if response.get('success'):
                 message = "Verification Code Sent"
             else:
                 message = "Unable to send verification Code"
+                error = response.get('message')
             code_for_user.save()
-            return Response({"success": True, "message": message })
+            return Response({"success": True, "message": message, "error": error })
         return Response({"success": False, "message": user.errors}, status=400)
 
 
@@ -154,12 +156,14 @@ class SendForgotPasswordCode(APIView):
             code = VerificationCodeGenerator.random_with_N_digits(5)
             code_for_user = VerificationCode(user=user, code=code)
             response = SendVerificationCode.send_code(code, type, user)
-            if response:
+            error = None
+            if response.get('success'):
                 message = "Verification Code Sent"
             else:
                 message = "Unable to send verification Code"
+                error = response.get('message')
             code_for_user.save()
-            return Response({"success": True, "message": message })
+            return Response({"success": True, "message": message, "error": error})
         elif type == 'phone':
             phone_number = request.data.get("phone_number")
             if phone_number is None:
@@ -176,12 +180,14 @@ class SendForgotPasswordCode(APIView):
                 return Response({"success": False,"message":"Phone number is not verified."}, status=400)
             code_for_user = VerificationCode(user=user, code=code)
             response = SendVerificationCode.send_code(code, type, user)
-            if response:
+            error = None
+            if response.get('success'):
                 message = "Verification Code Sent"
             else:
                 message = "Unable to send verification Code"
+                error = response.get('message')
             code_for_user.save()
-            return Response({"success": True, "message": message })
+            return Response({"success": True, "message": message, "error": error})
         else:
             return Response({"success": False, "message": "Invalid type param provided."}, status=400)
 
@@ -218,12 +224,14 @@ class ResendCode(APIView):
         code = VerificationCodeGenerator.random_with_N_digits(5)
         code_for_user = VerificationCode(user=user, code=code)
         response = SendVerificationCode.send_code(code, type, user)
-        if response:
+        error = None
+        if response.get('success'):
             message = "Verification Code Sent"
         else:
             message = "Unable to send verification Code"
+            error = response.get('message')
         code_for_user.save()
-        return Response({"success": True, "message": message })
+        return Response({"success": True, "message": message, "error": error})
 
 
 @permission_classes([IsAuthenticated])
