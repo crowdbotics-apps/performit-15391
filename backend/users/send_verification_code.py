@@ -10,13 +10,13 @@ class SendVerificationCode:
                 send_mail(
                     'Email Verification',
                     message,
-                    'no-reply@performit.com',
+                    'no-reply@performit-15391.botics.co',
                     [receiver.email],
                     fail_silently=False,
                 )
-                return True
+                return {"success": True, "message": "Verification code sent."}
             except Exception as e:
-                return False
+                return {"success": False, "message": str(e) }
         elif type == 'phone':
             #send SMS
             account_sid = settings.TWILIO_ACCOUNT_SID
@@ -29,8 +29,7 @@ class SendVerificationCode:
                     to=number,
                     from_="+15005550006",
                     body=body)
-                return True
+                return {"success": True, "message": "Verification code sent."}
             except Exception as e:
-                print(e)
+                return {"success": False, "message": str(e) }
                 # print(message)
-                return False
