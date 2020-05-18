@@ -221,65 +221,81 @@ class ConfirmCode extends Component {
         contentContainerStyle={styles.signUpScreen}
         style={{backgroundColor: 'black'}}>
         <KeyboardAvoidingView
-          style={{flex: 1}}
-          behavior={Platform.OS === 'ios' ? 'padding' : null}
-          automaticallyAdjustContentInsets={false}>
-          {this.renderImage()}
-
+          style={{
+            height: Dimensions.get('window').height,
+            width: '100%',
+          }}
+          behavior={'position'}
+          keyboardVerticalOffset={Platform.OS === 'ios' ? -250 : -150}
+          contentContainerStyle={{flex: 1}}
+          enabled>
           <View
-            style={[
-              styles.forgetPasswordDescContainer,
-              {flexDirection: 'column'},
-            ]}>
-            <Text style={styles.forgetPasswordDescText}>
-              Please insert the verification code sent to
-            </Text>
-            <Text style={[styles.forgetPasswordDescText, {color: '#c08637'}]}>
-              {email}
-            </Text>
-          </View>
+            style={{
+              flex: 1,
+              flexDirection: 'column',
+              justifyContent: 'flex-start',
+              alignItems: 'center',
+              height: Dimensions.get('window').height,
+              width: '100%',
+            }}>
+            {this.renderImage()}
 
-          <OTPInputView
-            pinCount={5}
-            style={{width: '90%', height: scaleModerate(50)}}
-            autoFocusOnLoad={true}
-            codeInputFieldStyle={styles.underlineStyleBase}
-            codeInputHighlightStyle={styles.underlineStyleHighLighted}
-            keyboardAppearance={'dark'}
-            onCodeFilled={code => {
-              this.setState({code});
-            }}
-          />
-
-          <TouchableOpacity
-            onPress={() => showVerify && this.submitVerifyCode()}
-            style={[
-              styles.signUpButtonContainer,
-              {marginTop: scaleModerate(30)},
-            ]}>
-            <Text style={styles.signUpButtonText}>VERIFY</Text>
-          </TouchableOpacity>
-
-          {showResendText && (
-            <View style={[styles.tncContainer, {marginTop: scaleModerate(36)}]}>
-              {!showResendButton && (
-                <Text style={styles.tncText2}>
-                  Re-send code in 0:
-                  {this.state.counter < 10 && '0'}
-                  {this.state.counter}
-                </Text>
-              )}
-              {showResendButton && (
-                <TouchableOpacity
-                  style={styles.tncText2Container}
-                  onPress={() => this.resendCode()}>
-                  <Text style={styles.tncText2}>Resend</Text>
-                </TouchableOpacity>
-              )}
+            <View
+              style={[
+                styles.forgetPasswordDescContainer,
+                {flexDirection: 'column'},
+              ]}>
+              <Text style={styles.forgetPasswordDescText}>
+                Please insert the verification code sent to
+              </Text>
+              <Text style={[styles.forgetPasswordDescText, {color: '#c08637'}]}>
+                {email}
+              </Text>
             </View>
-          )}
 
-          {this.renderErrors()}
+            <OTPInputView
+              pinCount={5}
+              style={{width: '90%', height: scaleModerate(50)}}
+              autoFocusOnLoad={true}
+              codeInputFieldStyle={styles.underlineStyleBase}
+              codeInputHighlightStyle={styles.underlineStyleHighLighted}
+              keyboardAppearance={'dark'}
+              onCodeFilled={code => {
+                this.setState({code});
+              }}
+            />
+
+            <TouchableOpacity
+              onPress={() => showVerify && this.submitVerifyCode()}
+              style={[
+                styles.signUpButtonContainer,
+                {marginTop: scaleModerate(30)},
+              ]}>
+              <Text style={styles.signUpButtonText}>VERIFY</Text>
+            </TouchableOpacity>
+
+            {showResendText && (
+              <View
+                style={[styles.tncContainer, {marginTop: scaleModerate(36)}]}>
+                {!showResendButton && (
+                  <Text style={styles.tncText2}>
+                    Re-send code in 0:
+                    {this.state.counter < 10 && '0'}
+                    {this.state.counter}
+                  </Text>
+                )}
+                {showResendButton && (
+                  <TouchableOpacity
+                    style={styles.tncText2Container}
+                    onPress={() => this.resendCode()}>
+                    <Text style={styles.tncText2}>Resend</Text>
+                  </TouchableOpacity>
+                )}
+              </View>
+            )}
+
+            {this.renderErrors()}
+          </View>
         </KeyboardAvoidingView>
       </ScrollView>
     );

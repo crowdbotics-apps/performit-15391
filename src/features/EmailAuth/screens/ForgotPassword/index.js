@@ -9,6 +9,8 @@ import {
   ScrollView,
   ImageBackground,
   Text,
+  Platform,
+  KeyboardAvoidingView,
 } from 'react-native';
 
 import {scaleModerate, scaleVertical} from '../../../../utils/scale';
@@ -144,40 +146,60 @@ class ForgotPassword extends Component {
       <ScrollView
         contentContainerStyle={styles.signUpScreen}
         style={{backgroundColor: 'black'}}>
-        {this.renderImage()}
+        <KeyboardAvoidingView
+          style={{
+            height: Dimensions.get('window').height,
+            width: '100%',
+          }}
+          behavior={'position'}
+          keyboardVerticalOffset={Platform.OS === 'ios' ? -250 : -150}
+          contentContainerStyle={{flex: 1}}
+          enabled>
+          <View
+            style={{
+              flex: 1,
+              flexDirection: 'column',
+              justifyContent: 'flex-start',
+              alignItems: 'center',
+              height: Dimensions.get('window').height,
+              width: '100%',
+            }}>
+            {this.renderImage()}
 
-        <View style={styles.forgetPasswordDescContainer}>
-          <Text style={styles.forgetPasswordDescText}>
-            Please insert the associated email address or mobile number for your
-            account
-          </Text>
-        </View>
+            <View style={styles.forgetPasswordDescContainer}>
+              <Text style={styles.forgetPasswordDescText}>
+                Please insert the associated email address or mobile number for
+                your account
+              </Text>
+            </View>
 
-        <View style={styles.inputContainer}>
-          <View style={[styles.inputEmailImage]}>
-            <Image
-              style={[styles.inputEmailImage]}
-              source={require('../../../../assets/images/Profile.png')}
-            />
+            <View style={styles.inputContainer}>
+              <View style={[styles.inputEmailImage]}>
+                <Image
+                  style={[styles.inputEmailImage]}
+                  source={require('../../../../assets/images/Profile.png')}
+                />
+              </View>
+              <TextInput
+                value={email}
+                onChangeText={this.handleEmailChange}
+                placeholder="Email Address or Mobile number"
+                style={styles.signUpInput}
+                autoCapitalize="none"
+                placeholderTextColor="#989ba5"
+                underlineColorAndroid="transparent"
+              />
+            </View>
+
+            <TouchableOpacity
+              onPress={() => this.submitForgotPassword()}
+              style={styles.signUpButtonContainer}>
+              <Text style={styles.signUpButtonText}>SUBMIT</Text>
+            </TouchableOpacity>
+
+            {this.renderErrors()}
           </View>
-          <TextInput
-            value={email}
-            onChangeText={this.handleEmailChange}
-            placeholder="Email Address or Mobile number"
-            style={styles.signUpInput}
-            autoCapitalize="none"
-            placeholderTextColor="#989ba5"
-            underlineColorAndroid="transparent"
-          />
-        </View>
-
-        <TouchableOpacity
-          onPress={() => this.submitForgotPassword()}
-          style={styles.signUpButtonContainer}>
-          <Text style={styles.signUpButtonText}>SUBMIT</Text>
-        </TouchableOpacity>
-
-        {this.renderErrors()}
+        </KeyboardAvoidingView>
       </ScrollView>
     );
   }

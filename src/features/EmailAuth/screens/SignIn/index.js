@@ -9,6 +9,8 @@ import {
   ScrollView,
   ImageBackground,
   Text,
+  Platform,
+  KeyboardAvoidingView,
 } from 'react-native';
 
 import {scaleModerate, scaleVertical} from '../../../../utils/scale';
@@ -170,97 +172,108 @@ class SignIn extends Component {
       <ScrollView
         contentContainerStyle={styles.signUpScreen}
         style={{backgroundColor: 'black'}}>
-        <View
+        <KeyboardAvoidingView
           style={{
-            flexDirection: 'column',
-            justifyContent: 'space-between',
-            alignItems: 'center',
             height: Dimensions.get('window').height,
             width: '100%',
-          }}>
-          <View style={{width: '100%', alignItems: 'center'}}>
-            {this.renderImage()}
-            <View style={styles.inputContainer}>
-              <View style={[styles.inputUserNameImage]}>
-                <Image
-                  style={[styles.inputUserNameImage]}
-                  source={require('../../../../assets/images/account.png')}
-                />
-              </View>
-              <TextInput
-                value={username}
-                onChangeText={this.handleUsernameChange}
-                placeholder="Username"
-                style={styles.signUpInput}
-                autoCapitalize="none"
-                placeholderTextColor="#989ba5"
-                underlineColorAndroid="transparent"
-              />
-            </View>
-
-            <View style={styles.inputContainer}>
-              <View style={[styles.inputEmailImage]}>
-                <Image
-                  style={[styles.inputEmailImage]}
-                  source={require('../../../../assets/images/small_lock.png')}
-                />
-              </View>
-              <TextInput
-                value={password}
-                onChangeText={this.handlePasswordChange}
-                placeholder="Password"
-                style={styles.signUpInput}
-                secureTextEntry={!showPassword}
-                autoCapitalize="none"
-                placeholderTextColor="#989ba5"
-                underlineColorAndroid="transparent"
-              />
-              <TouchableOpacity
-                style={[styles.inputEyeImage]}
-                onPress={() =>
-                  password && this.setState({showPassword: !showPassword})
-                }>
-                <Image
-                  style={[styles.inputEyeImage]}
-                  source={require('../../../../assets/images/eye.png')}
-                />
-              </TouchableOpacity>
-            </View>
-
-            <View style={styles.tncContainer}>
-              <TouchableOpacity
-                style={styles.tncText2Container}
-                onPress={() => this.goToForgotPassword()}>
-                <Text style={styles.tncText2}>Forgot Password?</Text>
-              </TouchableOpacity>
-            </View>
-
-            <TouchableOpacity
-              style={styles.signUpButtonContainer}
-              onPress={() => {
-                this.submitLogin();
-              }}>
-              <Text style={styles.signUpButtonText}>LOGIN</Text>
-            </TouchableOpacity>
-          </View>
-
+          }}
+          behavior={'position'}
+          keyboardVerticalOffset={Platform.OS === 'ios' ? -250 : -150}
+          contentContainerStyle={{flex: 1}}
+          enabled>
           <View
             style={{
+              flex: 1,
+              flexDirection: 'column',
+              justifyContent: 'space-between',
               alignItems: 'center',
+              height: Dimensions.get('window').height,
               width: '100%',
-              marginBottom: scaleVertical(15),
             }}>
-            {this.renderErrors()}
-            <View style={[styles.tncContainer]}>
-              <Text style={styles.tncText1}>Don’t have an account? </Text>
+            <View style={{width: '100%', alignItems: 'center'}}>
+              {this.renderImage()}
+              <View style={styles.inputContainer}>
+                <View style={[styles.inputUserNameImage]}>
+                  <Image
+                    style={[styles.inputUserNameImage]}
+                    source={require('../../../../assets/images/account.png')}
+                  />
+                </View>
+                <TextInput
+                  value={username}
+                  onChangeText={this.handleUsernameChange}
+                  placeholder="Username"
+                  style={styles.signUpInput}
+                  autoCapitalize="none"
+                  placeholderTextColor="#989ba5"
+                  underlineColorAndroid="transparent"
+                />
+              </View>
+
+              <View style={styles.inputContainer}>
+                <View style={[styles.inputEmailImage]}>
+                  <Image
+                    style={[styles.inputEmailImage]}
+                    source={require('../../../../assets/images/small_lock.png')}
+                  />
+                </View>
+                <TextInput
+                  value={password}
+                  onChangeText={this.handlePasswordChange}
+                  placeholder="Password"
+                  style={styles.signUpInput}
+                  secureTextEntry={!showPassword}
+                  autoCapitalize="none"
+                  placeholderTextColor="#989ba5"
+                  underlineColorAndroid="transparent"
+                />
+                <TouchableOpacity
+                  style={[styles.inputEyeImage]}
+                  onPress={() =>
+                    password && this.setState({showPassword: !showPassword})
+                  }>
+                  <Image
+                    style={[styles.inputEyeImage]}
+                    source={require('../../../../assets/images/eye.png')}
+                  />
+                </TouchableOpacity>
+              </View>
+
+              <View style={styles.tncContainer}>
+                <TouchableOpacity
+                  style={styles.tncText2Container}
+                  onPress={() => this.goToForgotPassword()}>
+                  <Text style={styles.tncText2}>Forgot Password?</Text>
+                </TouchableOpacity>
+              </View>
+
               <TouchableOpacity
-                style={styles.tncText2Container}
-                onPress={() => this.goToSignUp()}>
-                <Text style={styles.tncText2}>Sign Up</Text>
+                style={styles.signUpButtonContainer}
+                onPress={() => {
+                  this.submitLogin();
+                }}>
+                <Text style={styles.signUpButtonText}>LOGIN</Text>
               </TouchableOpacity>
             </View>
+
+            <View
+              style={{
+                alignItems: 'center',
+                width: '100%',
+                marginBottom: scaleVertical(15),
+              }}>
+              {this.renderErrors()}
+              <View style={[styles.tncContainer]}>
+                <Text style={styles.tncText1}>Don’t have an account? </Text>
+                <TouchableOpacity
+                  style={styles.tncText2Container}
+                  onPress={() => this.goToSignUp()}>
+                  <Text style={styles.tncText2}>Sign Up</Text>
+                </TouchableOpacity>
+              </View>
+            </View>
           </View>
-        </View>
+        </KeyboardAvoidingView>
       </ScrollView>
     );
   }

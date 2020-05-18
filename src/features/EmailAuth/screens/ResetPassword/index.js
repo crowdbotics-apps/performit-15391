@@ -9,6 +9,8 @@ import {
   ScrollView,
   ImageBackground,
   Text,
+  Platform,
+  KeyboardAvoidingView,
 } from 'react-native';
 
 import {scaleModerate, scaleVertical} from '../../../../utils/scale';
@@ -144,80 +146,100 @@ class ResetPassword extends Component {
       <ScrollView
         contentContainerStyle={styles.signUpScreen}
         style={{backgroundColor: 'black'}}>
-        {this.renderImage()}
+        <KeyboardAvoidingView
+          style={{
+            height: Dimensions.get('window').height,
+            width: '100%',
+          }}
+          behavior={'position'}
+          keyboardVerticalOffset={Platform.OS === 'ios' ? -200 : -100}
+          contentContainerStyle={{flex: 1}}
+          enabled>
+          <View
+            style={{
+              flex: 1,
+              flexDirection: 'column',
+              justifyContent: 'flex-start',
+              alignItems: 'center',
+              height: Dimensions.get('window').height,
+              width: '100%',
+            }}>
+            {this.renderImage()}
 
-        <View style={styles.forgetPasswordDescContainer}>
-          <Text style={styles.forgetPasswordDescText}>
-            Please enter your new password
-          </Text>
-        </View>
+            <View style={styles.forgetPasswordDescContainer}>
+              <Text style={styles.forgetPasswordDescText}>
+                Please enter your new password
+              </Text>
+            </View>
 
-        <View style={styles.inputContainer}>
-          <View style={[styles.inputEmailImage]}>
-            <Image
-              style={[styles.inputEmailImage]}
-              source={require('../../../../assets/images/small_lock.png')}
-            />
+            <View style={styles.inputContainer}>
+              <View style={[styles.inputEmailImage]}>
+                <Image
+                  style={[styles.inputEmailImage]}
+                  source={require('../../../../assets/images/small_lock.png')}
+                />
+              </View>
+              <TextInput
+                value={password}
+                onChangeText={this.handlePasswordChange}
+                placeholder="Password"
+                style={styles.signUpInput}
+                secureTextEntry={!showPassword}
+                autoCapitalize="none"
+                placeholderTextColor="#989ba5"
+                underlineColorAndroid="transparent"
+              />
+              <TouchableOpacity
+                style={[styles.inputEyeImage]}
+                onPress={() =>
+                  password && this.setState({showPassword: !showPassword})
+                }>
+                <Image
+                  style={[styles.inputEyeImage]}
+                  source={require('../../../../assets/images/eye.png')}
+                />
+              </TouchableOpacity>
+            </View>
+
+            <View style={styles.inputContainer}>
+              <View style={[styles.inputEmailImage]}>
+                <Image
+                  style={[styles.inputEmailImage]}
+                  source={require('../../../../assets/images/small_lock.png')}
+                />
+              </View>
+              <TextInput
+                value={confirmPassword}
+                onChangeText={this.handleConfirmPasswordChange}
+                placeholder="Confirm Password"
+                style={styles.signUpInput}
+                secureTextEntry={!showConfirmPassword}
+                autoCapitalize="none"
+                placeholderTextColor="#989ba5"
+                underlineColorAndroid="transparent"
+              />
+              <TouchableOpacity
+                style={[styles.inputEyeImage]}
+                onPress={() =>
+                  confirmPassword &&
+                  this.setState({showConfirmPassword: !showConfirmPassword})
+                }>
+                <Image
+                  style={[styles.inputEyeImage]}
+                  source={require('../../../../assets/images/eye.png')}
+                />
+              </TouchableOpacity>
+            </View>
+
+            <TouchableOpacity
+              style={styles.signUpButtonContainer}
+              onPress={() => this.submitResetPassword()}>
+              <Text style={styles.signUpButtonText}>RESET PASSWORD</Text>
+            </TouchableOpacity>
+
+            {this.renderErrors()}
           </View>
-          <TextInput
-            value={password}
-            onChangeText={this.handlePasswordChange}
-            placeholder="Password"
-            style={styles.signUpInput}
-            secureTextEntry={!showPassword}
-            autoCapitalize="none"
-            placeholderTextColor="#989ba5"
-            underlineColorAndroid="transparent"
-          />
-          <TouchableOpacity
-            style={[styles.inputEyeImage]}
-            onPress={() =>
-              password && this.setState({showPassword: !showPassword})
-            }>
-            <Image
-              style={[styles.inputEyeImage]}
-              source={require('../../../../assets/images/eye.png')}
-            />
-          </TouchableOpacity>
-        </View>
-
-        <View style={styles.inputContainer}>
-          <View style={[styles.inputEmailImage]}>
-            <Image
-              style={[styles.inputEmailImage]}
-              source={require('../../../../assets/images/small_lock.png')}
-            />
-          </View>
-          <TextInput
-            value={confirmPassword}
-            onChangeText={this.handleConfirmPasswordChange}
-            placeholder="Confirm Password"
-            style={styles.signUpInput}
-            secureTextEntry={!showConfirmPassword}
-            autoCapitalize="none"
-            placeholderTextColor="#989ba5"
-            underlineColorAndroid="transparent"
-          />
-          <TouchableOpacity
-            style={[styles.inputEyeImage]}
-            onPress={() =>
-              confirmPassword &&
-              this.setState({showConfirmPassword: !showConfirmPassword})
-            }>
-            <Image
-              style={[styles.inputEyeImage]}
-              source={require('../../../../assets/images/eye.png')}
-            />
-          </TouchableOpacity>
-        </View>
-
-        <TouchableOpacity
-          style={styles.signUpButtonContainer}
-          onPress={() => this.submitResetPassword()}>
-          <Text style={styles.signUpButtonText}>RESET PASSWORD</Text>
-        </TouchableOpacity>
-
-        {this.renderErrors()}
+        </KeyboardAvoidingView>
       </ScrollView>
     );
   }

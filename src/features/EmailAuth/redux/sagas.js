@@ -286,6 +286,7 @@ function* handleConfirmCode(action) {
         type: EMAIL_AUTH_CONFIRM_CODE_ERROR,
         error: '',
       });
+
       if (data.origin === 'signup') {
         // you can change the navigate for navigateAndResetStack to go to a protected route
         NavigationService.navigate('ProtectedRoute');
