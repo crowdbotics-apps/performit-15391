@@ -17,7 +17,7 @@ import {scaleModerate, scaleVertical} from '../../../../utils/scale';
 import {styles} from '../styles';
 import * as emailAuthActions from '../../redux/actions';
 import ErrorBox from '../../../../components/ErrorBox';
-import Icon from 'react-native-vector-icons/FontAwesome';
+import ActivityLoader from '../../ActivityIndicatorLoader/page';
 
 class SignIn extends Component {
   constructor(props) {
@@ -30,6 +30,7 @@ class SignIn extends Component {
       error: '',
       showError: true,
       updateForm: false,
+      isLoading: false,
     };
 
     this.handleUsernameChange = this.handleUsernameChange.bind(this);
@@ -108,6 +109,9 @@ class SignIn extends Component {
   }
 
   async submitLogin() {
+    this.setState({
+      isLoading: true,
+    });
     let validation = true;
     this.setState({error: ''});
     const {
@@ -147,6 +151,9 @@ class SignIn extends Component {
         });
       }, 2000);
     }
+    this.setState({
+      isLoading: false,
+    });
   }
 
   goToPasswordRecover() {
@@ -247,13 +254,17 @@ class SignIn extends Component {
                 </TouchableOpacity>
               </View>
 
-              <TouchableOpacity
-                style={styles.signUpButtonContainer}
-                onPress={() => {
-                  this.submitLogin();
-                }}>
-                <Text style={styles.signUpButtonText}>LOGIN</Text>
-              </TouchableOpacity>
+              {this.state.isLoading ? (
+                <ActivityLoader isAnimating={true} />
+              ) : (
+                <TouchableOpacity
+                  style={styles.signUpButtonContainer}
+                  onPress={() => {
+                    this.submitLogin();
+                  }}>
+                  <Text style={styles.signUpButtonText}>LOGIN</Text>
+                </TouchableOpacity>
+              )}
             </View>
 
             <View

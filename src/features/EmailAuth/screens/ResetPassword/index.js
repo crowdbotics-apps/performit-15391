@@ -17,6 +17,7 @@ import {scaleModerate, scaleVertical} from '../../../../utils/scale';
 import {styles} from '../styles';
 import * as emailAuthActions from '../../redux/actions';
 import ErrorBox from '../../../../components/ErrorBox';
+import ActivityLoader from '../../ActivityIndicatorLoader/page';
 
 class ResetPassword extends Component {
   constructor(props) {
@@ -29,6 +30,7 @@ class ResetPassword extends Component {
       showConfirmPassword: false,
       error: '',
       showError: true,
+      isLoading: false,
     };
 
     this.handlePasswordChange = this.handlePasswordChange.bind(this);
@@ -92,6 +94,9 @@ class ResetPassword extends Component {
   }
 
   async submitResetPassword() {
+    this.setState({
+      isLoading: true,
+    });
     let validation = true;
     this.setState({error: ''});
     const {
@@ -131,6 +136,9 @@ class ResetPassword extends Component {
         });
       }, 2000);
     }
+    this.setState({
+      isLoading: false,
+    });
   }
 
   render() {
@@ -231,11 +239,15 @@ class ResetPassword extends Component {
               </TouchableOpacity>
             </View>
 
-            <TouchableOpacity
-              style={styles.signUpButtonContainer}
-              onPress={() => this.submitResetPassword()}>
-              <Text style={styles.signUpButtonText}>RESET PASSWORD</Text>
-            </TouchableOpacity>
+            {this.state.isLoading ? (
+              <ActivityLoader isAnimating={true} />
+            ) : (
+              <TouchableOpacity
+                style={styles.signUpButtonContainer}
+                onPress={() => this.submitResetPassword()}>
+                <Text style={styles.signUpButtonText}>RESET PASSWORD</Text>
+              </TouchableOpacity>
+            )}
 
             {this.renderErrors()}
           </View>

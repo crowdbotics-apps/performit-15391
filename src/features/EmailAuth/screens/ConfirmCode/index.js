@@ -17,6 +17,7 @@ import {scaleModerate, scaleVertical} from '../../../../utils/scale';
 import {styles} from '../styles';
 import * as emailAuthActions from '../../redux/actions';
 import ErrorBox from '../../../../components/ErrorBox';
+import ActivityLoader from '../../ActivityIndicatorLoader/page';
 
 class ConfirmCode extends Component {
   constructor(props) {
@@ -36,6 +37,7 @@ class ConfirmCode extends Component {
       type: '',
       origin: '',
       code: '',
+      isLoading: false,
     };
 
     this.submitVerifyCode = this.submitVerifyCode.bind(this);
@@ -172,6 +174,9 @@ class ConfirmCode extends Component {
   }
 
   async submitVerifyCode() {
+    this.setState({
+      isLoading: true,
+    });
     const {code, type, email, origin} = this.state;
     this.setState({error: ''});
     if (!code) {
@@ -204,6 +209,10 @@ class ConfirmCode extends Component {
         showError: false,
       });
     }, 2000);
+
+    this.setState({
+      isLoading: false,
+    });
   }
 
   tick = () => {
@@ -265,14 +274,19 @@ class ConfirmCode extends Component {
               }}
             />
 
-            <TouchableOpacity
-              onPress={() => showVerify && this.submitVerifyCode()}
-              style={[
-                styles.signUpButtonContainer,
-                {marginTop: scaleModerate(30)},
-              ]}>
-              <Text style={styles.signUpButtonText}>VERIFY</Text>
-            </TouchableOpacity>
+            {this.state.isLoading ? (
+              <ActivityLoader isAnimating={true} />
+            ) : (
+              <TouchableOpacity
+                onPress={() => showVerify && this.submitVerifyCode()}
+                style={[
+                  styles.signUpButtonContainer,
+                  {marginTop: scaleModerate(30)},
+                ]}>
+                <Text style={styles.signUpButtonText}>VERIFY</Text>
+              </TouchableOpacity>
+            )}
+
             {this.renderErrors()}
             {showResendText && (
               <View

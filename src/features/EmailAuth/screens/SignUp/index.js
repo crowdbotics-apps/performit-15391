@@ -19,6 +19,7 @@ import {styles} from '../styles';
 import * as emailAuthActions from '../../redux/actions';
 import ErrorBox from '../../../../components/ErrorBox';
 import TermsAndConditions from '../../TermsAndConditions';
+import ActivityLoader from '../../ActivityIndicatorLoader/page';
 
 class SignUp extends Component {
   constructor(props) {
@@ -34,6 +35,7 @@ class SignUp extends Component {
       error: '',
       showError: true,
       updateForm: false,
+      isLoading: false,
     };
 
     this.handleEmailChange = this.handleEmailChange.bind(this);
@@ -123,6 +125,10 @@ class SignUp extends Component {
   }
 
   async submitSignUp() {
+    this.setState({
+      isLoading: true,
+    });
+
     let validation = true;
     this.setState({error: ''});
     const {
@@ -218,6 +224,9 @@ class SignUp extends Component {
         });
       }, 2000);
     }
+    this.setState({
+      isLoading: false,
+    });
   }
 
   goToSignIn() {
@@ -239,6 +248,7 @@ class SignUp extends Component {
       confirmPassword,
       showConfirmPassword,
       showError,
+      isLoading,
     } = this.state;
     const {errors} = this.props;
     return (
@@ -370,11 +380,15 @@ class SignUp extends Component {
                 </TouchableOpacity>
               </View>
 
-              <TouchableOpacity
-                style={[styles.signUpButtonContainer]}
-                onPress={() => this.submitSignUp()}>
-                <Text style={styles.signUpButtonText}>SIGN UP</Text>
-              </TouchableOpacity>
+              {isLoading ? (
+                <ActivityLoader isAnimating={true} />
+              ) : (
+                <TouchableOpacity
+                  style={[styles.signUpButtonContainer]}
+                  onPress={() => this.submitSignUp()}>
+                  <Text style={styles.signUpButtonText}>SIGN UP</Text>
+                </TouchableOpacity>
+              )}
             </View>
             <View
               style={{
