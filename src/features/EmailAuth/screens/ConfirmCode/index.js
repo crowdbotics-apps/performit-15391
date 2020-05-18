@@ -273,7 +273,7 @@ class ConfirmCode extends Component {
               ]}>
               <Text style={styles.signUpButtonText}>VERIFY</Text>
             </TouchableOpacity>
-
+            {this.renderErrors()}
             {showResendText && (
               <View
                 style={[styles.tncContainer, {marginTop: scaleModerate(36)}]}>
@@ -293,8 +293,6 @@ class ConfirmCode extends Component {
                 )}
               </View>
             )}
-
-            {this.renderErrors()}
           </View>
         </KeyboardAvoidingView>
       </ScrollView>
