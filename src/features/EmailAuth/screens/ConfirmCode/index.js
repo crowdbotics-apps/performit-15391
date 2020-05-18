@@ -264,6 +264,10 @@ class ConfirmCode extends Component {
 
             <OTPInputView
               pinCount={5}
+              code={this.state.code} //You can supply this prop or not. The component will be used as a controlled / uncontrolled component respectively.
+              onCodeChanged={code => {
+                this.setState({code});
+              }}
               style={{width: '90%', height: scaleModerate(50)}}
               autoFocusOnLoad={true}
               codeInputFieldStyle={styles.underlineStyleBase}
