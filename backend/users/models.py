@@ -12,7 +12,7 @@ class User(AbstractUser):
     name = models.CharField(_("Name of User"), blank=True, null=True, max_length=255)
     phone_regex = RegexValidator(regex=r'^\+?1?\d{9,15}$',
                                  message="Phone number must be entered in the format: '+999999999'. Up to 15 digits allowed.")
-    phone_number = models.CharField("Phone Number",validators=[phone_regex], max_length=17, blank=True, null=True)  # validators should be a list
+    phone_number = models.CharField("Phone Number",validators=[phone_regex], max_length=17, blank=True, default="")  # validators should be a list
     phone_number_verified = models.BooleanField(default=False)
 
     def get_absolute_url(self):
