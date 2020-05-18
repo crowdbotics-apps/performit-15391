@@ -7,8 +7,14 @@ const slides = [
   {
     key: 1,
     title: 'Capture Your Talent',
-    text:
-      'Make your talents shine! Join Performit and create your friends network to share your talent using videos and audios.',
+    text: (
+      <Text>
+        Make your talents shine! Join{' '}
+        <Text style={{fontWeight: 'bold', color: '#B88746'}}>Performit</Text>{' '}
+        and create your friends network to share your talent using videos and
+        audios.
+      </Text>
+    ),
     backgroundColor: '#000000',
     image: require('./assets/intro.png'),
   },
@@ -79,11 +85,11 @@ export default class Onboarding extends Component {
             <View style={styles.circleBG} />
             <TouchableOpacity
               onPress={() => {
-                this.props.navigation.navigate('SignUp')
+                this.props.navigation.navigate('SignUp');
               }}>
               <View style={styles.button}>
                 <Text style={styles.buttonText}>
-                  {this.state.slide === 2 ? 'Join' : 'Skip'}
+                  {this.state.slide === 2 ? 'JOIN' : 'SKIP'}
                 </Text>
               </View>
             </TouchableOpacity>

@@ -134,7 +134,7 @@ class SignUp extends Component {
 
     if (!email) {
       this.setState({showError: true});
-      this.setState({error: 'Please enter a email or phone number'});
+      this.setState({error: 'Please enter an email or phone number'});
       validation = false;
     } else if (!username) {
       this.setState({showError: true});
@@ -160,7 +160,17 @@ class SignUp extends Component {
       } else {
         type = 'phone';
       }
-      // const emailRegex = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+      const emailRegex = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+      if (type === 'email' && !email.match(emailRegex)) {
+        this.setState({showError: true});
+        this.setState({
+          error: 'Please enter a valid email',
+        });
+        validation = false;
+      }
+    }
+
+    if (validation) {
       // if (email.match(emailRegex)) {
       //   type = 'email';
       // } else {

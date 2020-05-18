@@ -98,7 +98,8 @@ const styles = StyleSheet.create({
   },
   buttonText: {
     fontSize: scaleVertical(14),
-    fontFamily: 'Nunito-Bold'
+    fontFamily: 'Nunito-Bold',
+    color: '#ffffff',
   }
 });
 
