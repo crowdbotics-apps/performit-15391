@@ -30,9 +30,10 @@ class ConfirmCode extends Component {
       timer: null,
       counter: 30,
       error: '',
-      showError: true,
+      showError: false,
       type: '',
       origin: '',
+      code: '',
     };
 
     this.submitVerifyCode = this.submitVerifyCode.bind(this);
@@ -75,6 +76,16 @@ class ConfirmCode extends Component {
       this.setState({
         showError: true,
       });
+
+      if (!this.props.confirmCodeErrors) {
+        this.setState({
+          updateForm: true,
+        });
+      } else {
+        this.setState({
+          updateForm: false,
+        });
+      }
     }
   }
 
@@ -177,11 +188,20 @@ class ConfirmCode extends Component {
     } else if (type === 'email') {
       await confirmCode({code, type, email, origin});
     }
+
+    setTimeout(() => {
+      if (this.state.updateForm) {
+        this.setState({
+          code: '',
+        });
+      }
+    }, 1000);
+
     setTimeout(() => {
       this.setState({
         showError: false,
       });
-    }, 4000);
+    }, 2000);
   }
 
   tick = () => {
