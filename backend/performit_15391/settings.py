@@ -195,17 +195,17 @@ REST_AUTH_SERIALIZERS = {
 # Custom user model
 AUTH_USER_MODEL = "users.User"
 
-EMAIL_HOST = "mail.bitsoftsol.com"
-EMAIL_HOST_USER = "performit@bitsoftsol.com"
-EMAIL_HOST_PASSWORD = "%3wz9lY3VNJk"
-EMAIL_PORT = 587
-EMAIL_USE_TLS = True
-
-# EMAIL_HOST = env.str("MAILGUN_SMTP_SERVER", "")
-# EMAIL_HOST_USER = env.str("MAILGUN_SMTP_LOGIN", "")
-# EMAIL_HOST_PASSWORD = env.str("MAILGUN_SMTP_PASSWORD", "")
-# EMAIL_PORT = env.str("MAILGUN_SMTP_PORT", "")
+# EMAIL_HOST = "mail.bitsoftsol.com"
+# EMAIL_HOST_USER = "performit@bitsoftsol.com"
+# EMAIL_HOST_PASSWORD = "%3wz9lY3VNJk"
+# EMAIL_PORT = 587
 # EMAIL_USE_TLS = True
+
+EMAIL_HOST = env.str("MAILGUN_SMTP_SERVER", "")
+EMAIL_HOST_USER = env.str("MAILGUN_SMTP_LOGIN", "")
+EMAIL_HOST_PASSWORD = env.str("MAILGUN_SMTP_PASSWORD", "")
+EMAIL_PORT = env.str("MAILGUN_SMTP_PORT", "")
+EMAIL_USE_TLS = True
 
 
 # TWILIO_ACCOUNT_SID = env.str("TWILIO_ACCOUNT_SID")
