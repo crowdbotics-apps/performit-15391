@@ -201,11 +201,18 @@ AUTH_USER_MODEL = "users.User"
 # EMAIL_PORT = 587
 # EMAIL_USE_TLS = True
 
-EMAIL_HOST = env.str("MAILGUN_SMTP_SERVER", "")
-EMAIL_HOST_USER = env.str("MAILGUN_SMTP_LOGIN", "")
-EMAIL_HOST_PASSWORD = env.str("MAILGUN_SMTP_PASSWORD", "")
-EMAIL_PORT = env.str("MAILGUN_SMTP_PORT", "")
+EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
+EMAIL_HOST = "smtp.gmail.com"
 EMAIL_USE_TLS = True
+EMAIL_PORT = 587
+EMAIL_HOST_USER = "no.reply.performit@gmail.com"
+EMAIL_HOST_PASSWORD = "collaborate2020"
+
+# EMAIL_HOST = env.str("MAILGUN_SMTP_SERVER", "")
+# EMAIL_HOST_USER = env.str("MAILGUN_SMTP_LOGIN", "")
+# EMAIL_HOST_PASSWORD = env.str("MAILGUN_SMTP_PASSWORD", "")
+# EMAIL_PORT = env.str("MAILGUN_SMTP_PORT", "")
+# EMAIL_USE_TLS = True
 
 
 # TWILIO_ACCOUNT_SID = env.str("TWILIO_ACCOUNT_SID")
