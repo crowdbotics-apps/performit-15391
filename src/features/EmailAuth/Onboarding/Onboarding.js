@@ -6,13 +6,12 @@ import styles from './styles';
 const slides = [
   {
     key: 1,
-    title: 'Capture Your Talent',
+    title: 'Share Your Talents',
     text: (
       <Text>
-        Make your talents shine! Join{' '}
-        <Text style={{fontWeight: 'bold', color: '#B88746'}}>Performit</Text>{' '}
-        and create your friends network to share your talent using videos and
-        audios.
+          Show off your talents and share! Join{' '}
+          <Text style={{fontWeight: 'bold', color: '#B88746'}}>PERFORMIT</Text>{' '}
+          and share your talents through videos and audio files with your own network.
       </Text>
     ),
     backgroundColor: '#000000',
@@ -20,17 +19,17 @@ const slides = [
   },
   {
     key: 2,
-    title: 'Vote Posts',
+    title: 'Voting',
     text:
-      'Vote friends posts and also get voted for your post in order to know how much you are really talented!',
+      'Vote and review content posted by other users. \n',
     backgroundColor: '#000000',
     image: require('./assets/intro-2.png'),
   },
   {
     key: 3,
-    title: 'Find Nearby Talent',
+    title: 'Find Nearby Talents',
     text:
-      'Increase your friends network by finding nearbry freind who already showing thier talent on Performit',
+      'Increase your network and build communities by finding nearby users to collaborate with.',
     image: require('./assets/intro-3.png'),
     backgroundColor: '#000000',
   },
