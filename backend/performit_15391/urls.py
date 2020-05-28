@@ -19,7 +19,8 @@ from allauth.account.views import confirm_email
 from rest_framework import permissions
 from drf_yasg.views import get_schema_view
 from drf_yasg import openapi
-
+from django.conf.urls.static import static
+from performit_15391 import settings
 from users.views import SignUp, ConfirmCode, SendForgotPasswordCode, ResendCode, ResetPassword
 
 urlpatterns = [
@@ -57,3 +58,5 @@ schema_view = get_schema_view(
 urlpatterns += [
     path("api-docs/", schema_view.with_ui("swagger", cache_timeout=0), name="api_docs")
 ]
+
+urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
