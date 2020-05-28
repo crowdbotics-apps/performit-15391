@@ -93,7 +93,7 @@ function* handleLogin(action) {
       });
 
       // you can change the navigate for navigateAndResetStack to go to a protected route
-      NavigationService.navigate('ProtectedRoute');
+      NavigationService.navigate('ProfilePage');
     } else {
       yield put({
         type: EMAIL_AUTH_LOGIN_ERROR,
@@ -288,7 +288,7 @@ function* handleConfirmCode(action) {
       });
       if (data.origin === 'signup') {
         // you can change the navigate for navigateAndResetStack to go to a protected route
-        NavigationService.navigate('ProtectedRoute');
+        NavigationService.navigate('ProfilePage');
       } else {
         NavigationService.navigate('ResetPassword', {data});
       }
