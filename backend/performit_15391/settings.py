@@ -49,6 +49,8 @@ INSTALLED_APPS = [
 LOCAL_APPS = [
     'home',
     'users.apps.UsersConfig',
+    'posts',
+    'connections'
 ]
 THIRD_PARTY_APPS = [
     'rest_framework',
@@ -163,6 +165,9 @@ STATICFILES_DIRS = [
     os.path.join(BASE_DIR, 'static')
 ]
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+
+MEDIA_ROOT = os.path.join(BASE_DIR, 'uploads')
+MEDIA_URL = '/uploads/'
 
 # allauth / users
 ACCOUNT_EMAIL_REQUIRED = True

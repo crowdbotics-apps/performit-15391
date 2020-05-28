@@ -3,7 +3,7 @@ from django.contrib.auth import admin as auth_admin
 from django.contrib.auth import get_user_model
 
 from users.forms import UserChangeForm, UserCreationForm
-from users.models import VerificationCode
+from users.models import VerificationCode, UserDetail, UserType
 
 User = get_user_model()
 
@@ -21,3 +21,16 @@ class UserAdmin(auth_admin.UserAdmin):
 @admin.register(VerificationCode)
 class VerificationCodeAdmin(admin.ModelAdmin):
     list_display = ['user', 'code', 'verified']
+
+
+@admin.register(UserDetail)
+class UserDetailAdmin(admin.ModelAdmin):
+    list_display = ['user', 'profile_pic', 'location_address', 'location_lat', 'location_long', 'gender', 'bio',
+                    'created_at']
+
+
+@admin.register(UserType)
+class UserTypeAdmin(admin.ModelAdmin):
+    list_display = ['user', 'user_type', 'created_at', 'updated_at']
+
+
