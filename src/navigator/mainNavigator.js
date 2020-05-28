@@ -21,6 +21,7 @@ import CalendarNavigator from '../features/Calendar/navigator';
 import CameraNavigator from '../features/Camera/navigator';
 import EmailAuthNavigator from '../features/EmailAuth/navigator';
 import ProfilePage from '../features/ProfilePage';
+import FollowPage from '../features/FollowPage';
 
 /**
  * new navigators can be imported here
@@ -79,6 +80,9 @@ const DrawerAppNavigator = createStackNavigator(
     ...AppNavigator,
     ProfilePage: {
       screen: ProfilePage,
+    },
+    FollowPage: {
+      screen: FollowPage,
     },
   },
   {
