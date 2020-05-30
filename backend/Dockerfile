@@ -18,7 +18,8 @@ RUN apk add --no-cache --update \
   zlib \
   zlib-dev \
   libjpeg-turbo \
-  libjpeg-turbo-dev
+  libjpeg-turbo-dev \
+  libffi-dev
 RUN pip3 install --no-cache-dir -q pipenv
 
 # Add our code
