@@ -1,6 +1,7 @@
 from allauth.account.models import EmailAddress
 from django.contrib.auth import get_user_model
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.core.paginator import Paginator, EmptyPage, InvalidPage
 from django.urls import reverse
 from django.views.decorators.csrf import csrf_exempt
 from django.views.generic import DetailView, RedirectView, UpdateView
@@ -11,9 +12,13 @@ from rest_framework.decorators import permission_classes
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.views import APIView, Response
 
-from users.models import VerificationCode
+from connections.models import UserRelationship
+from posts.models import Post
+from posts.serializers import PostSerializer
+from users.models import VerificationCode, UserType, UserDetail
 from users.send_verification_code import SendVerificationCode
-from users.serializers import SignupWithEmailSerializer, SignUpWithPhoneSerializer, CustomTokenSerializer
+from users.serializers import SignupWithEmailSerializer, SignUpWithPhoneSerializer, CustomTokenSerializer, \
+    UserDetailSerializer, CustomUserSerializer
 from users.verification_code_generator import VerificationCodeGenerator
 
 User = get_user_model()
@@ -259,5 +264,44 @@ class ResetPassword(APIView):
         serializer = CustomTokenSerializer(token, many=False)
         return Response({"success": False, "message": "password reset successful.", "user": serializer.data})
 
-
-
+@permission_classes([IsAuthenticated])
+class GetUserDetail(APIView):
+    def post(self, request):
+        user_id = request.data.get("user_id")
+        page = request.data.get("page")
+        if page is None:
+            page = 1
+        size = 10
+        if user_id is None:
+            return Response({"success": False, "message": "Required param user_id is missing"})
+        try:
+            user = User.objects.get(pk=user_id)
+        except User.DoesNotExist:
+            return Response({"success": False, "message": "Invalid User"}, status=400)
+        try:
+            user_details = UserDetail.objects.get(user=user)
+        except UserDetail.DoesNotExist:
+            user_details = None
+        user_types = UserType.objects.filter(user=user)
+        user_types = []
+        for type in user_types:
+            user_types.append(type['user_type'])
+        posts = Post.objects.filter(user=user).order_by("created_at")
+        try:
+            paginated_data = Paginator(posts, size)
+        except (EmptyPage, InvalidPage):
+            return Response({"success": False, "message": "Empty Page"}, status=400)
+        post_serializer = PostSerializer(paginated_data.page(page), many=True)
+        user_details_serializer = UserDetailSerializer(many=False)
+        user_serializer = CustomUserSerializer(many=False)
+        user_follower_qs = UserRelationship.objects.filter(following=user)
+        user_following_qs= UserRelationship.objects.filter(follower=user)
+        can_edit = False
+        if int(user_id) == int(request.user.id):
+            can_edit = True
+        data = {"user": user_serializer.data, "user_details": user_details_serializer.data, "user_types":user_types,
+                "posts": post_serializer.data,
+                "followers_count": user_follower_qs.count(), "user_following_count": user_following_qs.count(),
+                "can_edit": can_edit, "total": paginated_data.count,
+                         "pages": paginated_data.num_pages, "current_page": int(page) }
+        return Response({"success": True, "data": data })

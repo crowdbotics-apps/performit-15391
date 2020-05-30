@@ -1,16 +1,21 @@
-from allauth.account.utils import setup_user_email
 from allauth.utils import get_username_max_length, email_address_exists
 from django.contrib.auth import get_user_model, authenticate
 from rest_auth.models import TokenModel
 from allauth.account import app_settings as allauth_settings
 from allauth.account.adapter import get_adapter
 from django.utils.translation import ugettext_lazy as _
-from rest_auth.serializers import UserDetailsSerializer
 from rest_framework import serializers, exceptions
 from django.conf import settings
-
+from users.models import UserDetail, UserType
 
 User = get_user_model()
+
+
+class UserDetailSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = UserDetail
+        fields = "__all__"
 
 
 class CustomUserSerializer(serializers.ModelSerializer):
@@ -28,6 +33,19 @@ class CustomTokenSerializer(serializers.ModelSerializer):
         model = TokenModel
         fields = ('key', 'user')
 
+
+class UserTypeSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = UserType
+        fields = "__all__"
+
+
+class UserDetailSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = UserDetail
+        fields = '__all__'
 
 class CustomLoginSerializer(serializers.Serializer):
     username = serializers.CharField(required=False, allow_blank=True)

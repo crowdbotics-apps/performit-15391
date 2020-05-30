@@ -1,14 +1,9 @@
 from django.contrib import admin
 
 # Register your models here.
-from connections.models import UserFollower, UserFollowing
+from connections.models import UserRelationship
 
 
-@admin.register(UserFollower)
+@admin.register(UserRelationship)
 class UserFollowerAdmin(admin.ModelAdmin):
-    list_display = ['user', 'follower', 'created_at', 'updated_at']
-
-
-@admin.register(UserFollowing)
-class UserFollowingAdmin(admin.ModelAdmin):
-    list_display = ['user', 'following', 'created_at', 'updated_at']
+    list_display = ['following', 'follower', 'created_at', 'updated_at']
