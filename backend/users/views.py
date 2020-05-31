@@ -293,7 +293,7 @@ class GetUserDetail(APIView):
             return Response({"success": False, "message": "Empty Page"}, status=400)
         post_serializer = PostSerializer(paginated_data.page(page), many=True)
         user_details_serializer = UserDetailSerializer(many=False)
-        user_serializer = CustomUserSerializer(many=False)
+        user_serializer = CustomUserSerializer(user,many=False)
         user_follower_qs = UserRelationship.objects.filter(following=user)
         user_following_qs= UserRelationship.objects.filter(follower=user)
         can_edit = False
