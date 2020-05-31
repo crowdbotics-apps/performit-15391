@@ -118,7 +118,7 @@ class SearchUser(APIView):
             # return a list of users that are following the logged in user
             following = UserRelationship.objects.filter(following=user_id).filter(
                 Q(following__username__icontains=term) | Q(following__first_name__icontains=term) |
-                Q(following__last_name__icontains=term) | Q(following__name__icontains=term))
+                Q(following__last_name__icontains=term) | Q(following__name__icontains=term)).order_by("created_at")
             try:
                 paginated_data = Paginator(following, size)
             except (EmptyPage, InvalidPage):
@@ -130,7 +130,7 @@ class SearchUser(APIView):
             # return a list of users to whome the logged in user following
             follower = UserRelationship.objects.filter(follower=user_id).filter(
                 Q(following__username__icontains=term) | Q(following__first_name__icontains=term) |
-                Q(following__last_name__icontains=term) | Q(following__name__icontains=term))
+                Q(following__last_name__icontains=term) | Q(following__name__icontains=term)).order_by("created_at")
             try:
                 paginated_data = Paginator(follower, size)
             except (EmptyPage, InvalidPage):
