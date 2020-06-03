@@ -9,18 +9,135 @@ import {
   TextInput,
 } from 'react-native';
 import {styles} from './styles';
+import * as profileActions from '../ProfilePage/redux/actions';
+import {connect} from 'react-redux';
+import {get} from 'lodash';
 
-export default class App extends Component {
+class Follow extends Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      isLoading: false,
+      activeTab: 'follower',
+      followersCurrentPage: 1,
+      followingCurrentPage: 1,
+      userId: '',
+      searchTerm: '',
+    };
+  }
+
   static navigationOptions = {
     header: null,
   };
 
-  componentDidMount() {
+  search = {
+    searchTimeOut: null,
+  };
+
+  async componentDidMount() {
     // write code here
+    this.setState({
+      isLoading: true,
+    });
+
+    const userId = this.props.navigation.getParam('userId', '');
+    const activeTab = this.props.navigation.getParam('tab', 'follower');
+    const accessToken = this.props.accessToken;
+
+    const {
+      actions: {followersConnectionsList, followingConnectionsList},
+    } = this.props;
+
+    const {followersCurrentPage, followingCurrentPage} = this.state;
+    if (userId && accessToken) {
+      await followersConnectionsList(userId, followersCurrentPage, accessToken);
+      await followingConnectionsList(userId, followingCurrentPage, accessToken);
+      this.setState({
+        followersCurrentPage: followersCurrentPage + 1,
+        followingCurrentPage: followingCurrentPage + 1,
+        activeTab,
+      });
+    }
+    this.setState({
+      isLoading: false,
+      userId,
+    });
   }
 
+  componentDidUpdate(prevProps) {
+    const prevActiveTab = prevProps.navigation.getParam('tab', 'follower');
+    const activeTab = this.props.navigation.getParam('tab', 'follower');
+    if (prevActiveTab !== activeTab) {
+      this.setState({
+        activeTab,
+      });
+    }
+  }
+
+  followUser = async (userId, user, metaData, origin) => {
+    const {accessToken, user: loggedInUser} = this.props;
+    const {
+      actions: {followUser},
+    } = this.props;
+    await followUser(userId, user, metaData, accessToken, loggedInUser, origin);
+  };
+
+  unFollowUser = async (userId, origin) => {
+    const {accessToken, user: loggedInUser} = this.props;
+    const {
+      actions: {unFollowUser},
+    } = this.props;
+    await unFollowUser(userId, accessToken, loggedInUser, origin);
+  };
+
+  searchUser = text => {
+    this.setState({
+      searchTerm: text,
+    });
+    clearTimeout(this.search.searchTimeOut);
+    this.search.searchTimeOut = setTimeout(async () => {
+      const {
+        accessToken,
+        actions: {
+          searchFollowersConnectionsList,
+          searchFollowingConnectionsList,
+        },
+      } = this.props;
+      await searchFollowersConnectionsList(
+        this.state.userId,
+        1,
+        accessToken,
+        text,
+      );
+      await searchFollowingConnectionsList(
+        this.state.userId,
+        1,
+        accessToken,
+        text,
+      );
+    }, 1000);
+  };
+
   render() {
-    const {navigation} = this.props;
+    let origin = 'FollowPage';
+    const {navigation, profile: allProfiles} = this.props;
+    const {activeTab, searchTerm} = this.state;
+    const profile = allProfiles && allProfiles[`${this.state.userId}`];
+
+    let followers = get(profile, 'followersConnectionsList.data', []);
+    let following = get(profile, 'followingConnectionsList.data', []);
+
+    let followersCount = get(profile, 'followersConnectionsList.total', 0);
+    let followingCount = get(profile, 'followingConnectionsList.total', 0);
+
+    if (searchTerm) {
+      origin = 'search';
+      followers = get(profile, 'searchFollowersConnectionsList.data', []);
+      following = get(profile, 'searchFollowingConnectionsList.data', []);
+      followersCount = get(profile, 'searchFollowersConnectionsList.total', 0);
+      followingCount = get(profile, 'searchFollowingConnectionsList.total', 0);
+    }
+
     return (
       <ScrollView
         contentContainerStyle={styles.screen}
@@ -37,7 +154,9 @@ export default class App extends Component {
             </View>
           </TouchableOpacity>
           <View style={styles.headerTextContainer}>
-            <Text style={styles.headerText}>MariaSm007</Text>
+            <Text style={styles.headerText}>
+              {profile && profile.user && profile.user.username}
+            </Text>
           </View>
         </View>
 
@@ -60,334 +179,245 @@ export default class App extends Component {
               placeholder="Search"
               autoCapitalize="none"
               selectionColor="#ffffff"
-              onChangeText={value =>
-                console.log('-----------search value', value)
-              }
+              onChangeText={value => this.searchUser(value)}
             />
           </View>
         </View>
 
         <View style={styles.followHeaderContainer}>
-          <TouchableOpacity style={styles.followersHeaderContainer}>
-            <Text style={styles.activeHeaderText}>2359 Followers</Text>
+          <TouchableOpacity
+            onPress={() => this.setState({activeTab: 'follower'})}
+            style={[
+              styles.followersHeaderContainer,
+              activeTab === 'follower' ? styles.activeTab : styles.inactiveTab,
+            ]}>
+            <Text
+              style={
+                activeTab === 'follower'
+                  ? styles.activeHeaderText
+                  : styles.inActiveHeaderText
+              }>
+              {followersCount} {followersCount > 1 ? 'Followers' : 'Follower'}
+            </Text>
           </TouchableOpacity>
-          <TouchableOpacity style={styles.followingHeaderContainer}>
-            <Text style={styles.inActiveHeaderText}>134 Following</Text>
+          <TouchableOpacity
+            onPress={() => this.setState({activeTab: 'following'})}
+            style={[
+              styles.followingHeaderContainer,
+              activeTab === 'following' ? styles.activeTab : styles.inactiveTab,
+            ]}>
+            <Text
+              style={
+                activeTab === 'following'
+                  ? styles.activeHeaderText
+                  : styles.inActiveHeaderText
+              }>
+              {followingCount} Following
+            </Text>
           </TouchableOpacity>
         </View>
+        {activeTab === 'follower'
+          ? followers.map(follower => (
+              <View style={styles.followProfileRowContainer}>
+                <View style={styles.followProfileRowLeftContainer}>
+                  <TouchableOpacity
+                    onPress={() =>
+                      navigation.navigate('ProfilePage', {
+                        userId: follower.follower && follower.follower.pk,
+                      })
+                    }
+                    style={[styles.profileRowImageContainer]}>
+                    <Image
+                      style={[styles.profileRowImage]}
+                      source={
+                        follower &&
+                        follower.follower &&
+                        follower.follower.profile_pic
+                      }
+                    />
+                  </TouchableOpacity>
 
-        <TouchableOpacity style={styles.followProfileRowContainer}>
-          <View style={styles.followProfileRowLeftContainer}>
-            <View style={[styles.profileRowImage]}>
-              <Image
-                style={[styles.profileRowImage]}
-                source={require('../../assets/images/follow_image1.png')}
-              />
-            </View>
+                  <View style={styles.followProfileRowTextContainer}>
+                    <View style={styles.followProfileRowNameContainer}>
+                      {follower &&
+                      follower.follower &&
+                      (follower.follower.first_name ||
+                        follower.follower.last_name) ? (
+                        <Text style={styles.followProfileText}>
+                          {follower.follower.first_name}{' '}
+                          {follower.follower.last_name}
+                        </Text>
+                      ) : (
+                        <Text style={styles.followProfileText}>
+                          {follower.follower.username}
+                        </Text>
+                      )}
+                    </View>
+                    <View style={styles.followProfileRowRoleContainer}>
+                      <Text style={styles.followProfileSubText}>
+                        {follower &&
+                          follower.meta_data &&
+                          follower.meta_data.user_types &&
+                          follower.meta_data.user_types.length > 0 &&
+                          follower.meta_data.user_types.map(userType => (
+                            <Text>{userType}, </Text>
+                          ))}
+                      </Text>
+                    </View>
+                  </View>
+                </View>
+                <View style={styles.followProfileRowRightContainer}>
+                  {follower &&
+                  follower.meta_data &&
+                  follower.meta_data.is_following ? (
+                    <View style={styles.followingButtonContainer}>
+                      <Text style={styles.followingButtonText}>Following</Text>
+                    </View>
+                  ) : (
+                    <TouchableOpacity
+                      onPress={() =>
+                        this.followUser(
+                          follower && follower.follower && follower.follower.pk,
+                          follower.follower,
+                          follower.meta_data,
+                          origin,
+                        )
+                      }
+                      style={styles.followButtonContainer}>
+                      <Text style={styles.followButtonText}>Follow</Text>
+                    </TouchableOpacity>
+                  )}
+                </View>
+              </View>
+            ))
+          : following.map(follower => (
+              <View style={styles.followProfileRowContainer}>
+                <View style={styles.followProfileRowLeftContainer}>
+                  <TouchableOpacity
+                    onPress={() =>
+                      navigation.navigate('ProfilePage', {
+                        userId: follower.following && follower.following.pk,
+                      })
+                    }
+                    style={[styles.profileRowImageContainer]}>
+                    <Image
+                      style={[styles.profileRowImage]}
+                      source={
+                        follower &&
+                        follower.following &&
+                        follower.following.profile_pic
+                      }
+                    />
+                  </TouchableOpacity>
 
-            <View style={styles.followProfileRowTextContainer}>
-              <View style={styles.followProfileRowNameContainer}>
-                <Text style={styles.followProfileText}>John Doe</Text>
+                  <View style={styles.followProfileRowTextContainer}>
+                    <View style={styles.followProfileRowNameContainer}>
+                      {follower &&
+                      follower.following &&
+                      (follower.following.first_name ||
+                        follower.following.last_name) ? (
+                        <Text style={styles.followProfileText}>
+                          {follower.following.first_name}{' '}
+                          {follower.following.last_name}
+                        </Text>
+                      ) : (
+                        <Text style={styles.followProfileText}>
+                          {follower.following.username}
+                        </Text>
+                      )}
+                    </View>
+                    <View style={styles.followProfileRowRoleContainer}>
+                      <Text style={styles.followProfileSubText}>
+                        {follower &&
+                          follower.meta_data &&
+                          follower.meta_data.user_types &&
+                          follower.meta_data.user_types.length > 0 &&
+                          follower.meta_data.user_types.map(userType => (
+                            <Text>{userType}, </Text>
+                          ))}
+                      </Text>
+                    </View>
+                  </View>
+                </View>
+                <View style={styles.followProfileRowRightContainer}>
+                  <TouchableOpacity
+                    onPress={() =>
+                      this.unFollowUser(
+                        follower && follower.following && follower.following.pk,
+                        origin,
+                      )
+                    }
+                    style={styles.followingButtonContainer}>
+                    <Text style={styles.followingButtonText}>Unfollow</Text>
+                  </TouchableOpacity>
+                </View>
               </View>
-              <View style={styles.followProfileRowRoleContainer}>
-                <Text style={styles.followProfileSubText}>
-                  Musician, Singer, Rapper
-                </Text>
-              </View>
-            </View>
-          </View>
-          <View style={styles.followProfileRowRightContainer}>
-            <TouchableOpacity style={styles.followingButtonContainer}>
-              <Text style={styles.followingButtonText}>Following</Text>
-            </TouchableOpacity>
-          </View>
-        </TouchableOpacity>
-
-        <TouchableOpacity style={styles.followProfileRowContainer}>
-          <View style={styles.followProfileRowLeftContainer}>
-            <View style={[styles.profileRowImage]}>
-              <Image
-                style={[styles.profileRowImage]}
-                source={require('../../assets/images/follow_image2.png')}
-              />
-            </View>
-
-            <View style={styles.followProfileRowTextContainer}>
-              <View style={styles.followProfileRowNameContainer}>
-                <Text style={styles.followProfileText}>Natasha Williams</Text>
-              </View>
-              <View style={styles.followProfileRowRoleContainer}>
-                <Text style={styles.followProfileSubText}>Artist, Rapper</Text>
-              </View>
-            </View>
-          </View>
-          <View style={styles.followProfileRowRightContainer}>
-            <TouchableOpacity style={styles.followingButtonContainer}>
-              <Text style={styles.followingButtonText}>Following</Text>
-            </TouchableOpacity>
-          </View>
-        </TouchableOpacity>
-
-        <TouchableOpacity style={styles.followProfileRowContainer}>
-          <View style={styles.followProfileRowLeftContainer}>
-            <View style={[styles.profileRowImage]}>
-              <Image
-                style={[styles.profileRowImage]}
-                source={require('../../assets/images/follow_image3.png')}
-              />
-            </View>
-
-            <View style={styles.followProfileRowTextContainer}>
-              <View style={styles.followProfileRowNameContainer}>
-                <Text style={styles.followProfileText}>Dianna Haddad</Text>
-              </View>
-              <View style={styles.followProfileRowRoleContainer}>
-                <Text style={styles.followProfileSubText}>
-                  Musician, Singer, Rapper
-                </Text>
-              </View>
-            </View>
-          </View>
-          <View style={styles.followProfileRowRightContainer}>
-            <TouchableOpacity style={styles.followingButtonContainer}>
-              <Text style={styles.followingButtonText}>Following</Text>
-            </TouchableOpacity>
-          </View>
-        </TouchableOpacity>
-
-        <TouchableOpacity style={styles.followProfileRowContainer}>
-          <View style={styles.followProfileRowLeftContainer}>
-            <View style={[styles.profileRowImage]}>
-              <Image
-                style={[styles.profileRowImage]}
-                source={require('../../assets/images/follow_image1.png')}
-              />
-            </View>
-
-            <View style={styles.followProfileRowTextContainer}>
-              <View style={styles.followProfileRowNameContainer}>
-                <Text style={styles.followProfileText}>John Doe</Text>
-              </View>
-              <View style={styles.followProfileRowRoleContainer}>
-                <Text style={styles.followProfileSubText}>Musician</Text>
-              </View>
-            </View>
-          </View>
-          <View style={styles.followProfileRowRightContainer}>
-            <TouchableOpacity style={styles.followButtonContainer}>
-              <Text style={styles.followButtonText}>Follow</Text>
-            </TouchableOpacity>
-          </View>
-        </TouchableOpacity>
-
-        <TouchableOpacity style={styles.followProfileRowContainer}>
-          <View style={styles.followProfileRowLeftContainer}>
-            <View style={[styles.profileRowImage]}>
-              <Image
-                style={[styles.profileRowImage]}
-                source={require('../../assets/images/follow_image2.png')}
-              />
-            </View>
-
-            <View style={styles.followProfileRowTextContainer}>
-              <View style={styles.followProfileRowNameContainer}>
-                <Text style={styles.followProfileText}>Maria Smith</Text>
-              </View>
-              <View style={styles.followProfileRowRoleContainer}>
-                <Text style={styles.followProfileSubText}>Singer, Rapper</Text>
-              </View>
-            </View>
-          </View>
-          <View style={styles.followProfileRowRightContainer}>
-            <TouchableOpacity style={styles.followButtonContainer}>
-              <Text style={styles.followButtonText}>Follow</Text>
-            </TouchableOpacity>
-          </View>
-        </TouchableOpacity>
-
-        <TouchableOpacity style={styles.followProfileRowContainer}>
-          <View style={styles.followProfileRowLeftContainer}>
-            <View style={[styles.profileRowImage]}>
-              <Image
-                style={[styles.profileRowImage]}
-                source={require('../../assets/images/follow_image3.png')}
-              />
-            </View>
-
-            <View style={styles.followProfileRowTextContainer}>
-              <View style={styles.followProfileRowNameContainer}>
-                <Text style={styles.followProfileText}>Dianna Haddad</Text>
-              </View>
-              <View style={styles.followProfileRowRoleContainer}>
-                <Text style={styles.followProfileSubText}>
-                  Musician, Rapper
-                </Text>
-              </View>
-            </View>
-          </View>
-          <View style={styles.followProfileRowRightContainer}>
-            <TouchableOpacity style={styles.followButtonContainer}>
-              <Text style={styles.followButtonText}>Follow</Text>
-            </TouchableOpacity>
-          </View>
-        </TouchableOpacity>
-
-        <TouchableOpacity style={styles.followProfileRowContainer}>
-          <View style={styles.followProfileRowLeftContainer}>
-            <View style={[styles.profileRowImage]}>
-              <Image
-                style={[styles.profileRowImage]}
-                source={require('../../assets/images/follow_image1.png')}
-              />
-            </View>
-
-            <View style={styles.followProfileRowTextContainer}>
-              <View style={styles.followProfileRowNameContainer}>
-                <Text style={styles.followProfileText}>John Doe</Text>
-              </View>
-              <View style={styles.followProfileRowRoleContainer}>
-                <Text style={styles.followProfileSubText}>
-                  Musician, Singer, Rapper
-                </Text>
-              </View>
-            </View>
-          </View>
-          <View style={styles.followProfileRowRightContainer}>
-            <TouchableOpacity style={styles.followButtonContainer}>
-              <Text style={styles.followButtonText}>Follow</Text>
-            </TouchableOpacity>
-          </View>
-        </TouchableOpacity>
-
-        <TouchableOpacity style={styles.followProfileRowContainer}>
-          <View style={styles.followProfileRowLeftContainer}>
-            <View style={[styles.profileRowImage]}>
-              <Image
-                style={[styles.profileRowImage]}
-                source={require('../../assets/images/follow_image2.png')}
-              />
-            </View>
-
-            <View style={styles.followProfileRowTextContainer}>
-              <View style={styles.followProfileRowNameContainer}>
-                <Text style={styles.followProfileText}>Maria Smith</Text>
-              </View>
-              <View style={styles.followProfileRowRoleContainer}>
-                <Text style={styles.followProfileSubText}>Singer, Rapper</Text>
-              </View>
-            </View>
-          </View>
-          <View style={styles.followProfileRowRightContainer}>
-            <TouchableOpacity style={styles.followButtonContainer}>
-              <Text style={styles.followButtonText}>Follow</Text>
-            </TouchableOpacity>
-          </View>
-        </TouchableOpacity>
-
-        <TouchableOpacity style={styles.followProfileRowContainer}>
-          <View style={styles.followProfileRowLeftContainer}>
-            <View style={[styles.profileRowImage]}>
-              <Image
-                style={[styles.profileRowImage]}
-                source={require('../../assets/images/follow_image3.png')}
-              />
-            </View>
-
-            <View style={styles.followProfileRowTextContainer}>
-              <View style={styles.followProfileRowNameContainer}>
-                <Text style={styles.followProfileText}>Dianna Haddad</Text>
-              </View>
-              <View style={styles.followProfileRowRoleContainer}>
-                <Text style={styles.followProfileSubText}>Rapper</Text>
-              </View>
-            </View>
-          </View>
-          <View style={styles.followProfileRowRightContainer}>
-            <TouchableOpacity style={styles.followButtonContainer}>
-              <Text style={styles.followButtonText}>Follow</Text>
-            </TouchableOpacity>
-          </View>
-        </TouchableOpacity>
-
-        <TouchableOpacity style={styles.followProfileRowContainer}>
-          <View style={styles.followProfileRowLeftContainer}>
-            <View style={[styles.profileRowImage]}>
-              <Image
-                style={[styles.profileRowImage]}
-                source={require('../../assets/images/follow_image1.png')}
-              />
-            </View>
-
-            <View style={styles.followProfileRowTextContainer}>
-              <View style={styles.followProfileRowNameContainer}>
-                <Text style={styles.followProfileText}>John Doe</Text>
-              </View>
-              <View style={styles.followProfileRowRoleContainer}>
-                <Text style={styles.followProfileSubText}>Musician</Text>
-              </View>
-            </View>
-          </View>
-          <View style={styles.followProfileRowRightContainer}>
-            <TouchableOpacity style={styles.followButtonContainer}>
-              <Text style={styles.followButtonText}>Follow</Text>
-            </TouchableOpacity>
-          </View>
-        </TouchableOpacity>
-
-        <TouchableOpacity style={styles.followProfileRowContainer}>
-          <View style={styles.followProfileRowLeftContainer}>
-            <View style={[styles.profileRowImage]}>
-              <Image
-                style={[styles.profileRowImage]}
-                source={require('../../assets/images/follow_image2.png')}
-              />
-            </View>
-
-            <View style={styles.followProfileRowTextContainer}>
-              <View style={styles.followProfileRowNameContainer}>
-                <Text style={styles.followProfileText}>Maria Smith</Text>
-              </View>
-              <View style={styles.followProfileRowRoleContainer}>
-                <Text style={styles.followProfileSubText}>
-                  Musician, Singer, Rapper
-                </Text>
-              </View>
-            </View>
-          </View>
-          <View style={styles.followProfileRowRightContainer}>
-            <TouchableOpacity style={styles.followButtonContainer}>
-              <Text style={styles.followButtonText}>Follow</Text>
-            </TouchableOpacity>
-          </View>
-        </TouchableOpacity>
-
-        <TouchableOpacity style={styles.followProfileRowContainer}>
-          <View style={styles.followProfileRowLeftContainer}>
-            <View style={[styles.profileRowImage]}>
-              <Image
-                style={[styles.profileRowImage]}
-                source={require('../../assets/images/follow_image3.png')}
-              />
-            </View>
-
-            <View style={styles.followProfileRowTextContainer}>
-              <View style={styles.followProfileRowNameContainer}>
-                <Text style={styles.followProfileText}>Dianna Haddad</Text>
-              </View>
-              <View style={styles.followProfileRowRoleContainer}>
-                <Text style={styles.followProfileSubText}>
-                  Musician, Singer, Rapper
-                </Text>
-              </View>
-            </View>
-          </View>
-          <View style={styles.followProfileRowRightContainer}>
-            <TouchableOpacity style={styles.followButtonContainer}>
-              <Text style={styles.followButtonText}>Follow</Text>
-            </TouchableOpacity>
-          </View>
-        </TouchableOpacity>
+            ))}
       </ScrollView>
     );
   }
 }
+
+const mapStateToProps = state => ({
+  userDetailErrors: state.Profile.errors.UserDetail,
+  profile: state.Profile.profile,
+  user: state.EmailAuth.user,
+  accessToken: state.EmailAuth.accessToken,
+});
+
+const mapDispatchToProps = dispatch => ({
+  actions: {
+    followersConnectionsList: (userId, page, token) => {
+      dispatch(profileActions.followersConnectionsList(userId, page, token));
+    },
+    followingConnectionsList: (userId, page, token) => {
+      dispatch(profileActions.followingConnectionsList(userId, page, token));
+    },
+    searchFollowersConnectionsList: (userId, page, token, term) => {
+      dispatch(
+        profileActions.searchFollowersConnectionsList(
+          userId,
+          page,
+          token,
+          term,
+        ),
+      );
+    },
+    searchFollowingConnectionsList: (userId, page, token, term) => {
+      dispatch(
+        profileActions.searchFollowingConnectionsList(
+          userId,
+          page,
+          token,
+          term,
+        ),
+      );
+    },
+    followUser: (userId, user, metaData, token, loggedInUser, origin) => {
+      dispatch(
+        profileActions.followUser(
+          userId,
+          user,
+          metaData,
+          token,
+          loggedInUser,
+          origin,
+        ),
+      );
+    },
+    unFollowUser: (userId, token, loggedInUser, origin) => {
+      dispatch(
+        profileActions.unFollowUser(userId, token, loggedInUser, origin),
+      );
+    },
+  },
+});
+
+Follow.navigationOptions = {
+  header: null,
+};
+
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps,
+)(Follow);

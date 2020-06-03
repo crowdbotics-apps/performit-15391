@@ -15,7 +15,6 @@ import {scaleModerate, scaleVertical} from '../../../../utils/scale';
 import {styles} from '../styles';
 import * as emailAuthActions from '../../redux/actions';
 import ErrorBox from '../../../../components/ErrorBox';
-import Icon from 'react-native-vector-icons/FontAwesome';
 
 class SignIn extends Component {
   constructor(props) {
@@ -280,6 +279,7 @@ const mapDispatchToProps = dispatch => ({
 
 SignIn.navigationOptions = {
   header: null,
+  tabBarVisible: false,
 };
 
 export default connect(

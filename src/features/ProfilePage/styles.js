@@ -23,8 +23,11 @@ export const styles = StyleSheet.create({
   },
 
   headerTextContainer: {
-    flex: 7,
+    flex: 5,
     marginLeft: scaleModerate(20),
+    flexDirection: 'row',
+    justifyContent: 'flex-start',
+    alignItems: 'center',
   },
 
   headerText: {
@@ -136,9 +139,22 @@ export const styles = StyleSheet.create({
     alignItems: 'flex-end',
   },
 
+  profileImageContainer: {
+    width: scaleModerate(100),
+    height: scaleModerate(100),
+    borderRadius: scaleModerate(50),
+    borderWidth: scaleModerate(1),
+    borderColor: '#b88746',
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+
   profileImage: {
-    width: scaleModerate(90),
-    height: scaleModerate(90),
+    width: scaleModerate(86),
+    height: scaleModerate(86),
+    borderRadius: scaleModerate(43),
+    backgroundColor: '#111111',
   },
 
   profileDescContainer: {
@@ -169,6 +185,42 @@ export const styles = StyleSheet.create({
   },
 
   editProfileButtonText: {
+    color: '#ffffff',
+    fontSize: scaleVertical(16),
+    fontFamily: 'Nunito-Bold',
+    fontWeight: '600',
+  },
+
+  otherProfileButtonContainer: {
+    width: '95%',
+    height: scaleModerate(46),
+    flexDirection: 'row',
+    justifyContent: 'space-around',
+    alignItems: 'center',
+    marginTop: scaleVertical(20),
+  },
+
+  followProfileButtonContainer: {
+    width: '45%',
+    height: scaleModerate(46),
+    borderRadius: scaleModerate(23),
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: '#b88746',
+  },
+
+  messageProfileButtonContainer: {
+    width: '45%',
+    height: scaleModerate(46),
+    borderRadius: scaleModerate(23),
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: '#111111',
+  },
+
+  followProfileButtonText: {
     color: '#ffffff',
     fontSize: scaleVertical(16),
     fontFamily: 'Nunito-Bold',
@@ -210,6 +262,15 @@ export const styles = StyleSheet.create({
     flexDirection: 'row',
   },
 
+  noProfilePostsContainer: {
+    width: screenSize.width,
+    minHeight: scaleModerate(370),
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: '#111111',
+  },
+
   profileSingleImage: {
     width: scaleModerate(137),
     height: scaleModerate(137),
@@ -220,6 +281,21 @@ export const styles = StyleSheet.create({
     height: scaleModerate(137),
     borderWidth: scaleModerate(1),
     borderColor: 'black',
+  },
 
-  }
+  leftArrowContainer: {
+    flex: 1,
+    width: scaleModerate(30),
+    height: scaleModerate(50),
+    flexDirection: 'row',
+    justifyContent: 'flex-start',
+    alignItems: 'center',
+  },
+
+  leftArrow: {
+    flex: 1,
+    width: scaleModerate(20),
+    height: scaleModerate(14),
+    marginLeft: scaleModerate(10),
+  },
 });

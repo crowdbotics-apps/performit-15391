@@ -78,6 +78,14 @@ const AppNavigator = {
 const DrawerAppNavigator = createStackNavigator(
   {
     ...AppNavigator,
+  },
+  {
+    initialRouteName: 'EmailAuth',
+  },
+);
+
+const ProfileAppNavigator = createStackNavigator(
+  {
     ProfilePage: {
       screen: ProfilePage,
     },
@@ -86,7 +94,7 @@ const DrawerAppNavigator = createStackNavigator(
     },
   },
   {
-    initialRouteName: 'EmailAuth',
+    initialRouteName: 'ProfilePage',
   },
 );
 
@@ -95,6 +103,7 @@ const LoggedInBottomTabNavigator = createBottomTabNavigator(
     Home: {
       screen: DrawerAppNavigator,
       navigationOptions: ({navigation}) => ({
+        tabBarVisible: false,
         tabBarIcon: ({focused}) => (
           <Image
             source={require('../assets/images/home_small.png')}
@@ -106,6 +115,7 @@ const LoggedInBottomTabNavigator = createBottomTabNavigator(
     Location: {
       screen: DrawerAppNavigator,
       navigationOptions: ({navigation}) => ({
+        tabBarVisible: false,
         title: null,
         tabBarIcon: ({focused}) => (
           <Image
@@ -118,6 +128,7 @@ const LoggedInBottomTabNavigator = createBottomTabNavigator(
     CreatePost: {
       screen: DrawerAppNavigator,
       navigationOptions: ({navigation}) => ({
+        tabBarVisible: false,
         title: null,
         tabBarIcon: ({focused}) => (
           <Image
@@ -130,6 +141,7 @@ const LoggedInBottomTabNavigator = createBottomTabNavigator(
     Notifications: {
       screen: DrawerAppNavigator,
       navigationOptions: ({navigation}) => ({
+        tabBarVisible: false,
         title: null,
         tabBarIcon: ({focused}) => (
           <Image
@@ -140,16 +152,19 @@ const LoggedInBottomTabNavigator = createBottomTabNavigator(
       }),
     },
     Profile: {
-      screen: DrawerAppNavigator,
-      navigationOptions: ({navigation}) => ({
-        title: '',
-        tabBarIcon: ({focused}) => (
-          <Image
-            source={require('../assets/images/profile_small.png')}
-            style={focused ? focusedHomeImageStyle : homeImageStyle}
-          />
-        ),
-      }),
+      screen: ProfileAppNavigator,
+      navigationOptions: ({navigation}) => {
+        return {
+          tabBarVisible: navigation.state.index === 0 ? true : false,
+          title: '',
+          tabBarIcon: ({focused}) => (
+            <Image
+              source={require('../assets/images/profile_small.png')}
+              style={focused ? focusedHomeImageStyle : homeImageStyle}
+            />
+          ),
+        };
+      },
     },
   },
   {

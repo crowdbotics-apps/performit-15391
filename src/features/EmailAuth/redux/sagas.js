@@ -93,7 +93,7 @@ function* handleLogin(action) {
       });
 
       // you can change the navigate for navigateAndResetStack to go to a protected route
-      NavigationService.navigate('ProfilePage');
+      NavigationService.navigate('Profile', {userId: ''});
     } else {
       yield put({
         type: EMAIL_AUTH_LOGIN_ERROR,
@@ -117,6 +117,7 @@ function* handleSignUp(action) {
   const {user} = action;
   try {
     const {status, data} = yield call(sendSignUp, user);
+    console.log('-----------------------------signup user', data);
     if (status === 200) {
       yield put({
         type: EMAIL_AUTH_SIGNUP_SUCCESS,
@@ -288,7 +289,7 @@ function* handleConfirmCode(action) {
       });
       if (data.origin === 'signup') {
         // you can change the navigate for navigateAndResetStack to go to a protected route
-        NavigationService.navigate('ProfilePage');
+        NavigationService.navigate('Profile', {userId: ''});
       } else {
         NavigationService.navigate('ResetPassword', {data});
       }

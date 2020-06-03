@@ -106,8 +106,16 @@ export const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'center',
     alignItems: 'center',
+  },
+
+  activeTab: {
     borderBottomWidth: scaleModerate(2),
     borderColor: '#b88746',
+  },
+
+  inactiveTab: {
+    borderBottomWidth: scaleModerate(0.5),
+    borderColor: '#979797',
   },
 
   followingHeaderContainer: {
@@ -116,8 +124,6 @@ export const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'center',
     alignItems: 'center',
-    borderBottomWidth: scaleModerate(0.5),
-    borderColor: '#979797',
   },
 
   activeHeaderText: {
@@ -160,9 +166,22 @@ export const styles = StyleSheet.create({
     alignItems: 'center',
   },
 
+  profileRowImageContainer: {
+    width: scaleModerate(44),
+    height: scaleModerate(44),
+    borderRadius: scaleModerate(22),
+    borderWidth: scaleModerate(1),
+    borderColor: '#b88746',
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+
   profileRowImage: {
     width: scaleModerate(42),
     height: scaleModerate(42),
+    borderRadius: scaleModerate(21),
+    backgroundColor: '#111111',
   },
 
   followProfileRowTextContainer: {
