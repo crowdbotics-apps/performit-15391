@@ -193,12 +193,12 @@ export default (ProfilePageReducer = (state = initialState, action) => {
           'searchFollowingConnectionsList.data',
           [],
         );
-        const data = [];
+        const searchData = [];
         searchFollowingData &&
           searchFollowingData.length > 0 &&
           searchFollowingData.forEach(item => {
             if (item.following && item.following.pk !== action.userId) {
-              data.push(item);
+              searchData.push(item);
             }
           });
 
@@ -239,7 +239,7 @@ export default (ProfilePageReducer = (state = initialState, action) => {
                 total:
                   state.profile[`${loggedInUserId_unfollow}`]
                     .searchFollowingConnectionsList.total - 1,
-                data: data,
+                data: searchData,
               },
               searchFollowersConnectionsList: {
                 ...state.profile[`${loggedInUserId_unfollow}`]
