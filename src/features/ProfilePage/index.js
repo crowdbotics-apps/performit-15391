@@ -81,8 +81,8 @@ class Profile extends Component {
     }
   }
 
-  showAccountNotConnected = () => {
-    Toast.show('Account is not connected');
+  showAccountNotConnected = platform => {
+    Toast.show(`${platform} account is not connected`);
   };
 
   followUser = async (userId, user, metaData) => {
@@ -325,7 +325,7 @@ class Profile extends Component {
               <View style={styles.socialMediaContainer}>
                 <TouchableOpacity
                   style={styles.singleSocialMediaContainer}
-                  onPress={() => this.showAccountNotConnected()}>
+                  onPress={() => this.showAccountNotConnected('Facebook')}>
                   <Image
                     style={[styles.facebookIcon]}
                     source={require('../../assets/images/facebook.png')}
@@ -333,7 +333,7 @@ class Profile extends Component {
                 </TouchableOpacity>
                 <TouchableOpacity
                   style={styles.singleSocialMediaContainer}
-                  onPress={() => this.showAccountNotConnected()}>
+                  onPress={() => this.showAccountNotConnected('Instagram')}>
                   <Image
                     style={[styles.instagramIcon]}
                     source={require('../../assets/images/instagram.png')}
@@ -341,7 +341,7 @@ class Profile extends Component {
                 </TouchableOpacity>
                 <TouchableOpacity
                   style={styles.singleSocialMediaContainer}
-                  onPress={() => this.showAccountNotConnected()}>
+                  onPress={() => this.showAccountNotConnected('Youtube')}>
                   <Image
                     style={[styles.youtubeIcon]}
                     source={require('../../assets/images/youtube.png')}
