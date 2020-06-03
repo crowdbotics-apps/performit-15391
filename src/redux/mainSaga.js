@@ -1,7 +1,6 @@
 import {all, takeEvery, take} from 'redux-saga/effects';
 
 //@BlueprintReduxSagaImportInsertion
-import CalendarSaga from '../features/Calendar/redux/sagas';
 import EmailAuthSaga from '../features/EmailAuth/redux/sagas';
 import ProfilePageSaga from '../features/ProfilePage/redux/sagas';
 
@@ -15,7 +14,6 @@ export function* mainSaga() {
     // other sagas go here
 
     //@BlueprintReduxSagaMainInsertion
-    CalendarSaga,
     EmailAuthSaga,
     ProfilePageSaga,
   ]);
