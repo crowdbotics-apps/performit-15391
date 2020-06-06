@@ -264,6 +264,23 @@ class ResetPassword(APIView):
         serializer = CustomTokenSerializer(token, many=False)
         return Response({"success": False, "message": "password reset successful.", "user": serializer.data})
 
+
+@permission_classes([IsAuthenticated])
+class ChangePassword(APIView):
+    def post(self, request):
+        user = request.user
+        current_password = request.data.get("current_password")
+        password = request.data.get("password")
+        if current_password is None or password is None:
+            return Response({"success": False, "message": "Required param password or current_password is missing"},
+                            status=400)
+        if user.check_password(current_password):
+            user.set_password(password)
+            user.save()
+            return Response({"success": True, "message": "Password changed successfully"})
+        return Response({"success": False, "message": "Invalid Current Password"})
+
+
 @permission_classes([IsAuthenticated])
 class GetUserDetail(APIView):
     def post(self, request):
