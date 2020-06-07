@@ -63,11 +63,11 @@ class UserDetail(models.Model):
 
 class UserType(models.Model):
     ARTIST = "Artist"
-    SINGER = "Singer"
-    RAPPER = "Rapper"
+    SINGER = "Videographer"
+    RAPPER = "Engineer"
     DANCER = "Dancer"
     PRODUCER = "Producer"
-    OTHER = "Other"
+    OTHER = "DJ"
     USER_TYPE_CHOICES = (
         (ARTIST, ARTIST),
         (SINGER, SINGER),
