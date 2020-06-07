@@ -3,6 +3,7 @@ from django.contrib.auth import get_user_model
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.core.paginator import Paginator, EmptyPage, InvalidPage
 from django.urls import reverse
+from django.utils.datastructures import MultiValueDictKeyError
 from django.views.decorators.csrf import csrf_exempt
 from django.views.generic import DetailView, RedirectView, UpdateView
 from random import randint
@@ -15,10 +16,10 @@ from rest_framework.views import APIView, Response
 from connections.models import UserRelationship
 from posts.models import Post
 from posts.serializers import PostSerializer
-from users.models import VerificationCode, UserType, UserDetail
+from users.models import VerificationCode, UserType, UserDetail, ConnectedSocialMedia
 from users.send_verification_code import SendVerificationCode
 from users.serializers import SignupWithEmailSerializer, SignUpWithPhoneSerializer, CustomTokenSerializer, \
-    UserDetailSerializer, CustomUserSerializer
+    UserDetailSerializer, CustomUserSerializer, UserTypeSerializer, UserDetailEditSerializer
 from users.verification_code_generator import VerificationCodeGenerator
 
 User = get_user_model()
@@ -322,3 +323,65 @@ class GetUserDetail(APIView):
                 "can_edit": can_edit, "total": paginated_data.count,
                          "pages": paginated_data.num_pages, "current_page": int(page) }
         return Response({"success": True, "data": data })
+
+
+@permission_classes([IsAuthenticated])
+class EditProfile(APIView):
+    def post(self, request):
+        try:
+            profile_pic = request.FILES['profile_pic']
+        except MultiValueDictKeyError:
+            profile_pic = None
+
+        user_detail_data = {"user": request.user.id, "profile_pic": profile_pic,
+                            "location_address": request.data.get("location_address"),
+                            "location_lat": request.data.get("location_lat"),
+                            "location_long": request.data.get("location_long"), "gender": request.data.get("gender"),
+                            "bio": request.data.get("bio")}
+        existing = UserDetail.objects.filter(user=request.user.id)
+        if existing.exists():
+            user_detail_serializer = UserDetailEditSerializer(data=user_detail_data)
+        else:
+            user_detail_serializer = UserDetailSerializer(data=user_detail_data)
+        if user_detail_serializer.is_valid():
+            user_type_list = request.data.getlist("user_types")
+            existing_types = UserType.objects.filter(user=request.user.id)
+            if existing_types.exists():
+                existing_types.delete()
+            for i in user_type_list:
+                data = {"user": request.user.id, "user_type": i}
+                user_type_serializer = UserTypeSerializer(data=data)
+                if user_type_serializer.is_valid():
+                    user_type_instance = user_type_serializer.save()
+                else:
+                    return Response({"success": False, "message": user_type_serializer.errors}, status=400)
+                    break
+            try:
+                existing_detail = UserDetail.objects.get(user=request.user.id)
+                existing_detail.profile_pic = profile_pic
+                existing_detail.location_address = user_detail_data.get("location_address")
+                existing_detail.location_lat = user_detail_data.get("location_lat")
+                existing_detail.location_long = user_detail_data.get("location_long")
+                existing_detail.gender = user_detail_data.get("gender")
+                existing_detail.bio = user_detail_data.get("bio")
+                existing_detail.save()
+            except UserDetail.DoesNotExist:
+                user_detail_instance = user_detail_serializer.save()
+            return Response({"success": True, "message": "User Profile Updated"})
+        return Response({"success": False, "message": user_detail_serializer.errors}, status=400)
+
+
+@permission_classes([IsAuthenticated])
+class ConnectSocialMedia(APIView):
+    def post(self, request):
+        social_media_type = request.data.get("social_media_type")
+        if social_media_type is None:
+            return Response({"success": False, "message": "Required Param social_media_type is missing."}, status=400)
+        if social_media_type == ConnectedSocialMedia.FACEBOOK:
+            return Response({"success": True, "message": "Facebook"})
+        elif social_media_type == ConnectedSocialMedia.YOUTUBE:
+            return Response({"success": True, "message": "Youtube"})
+        elif social_media_type == ConnectedSocialMedia.INSTAGRAM:
+            return Response({"success": True, "message": "Instagram"})
+        else:
+            return Response({"success": False, "message": "Invalid social_media_type param is provided."})

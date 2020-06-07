@@ -22,7 +22,7 @@ from drf_yasg import openapi
 from django.conf.urls.static import static
 from performit_15391 import settings
 from users.views import SignUp, ConfirmCode, SendForgotPasswordCode, ResendCode, ResetPassword, GetUserDetail, \
-    ChangePassword
+    ChangePassword, EditProfile, ConnectSocialMedia
 
 urlpatterns = [
     path("", include("home.urls")),
@@ -39,6 +39,8 @@ urlpatterns = [
     path("reset-password/", view=ResetPassword.as_view(), name="reset-password"),
     path("change-password/", view=ChangePassword.as_view(), name="change-password"),
     path("users-detail/", view=GetUserDetail.as_view(), name="users-detail"),
+    path("edit-profile/", view=EditProfile.as_view(), name="edit-profile"),
+    path("connect-social-media/", view=ConnectSocialMedia.as_view(), name="connect-social-media"),
     # Override email confirm to use allauth's HTML view instead of rest_auth's API view
     path("rest-auth/registration/account-confirm-email/<str:key>/", confirm_email),
     path("rest-auth/registration/", include("rest_auth.registration.urls")),

@@ -42,6 +42,14 @@ class UserTypeSerializer(serializers.ModelSerializer):
 
 
 class UserDetailSerializer(serializers.ModelSerializer):
+    # device = DeviceSerializer(required=False)
+    class Meta:
+        model = UserDetail
+        fields = '__all__'
+
+
+class UserDetailEditSerializer(serializers.ModelSerializer):
+    user = serializers.IntegerField()
 
     class Meta:
         model = UserDetail
