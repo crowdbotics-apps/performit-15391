@@ -19,8 +19,9 @@ from posts.serializers import PostSerializer
 from users.models import VerificationCode, UserType, UserDetail, ConnectedSocialMedia
 from users.send_verification_code import SendVerificationCode
 from users.serializers import SignupWithEmailSerializer, SignUpWithPhoneSerializer, CustomTokenSerializer, \
-    UserDetailSerializer, CustomUserSerializer, UserTypeSerializer, UserDetailEditSerializer
+    UserDetailSerializer, CustomUserSerializer, UserTypeSerializer, UserDetailEditSerializer, ConnectedSocialMediaSerializer
 from users.verification_code_generator import VerificationCodeGenerator
+import facebook
 
 User = get_user_model()
 
@@ -375,9 +376,22 @@ class EditProfile(APIView):
 class ConnectSocialMedia(APIView):
     def post(self, request):
         social_media_type = request.data.get("social_media_type")
-        if social_media_type is None:
-            return Response({"success": False, "message": "Required Param social_media_type is missing."}, status=400)
+        token = request.data.get("token")
+        if social_media_type is None or token is None:
+            return Response({"success": False, "message": "Required Param social_media_type, token is missing."}, status=400)
         if social_media_type == ConnectedSocialMedia.FACEBOOK:
+            try:
+                graph = facebook.GraphAPI(access_token=token)
+                user_info = graph.get_object(
+                    id='me',
+                    fields='first_name, middle_name, last_name, id, '
+                           'currency, hometown, location, locale, '
+                           'email, gender, interested_in, picture.type(large),'
+                           ' birthday, cover, link')
+                data = {"user": request.user.id, "social_media_type": ConnectedSocialMedia.FACEBOOK,
+                        "link": user_info.get("link"), "user_token": token, "social_media_user_id": user_info.get("id")}
+            except facebook.GraphAPIError as e:
+                return Response({"success": False, "message": "Unable to call FB / Invalid Token provided"}, status=400)
             return Response({"success": True, "message": "Facebook"})
         elif social_media_type == ConnectedSocialMedia.YOUTUBE:
             return Response({"success": True, "message": "Youtube"})
@@ -385,3 +399,8 @@ class ConnectSocialMedia(APIView):
             return Response({"success": True, "message": "Instagram"})
         else:
             return Response({"success": False, "message": "Invalid social_media_type param is provided."})
+        connected_social_media = ConnectedSocialMediaSerializer(data=data)
+        if connected_social_media.is_valid():
+            instance = connected_social_media.save()
+            serializer = ConnectedSocialMediaSerializer(instance, many=False)
+            return Response({"success": True, "message": "Social Media Connected.", "data": serializer.data})
