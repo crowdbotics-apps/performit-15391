@@ -1,7 +1,15 @@
 import React, {Component} from 'react';
 import {connect} from 'react-redux';
-import {Image, Dimensions, View, TouchableOpacity} from 'react-native';
-import {Text, Layout, Button, Input} from 'react-native-ui-kitten';
+import {
+  Image,
+  Dimensions,
+  View,
+  TouchableOpacity,
+  TextInput,
+  ScrollView,
+  ImageBackground,
+  Text,
+} from 'react-native';
 
 import {scaleModerate, scaleVertical} from '../../../../utils/scale';
 import {styles} from '../styles';
@@ -13,34 +21,68 @@ class SignIn extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      email: '',
+      username: '',
       password: '',
       validationErrors: {},
+      showPassword: false,
+      error: '',
+      showError: true,
+      updateForm: false,
     };
 
-    this.handleEmailChange = this.handleEmailChange.bind(this);
+    this.handleUsernameChange = this.handleUsernameChange.bind(this);
     this.handlePasswordChange = this.handlePasswordChange.bind(this);
     this.goToPasswordRecover = this.goToPasswordRecover.bind(this);
     this.goToSignUp = this.goToSignUp.bind(this);
     this.submitLogin = this.submitLogin.bind(this);
   }
 
+  componentDidUpdate(prevProps) {
+    if (this.props.signInErrors !== prevProps.signInErrors) {
+      this.setState({
+        showError: true,
+      });
+      if (!this.props.signInErrors) {
+        this.setState({
+          updateForm: true,
+        });
+      } else {
+        this.setState({
+          updateForm: false,
+        });
+      }
+    }
+  }
+
   renderImage = () => {
     const screenSize = Dimensions.get('window');
+    const imageBackgroundSize = {
+      width: scaleModerate(312, 1),
+      height: scaleModerate(191, 1),
+    };
     const imageSize = {
-      width: screenSize.width,
-      height: screenSize.height - scaleModerate(500, 1),
+      width: scaleModerate(100, 1),
+      height: scaleModerate(100, 1),
     };
     return (
-      <Image
-        style={[styles.image, imageSize]}
-        source={require('../../../../assets/images/backgroundLoginV1.png')}
-      />
+      <View style={[styles.imageContainer, {width: screenSize.width}]}>
+        <ImageBackground
+          style={[styles.imageBackground, imageBackgroundSize]}
+          source={require('../../../../assets/images/Bubbles.png')}>
+          <Image
+            style={[styles.image, imageSize]}
+            source={require('../../../../assets/images/logo_performit.png')}
+          />
+        </ImageBackground>
+        <View style={[styles.titleTextContainer]}>
+          <Text style={[styles.titleText]}>LOGIN</Text>
+        </View>
+      </View>
     );
   };
 
-  handleEmailChange(email) {
-    this.setState({email});
+  handleUsernameChange(username) {
+    this.setState({username});
     // todo add email validation
   }
 
@@ -51,21 +93,58 @@ class SignIn extends Component {
 
   renderErrors() {
     const {signInErrors} = this.props;
-    if (signInErrors) {
-      return <ErrorBox errorText={signInErrors} />;
+    const {error} = this.state;
+    if (this.state.showError) {
+      if (error) {
+        return <ErrorBox errorText={error} />;
+      } else if (signInErrors) {
+        return <ErrorBox errorText={signInErrors} />;
+      }
+    } else {
+      return;
     }
   }
 
-  submitLogin() {
+  async submitLogin() {
+    let validation = true;
+    this.setState({error: ''});
     const {
       actions: {login},
     } = this.props;
 
-    const {email, password} = this.state;
-    // todo add disable buttons on submit
-    login({email, password});
+    const {username, password} = this.state;
+    if (!username) {
+      this.setState({showError: true});
+      this.setState({error: 'Please enter a username'});
+      validation = false;
+    } else if (!password) {
+      this.setState({showError: true});
+      this.setState({error: 'Please enter a password'});
+      validation = false;
+    }
 
-    this.setState({email: '', password: ''});
+    if (validation) {
+      await login({username, password});
+      setTimeout(() => {
+        if (this.state.updateForm) {
+          this.setState({
+            username: '',
+            password: '',
+          });
+        }
+      }, 1000);
+      setTimeout(() => {
+        this.setState({
+          showError: false,
+        });
+      }, 4000);
+    } else {
+      setTimeout(() => {
+        this.setState({
+          showError: false,
+        });
+      }, 2000);
+    }
   }
 
   goToPasswordRecover() {
@@ -78,62 +157,111 @@ class SignIn extends Component {
     navigation.navigate('SignUp');
   }
 
+  goToForgotPassword() {
+    const {navigation} = this.props;
+    navigation.navigate('ForgotPassword');
+  }
+
   render() {
-    const {email, password} = this.state;
+    const {username, password, showPassword} = this.state;
     const {errors} = this.props;
 
     return (
-      <Layout style={styles.screen}>
-        {this.renderImage()}
-        <View style={styles.buttons}>
-          <TouchableOpacity style={styles.button}>
-            <Icon name="twitter" size={20} color="#ED6854" />
-          </TouchableOpacity>
-          <TouchableOpacity style={styles.button}>
-            <Icon name="google" size={20} color="#ED6854" />
-          </TouchableOpacity>
-          <TouchableOpacity style={styles.button}>
-            <Icon name="facebook" size={20} color="#ED6854" />
-          </TouchableOpacity>
+      <ScrollView
+        contentContainerStyle={styles.signUpScreen}
+        style={{backgroundColor: 'black'}}>
+        <View
+          style={{
+            flexDirection: 'column',
+            justifyContent: 'space-between',
+            alignItems: 'center',
+            height: Dimensions.get('window').height,
+            width: '100%',
+          }}>
+          <View style={{width: '100%', alignItems: 'center'}}>
+            {this.renderImage()}
+            <View style={styles.inputContainer}>
+              <View style={[styles.inputUserNameImage]}>
+                <Image
+                  style={[styles.inputUserNameImage]}
+                  source={require('../../../../assets/images/account.png')}
+                />
+              </View>
+              <TextInput
+                value={username}
+                onChangeText={this.handleUsernameChange}
+                placeholder="Username"
+                style={styles.signUpInput}
+                autoCapitalize="none"
+                placeholderTextColor="#989ba5"
+                underlineColorAndroid="transparent"
+              />
+            </View>
+
+            <View style={styles.inputContainer}>
+              <View style={[styles.inputEmailImage]}>
+                <Image
+                  style={[styles.inputEmailImage]}
+                  source={require('../../../../assets/images/small_lock.png')}
+                />
+              </View>
+              <TextInput
+                value={password}
+                onChangeText={this.handlePasswordChange}
+                placeholder="Password"
+                style={styles.signUpInput}
+                secureTextEntry={!showPassword}
+                autoCapitalize="none"
+                placeholderTextColor="#989ba5"
+                underlineColorAndroid="transparent"
+              />
+              <TouchableOpacity
+                style={[styles.inputEyeImage]}
+                onPress={() =>
+                  password && this.setState({showPassword: !showPassword})
+                }>
+                <Image
+                  style={[styles.inputEyeImage]}
+                  source={require('../../../../assets/images/eye.png')}
+                />
+              </TouchableOpacity>
+            </View>
+
+            <View style={styles.tncContainer}>
+              <TouchableOpacity
+                style={styles.tncText2Container}
+                onPress={() => this.goToForgotPassword()}>
+                <Text style={styles.tncText2}>Forgot Password?</Text>
+              </TouchableOpacity>
+            </View>
+
+            <TouchableOpacity
+              style={styles.signUpButtonContainer}
+              onPress={() => {
+                this.submitLogin();
+              }}>
+              <Text style={styles.signUpButtonText}>LOGIN</Text>
+            </TouchableOpacity>
+          </View>
+
+          <View
+            style={{
+              alignItems: 'center',
+              width: '100%',
+              marginBottom: scaleVertical(15),
+            }}>
+            {this.renderErrors()}
+            <View style={[styles.tncContainer]}>
+              <Text style={styles.tncText1}>Don’t have an account? </Text>
+              <TouchableOpacity
+                style={styles.tncText2Container}
+                onPress={() => this.goToSignUp()}>
+                <Text style={styles.tncText2}>Sign Up</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
         </View>
-        <Input
-          value={email}
-          onChangeText={this.handleEmailChange}
-          placeholder="Email"
-          size="large"
-          style={styles.input}
-          keyboardType="email-address"
-          textStyle={styles.text}
-          autoCapitalize="none"
-        />
-        <Input
-          value={password}
-          onChangeText={this.handlePasswordChange}
-          placeholder="Password"
-          size="large"
-          style={styles.input}
-          secureTextEntry={true}
-          textStyle={styles.text}
-          autoCapitalize="none"
-        />
-
-        <Text
-          style={[styles.textRow, styles.boldText]}
-          onPress={this.goToPasswordRecover}>
-          Forgot password?
-        </Text>
-
-        <Button style={styles.actionButon} onPress={this.submitLogin}>
-          LOGIN
-        </Button>
-
-        <Text style={styles.textRow} onPress={this.goToSignUp}>
-          Don't have an account?
-          <Text style={[styles.textRow, styles.boldText]}> Sign up now</Text>
-        </Text>
-
-        {this.renderErrors()}
-      </Layout>
+      </ScrollView>
     );
   }
 }
@@ -144,11 +272,15 @@ const mapStateToProps = state => ({
 
 const mapDispatchToProps = dispatch => ({
   actions: {
-    login: ({email, password}) => {
-      dispatch(emailAuthActions.login({email, password}));
+    login: ({username, password}) => {
+      dispatch(emailAuthActions.login({username, password}));
     },
   },
 });
+
+SignIn.navigationOptions = {
+  header: null,
+};
 
 export default connect(
   mapStateToProps,
