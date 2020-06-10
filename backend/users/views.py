@@ -301,9 +301,10 @@ class GetUserDetail(APIView):
             user_details = UserDetail.objects.get(user=user)
         except UserDetail.DoesNotExist:
             user_details = None
-        user_types = UserType.objects.filter(user=user)
+        user_types_data = UserType.objects.filter(user=user)
+        user_types_serializer = UserTypeSerializer(user_types_data, many=True)
         user_types = []
-        for type in user_types:
+        for type in user_types_serializer.data:
             user_types.append(type['user_type'])
         posts = Post.objects.filter(user=user).order_by("created_at")
         try:
@@ -311,7 +312,7 @@ class GetUserDetail(APIView):
         except (EmptyPage, InvalidPage):
             return Response({"success": False, "message": "Empty Page"}, status=400)
         post_serializer = PostSerializer(paginated_data.page(page), many=True)
-        user_details_serializer = UserDetailSerializer(many=False)
+        user_details_serializer = UserDetailSerializer(user_details, many=False)
         user_serializer = CustomUserSerializer(user,many=False)
         user_follower_qs = UserRelationship.objects.filter(following=user)
         user_following_qs= UserRelationship.objects.filter(follower=user)
@@ -366,7 +367,7 @@ class EditProfile(APIView):
                 first_name = request.data.get("first_name")
                 last_name = request.data.get("last_name")
                 if first_name is not None:
-                    existing_user.fist_name = first_name
+                    existing_user.first_name = first_name
                 if last_name is not None:
                     existing_user.last_name =  last_name
                 existing_user.save()
