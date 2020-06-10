@@ -2,8 +2,8 @@ source 'https://cdn.cocoapods.org/'
 platform :ios, '9.0'
 require_relative '../node_modules/@react-native-community/cli-platform-ios/native_modules'
 
-target 'performit_15391' do
-  # Pods for performit_15391
+target 'Performit' do
+  # Pods for Performit
   pod 'React', :path => '../node_modules/react-native/'
   pod 'React-Core', :path => '../node_modules/react-native/React'
   pod 'React-DevSupport', :path => '../node_modules/react-native/React'
@@ -38,7 +38,7 @@ target 'performit_15391' do
   pod 'react-native-camera', :path => '../node_modules/react-native-camera'
 
 
-  target 'performit_15391Tests' do
+  target 'PerformitTests' do
     inherit! :search_paths
     # Pods for testing
   end
@@ -46,10 +46,10 @@ target 'performit_15391' do
   use_native_modules!
 end
 
-target 'performit_15391-tvOS' do
-  # Pods for performit_15391-tvOS
+target 'Performit-tvOS' do
+  # Pods for Performit-tvOS
 
-  target 'performit_15391-tvOSTests' do
+  target 'Performit-tvOSTests' do
     inherit! :search_paths
     # Pods for testing
   end
