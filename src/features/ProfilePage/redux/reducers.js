@@ -11,6 +11,8 @@ const initialState = {
     UnfollowUser: null,
     SearchFollowersConnectionsList: null,
     SearchFollowingConnectionsList: null,
+    ChangePassword: null,
+    EditProfile: null,
   },
 };
 
@@ -301,6 +303,10 @@ export default (ProfilePageReducer = (state = initialState, action) => {
       };
     case actions.PROFILE_SEARCH_FOLLOWING_CONNECTIONS_LIST_ERROR:
       return {...state, errors: {SearchFollowingConnectionsList: action.error}};
+    case actions.CHANGE_PASSWORD_ERROR:
+      return {...state, errors: {ChangePassword: action.error}};
+    case actions.EDIT_PROFILE_ERROR:
+      return {...state, errors: {EditProfile: action.error}};
     default:
       return state;
   }

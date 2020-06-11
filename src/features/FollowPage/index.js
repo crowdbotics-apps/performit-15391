@@ -229,11 +229,12 @@ class Follow extends Component {
                     style={[styles.profileRowImageContainer]}>
                     <Image
                       style={[styles.profileRowImage]}
-                      source={
-                        follower &&
-                        follower.follower &&
-                        follower.follower.profile_pic
-                      }
+                      source={{
+                        uri:
+                          follower &&
+                          follower.follower &&
+                          follower.follower.profile_pic,
+                      }}
                     />
                   </TouchableOpacity>
 
@@ -302,11 +303,12 @@ class Follow extends Component {
                     style={[styles.profileRowImageContainer]}>
                     <Image
                       style={[styles.profileRowImage]}
-                      source={
-                        follower &&
-                        follower.following &&
-                        follower.following.profile_pic
-                      }
+                      source={{
+                        uri:
+                          follower &&
+                          follower.following &&
+                          follower.following.profile_pic,
+                      }}
                     />
                   </TouchableOpacity>
 

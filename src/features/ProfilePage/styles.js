@@ -298,4 +298,33 @@ export const styles = StyleSheet.create({
     height: scaleModerate(14),
     marginLeft: scaleModerate(10),
   },
+
+  drawerText: {
+    color: '#ffffff',
+    fontSize: scaleModerate(16),
+    letterSpacing: scaleModerate(0.5),
+    fontFamily: 'Nunito-SemiBold',
+    marginLeft: scaleModerate(20),
+  },
+
+  footerText: {
+    color: '#ffffff',
+    fontSize: scaleModerate(16),
+    letterSpacing: scaleModerate(0.5),
+    fontFamily: 'Nunito-Regular',
+  },
+
+  logoutIcon: {
+    flex: 1,
+    width: scaleModerate(20),
+    height: scaleModerate(22),
+    marginLeft: scaleModerate(10),
+  },
+
+  tNcIcon: {
+    flex: 1,
+    width: scaleModerate(18),
+    height: scaleModerate(25),
+    marginLeft: scaleModerate(20),
+  },
 });

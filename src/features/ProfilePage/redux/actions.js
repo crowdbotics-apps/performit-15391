@@ -60,3 +60,17 @@ export const searchFollowingConnectionsList = (userId, page, token, term) => ({
   token,
   term,
 });
+
+export const changePassword = (token, current_password, password) => ({
+  type: actions.CHANGE_PASSWORD_REQUEST,
+  token,
+  current_password,
+  password,
+});
+
+export const editProfile = (token, user, userTypes) => ({
+  type: actions.EDIT_PROFILE_REQUEST,
+  token,
+  user,
+  userTypes,
+});

@@ -9,8 +9,13 @@ import {
   TouchableWithoutFeedback,
   TouchableOpacity,
 } from 'react-native';
-import {createDrawerNavigator} from 'react-navigation-drawer';
-
+import {
+  createDrawerNavigator,
+  DrawerContentScrollView,
+  DrawerItemList,
+  DrawerItem,
+} from 'react-navigation-drawer';
+import IconFA5 from 'react-native-vector-icons/FontAwesome5';
 import SplashScreen from '../features/SplashScreen';
 import SideMenu from './sideMenu';
 //@BlueprintImportInsertion
@@ -20,6 +25,10 @@ import CameraNavigator from '../features/Camera/navigator';
 import EmailAuthNavigator from '../features/EmailAuth/navigator';
 import ProfilePage from '../features/ProfilePage';
 import FollowPage from '../features/FollowPage';
+import ChangePassword from '../features/ChangePassword';
+import TermsAndConditions from '../features/EmailAuth/TermsAndConditions';
+import EditProfile from '../features/EditProfile';
+import DrawerComponent from './DrawerComponent';
 
 /**
  * new navigators can be imported here
@@ -71,7 +80,7 @@ const AppNavigator = {
   /** new navigators can be added here */
 };
 
-const DrawerAppNavigator = createStackNavigator(
+const EmailAuthStackNavigator = createStackNavigator(
   {
     ...AppNavigator,
   },
@@ -80,24 +89,101 @@ const DrawerAppNavigator = createStackNavigator(
   },
 );
 
-const ProfileAppNavigator = createStackNavigator(
+const DrawerAppNavigator = createDrawerNavigator(
   {
     ProfilePage: {
       screen: ProfilePage,
+      navigationOptions: {
+        drawerLabel: () => null,
+      },
     },
     FollowPage: {
       screen: FollowPage,
+      navigationOptions: {
+        drawerLabel: () => null,
+      },
+    },
+    ChangePasswordPage: {
+      screen: ChangePassword,
+      navigationOptions: {
+        drawerLabel: 'Change Password',
+        drawerIcon: () => (
+          <Image
+            source={require('../assets/images/small_lock.png')}
+            resizeMode="contain"
+            style={{width: 20, height: 22, tintColor: '#111111'}}
+          />
+        ),
+      },
+    },
+    EditProfilePage: {
+      screen: EditProfile,
+      navigationOptions: {
+        drawerLabel: () => null,
+      },
+    },
+    TermsAndConditionsPage: {
+      screen: TermsAndConditions,
+      navigationOptions: {
+        drawerLabel: 'Terms & Conditions',
+        drawerIcon: () => (
+          <IconFA5 name="file-alt" size={25} color={'#111111'} />
+        ),
+      },
     },
   },
   {
     initialRouteName: 'ProfilePage',
+    drawerPosition: 'right',
+    // contentOptions: {
+    //   style: {
+    //     backgroundColor: 'black',
+    //     flex: 1,
+    //   },
+    // },
+
+    drawerType: 'slide',
+    drawerStyle: {
+      style: {
+        backgroundColor: 'black',
+        flex: 1,
+      },
+      backgroundColor: 'black',
+    },
+    contentComponent: DrawerComponent,
+    contentOptions: {
+      backgroundColor: 'black',
+      flex: 1,
+      ...this.props,
+    },
+    // drawerContent: props => (
+    //   <DrawerContentScrollView {...props}>
+    //     <DrawerItemList {...props} />
+    //     <DrawerItem
+    //       label="Help"
+    //       onPress={() => console.log('------link pressed')}
+    //     />
+    //   </DrawerContentScrollView>
+    // ),
   },
 );
+
+// const ProfileAppNavigator = createStackNavigator(
+//   {
+//
+//     DrawerPage: {
+//       screen: DrawerAppNavigator,
+//     },
+//   },
+//   {
+//     initialRouteName: 'ProfilePage',
+//   },
+// );
 
 const LoggedInBottomTabNavigator = createBottomTabNavigator(
   {
     Home: {
-      screen: DrawerAppNavigator,
+      screen: EmailAuthStackNavigator,
       navigationOptions: ({navigation}) => ({
         tabBarVisible: false,
         tabBarIcon: ({focused}) => (
@@ -109,7 +195,7 @@ const LoggedInBottomTabNavigator = createBottomTabNavigator(
       }),
     },
     Location: {
-      screen: DrawerAppNavigator,
+      screen: EmailAuthStackNavigator,
       navigationOptions: ({navigation}) => ({
         tabBarVisible: false,
         title: null,
@@ -122,7 +208,7 @@ const LoggedInBottomTabNavigator = createBottomTabNavigator(
       }),
     },
     CreatePost: {
-      screen: DrawerAppNavigator,
+      screen: EmailAuthStackNavigator,
       navigationOptions: ({navigation}) => ({
         tabBarVisible: false,
         title: null,
@@ -135,7 +221,7 @@ const LoggedInBottomTabNavigator = createBottomTabNavigator(
       }),
     },
     Notifications: {
-      screen: DrawerAppNavigator,
+      screen: EmailAuthStackNavigator,
       navigationOptions: ({navigation}) => ({
         tabBarVisible: false,
         title: null,
@@ -148,7 +234,7 @@ const LoggedInBottomTabNavigator = createBottomTabNavigator(
       }),
     },
     Profile: {
-      screen: ProfileAppNavigator,
+      screen: DrawerAppNavigator,
       navigationOptions: ({navigation}) => {
         return {
           tabBarVisible: navigation.state.index === 0 ? true : false,

@@ -23,6 +23,12 @@ import {
   PROFILE_SEARCH_FOLLOWING_CONNECTIONS_LIST_REQUEST,
   PROFILE_SEARCH_FOLLOWING_CONNECTIONS_LIST_SUCCESS,
   PROFILE_SEARCH_FOLLOWING_CONNECTIONS_LIST_ERROR,
+  CHANGE_PASSWORD_REQUEST,
+  CHANGE_PASSWORD_SUCCESS,
+  CHANGE_PASSWORD_ERROR,
+  EDIT_PROFILE_REQUEST,
+  EDIT_PROFILE_SUCCESS,
+  EDIT_PROFILE_ERROR,
 } from './constants';
 import {request} from '../../../utils/http';
 
@@ -99,6 +105,31 @@ function sendUnfollowUser(user_id, token) {
       },
     },
   );
+}
+
+function sendChangePassword(token, current_password, password) {
+  return request.post(
+    '/change-password/',
+    {
+      current_password,
+      password,
+    },
+    {
+      headers: {
+        Authorization: `Token ${token}`,
+      },
+    },
+  );
+}
+
+function sendEditProfile(data, token) {
+  return request.post('/edit-profile/', data, {
+    headers: {
+      Accept: 'application/json',
+      'Content-Type': 'multipart/form-data',
+      Authorization: `Token ${token}`,
+    },
+  });
 }
 
 function* handleGetUserDetails(action) {
@@ -394,6 +425,105 @@ function* handleGetSearchFollowingConnectionsList(action) {
   }
 }
 
+function* handleChangePassword(action) {
+  const {token, current_password, password} = action;
+  try {
+    const {status, data, success} = yield call(
+      sendChangePassword,
+      token,
+      current_password,
+      password,
+    );
+
+    if (status === 200) {
+      yield put({
+        type: CHANGE_PASSWORD_ERROR,
+        error: '',
+      });
+      if (data && data.success === false) {
+        yield put({
+          type: CHANGE_PASSWORD_ERROR,
+          error: data.message,
+        });
+      } else {
+        yield put({
+          type: CHANGE_PASSWORD_SUCCESS,
+        });
+      }
+
+      // you can change the navigate for navigateAndResetStack to go to a protected route
+      // NavigationService.navigate('ProfilePage');
+    } else {
+      yield put({
+        type: CHANGE_PASSWORD_ERROR,
+        error: 'Unknown Error',
+      });
+    }
+  } catch (error) {
+    yield put({
+      type: CHANGE_PASSWORD_ERROR,
+      error: "Can't recover password with provided email",
+    });
+  }
+}
+
+function* handleEditProfile(action) {
+  const {token, user, userTypes} = action;
+  console.log('--------------------------------token', token);
+  console.log('--------------------------------user', user);
+  console.log('--------------------------------userTypes', userTypes);
+
+  try {
+    const formData = new FormData();
+    Object.keys(user).forEach(key => {
+      formData.append(key, user[key]);
+    });
+
+    userTypes &&
+      userTypes.length &&
+      userTypes.forEach(userType => {
+        formData.append('user_types', userType);
+      });
+
+    console.log('--------------------------------formData', formData);
+    const {status, data, success} = yield call(
+      sendEditProfile,
+      formData,
+      token,
+    );
+
+    if (status === 200) {
+      yield put({
+        type: EDIT_PROFILE_ERROR,
+        error: '',
+      });
+      if (data && data.success === false) {
+        yield put({
+          type: EDIT_PROFILE_ERROR,
+          error: data.message,
+        });
+      } else {
+        yield put({
+          type: EDIT_PROFILE_SUCCESS,
+        });
+      }
+
+      // you can change the navigate for navigateAndResetStack to go to a protected route
+      // NavigationService.navigate('ProfilePage');
+    } else {
+      yield put({
+        type: EDIT_PROFILE_ERROR,
+        error: 'Unknown Error',
+      });
+    }
+  } catch (error) {
+    yield put({
+      type: EDIT_PROFILE_ERROR,
+      error: 'Not able to update user profile',
+    });
+  }
+}
+
 export default all([
   takeLatest(PROFILE_USER_DETAIL_REQUEST, handleGetUserDetails),
   takeLatest(
@@ -414,4 +544,6 @@ export default all([
     PROFILE_SEARCH_FOLLOWING_CONNECTIONS_LIST_REQUEST,
     handleGetSearchFollowingConnectionsList,
   ),
+  takeLatest(CHANGE_PASSWORD_REQUEST, handleChangePassword),
+  takeLatest(EDIT_PROFILE_REQUEST, handleEditProfile),
 ]);

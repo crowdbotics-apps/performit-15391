@@ -108,11 +108,18 @@ class Profile extends Component {
     await unFollowUser(userId, accessToken, loggedInUser, 'profile');
   };
 
+  toggleDrawer = () => {
+    this.props.navigation.toggleDrawer();
+  };
+
   render() {
     let isOtherProfilePage = false;
     let shouldShowFollowButton = true;
     const {navigation, profile: allProfiles, user} = this.props;
-    const {userId} = this.state;
+    let {userId} = this.state;
+    if (!userId) {
+      userId = this.props.user && this.props.user.pk;
+    }
     const profile = allProfiles && allProfiles[`${this.state.userId}`];
     const loggedInProfile = allProfiles && allProfiles[`${user.pk}`];
     let followerDataForFollow = '';
@@ -195,7 +202,7 @@ class Profile extends Component {
                 </View>
                 <TouchableOpacity
                   style={[styles.inputDrawerContainer]}
-                  onPress={() => console.log('-------------open drawer')}>
+                  onPress={() => this.toggleDrawer()}>
                   <View style={[styles.inputDrawer]}>
                     <Image
                       style={[styles.inputDrawer]}
@@ -267,14 +274,14 @@ class Profile extends Component {
                   </View>
                 </View>
                 <View style={styles.profileRightInfoContainer}>
-                  <View
-                    onPress={() => console.log('-------go on Profile')}
-                    style={[styles.profileImageContainer]}>
+                  <View style={[styles.profileImageContainer]}>
                     <Image
                       style={[styles.profileImage]}
-                      source={
-                        profile.user_details && profile.user_details.profile_pic
-                      }
+                      source={{
+                        uri:
+                          profile.user_details &&
+                          profile.user_details.profile_pic,
+                      }}
                     />
                   </View>
                 </View>
@@ -316,7 +323,7 @@ class Profile extends Component {
                 <TouchableOpacity
                   style={styles.editProfileButtonContainer}
                   onPress={() => {
-                    console.log('-------------edit profile');
+                    this.props.navigation.navigate('EditProfilePage');
                   }}>
                   <Text style={styles.editProfileButtonText}>EDIT PROFILE</Text>
                 </TouchableOpacity>
