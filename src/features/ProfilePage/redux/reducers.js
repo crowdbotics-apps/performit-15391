@@ -2,7 +2,7 @@ import * as actions from './constants';
 import {get, cloneDeep} from 'lodash';
 
 const initialState = {
-  profile: null,
+  profile: {},
   errors: {
     UserDetail: null,
     FollowersConnectionsList: null,
@@ -21,7 +21,15 @@ export default (ProfilePageReducer = (state = initialState, action) => {
     case actions.PROFILE_USER_DETAIL_SUCCESS:
       return {
         ...state,
-        profile: {...state.profile, [`${action.userId}`]: action.profile},
+        profile: {
+          ...state.profile,
+          [`${action.userId}`]: {
+            ...state.profile[`${action.userId}`],
+            user: action.profile && action.profile.user,
+            user_details: action.profile && action.profile.user_details,
+            user_types: action.profile && action.profile.user_types,
+          },
+        },
       };
     case actions.PROFILE_USER_DETAIL_ERROR:
       return {...state, errors: {UserDetail: action.error}};

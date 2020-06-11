@@ -52,7 +52,7 @@ class DrawerComponent extends Component {
               justifyContent: 'flex-start',
               alignItems: 'flex-start',
             }}>
-            <View
+            <SafeAreaView
               style={{
                 width: '100%',
                 minHeight: scaleModerate(60),
@@ -64,7 +64,7 @@ class DrawerComponent extends Component {
                 borderColor: '#111111',
               }}>
               <Text style={styles.drawerText}>{user && user.username}</Text>
-            </View>
+            </SafeAreaView>
             <TouchableOpacity
               onPress={() => navigation.navigate('TermsAndConditionsPage')}
               style={{

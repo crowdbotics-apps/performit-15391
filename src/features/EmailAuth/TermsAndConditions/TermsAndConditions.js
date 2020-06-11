@@ -6,6 +6,7 @@ import {
   TouchableOpacity,
   Text,
   ScrollView,
+  SafeAreaView,
 } from 'react-native';
 import {styles} from './styles';
 import {scaleModerate} from '../../../utils/scale';
@@ -22,7 +23,7 @@ class TermsAndConditions extends Component {
       <ScrollView
         contentContainerStyle={styles.screen}
         style={{backgroundColor: 'black'}}>
-        <View style={styles.headerContainer}>
+        <SafeAreaView style={styles.headerContainer}>
           <TouchableOpacity
             style={[styles.inputLeftArrowContainer]}
             onPress={() => navigation.goBack()}>
@@ -36,7 +37,7 @@ class TermsAndConditions extends Component {
           <View style={styles.headerTextContainer}>
             <Text style={styles.headerText}>Terms & Conditions</Text>
           </View>
-        </View>
+        </SafeAreaView>
         <View style={styles.bodyContainer}>
           <Text style={styles.bodyTitleText}>Title goes here</Text>
           <Text style={styles.bodyText}>

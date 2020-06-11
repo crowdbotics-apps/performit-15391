@@ -9,6 +9,7 @@ import {
   Text,
   TextInput,
   Dimensions,
+  SafeAreaView,
 } from 'react-native';
 import Modal from 'react-native-modalbox';
 import {styles} from './styles';
@@ -200,7 +201,7 @@ class ChangePassword extends Component {
             width: '100%',
           }}>
           <View style={{width: '100%', alignItems: 'center'}}>
-            <View style={styles.headerContainer}>
+            <SafeAreaView style={styles.headerContainer}>
               <TouchableOpacity
                 style={[styles.leftArrowContainer]}
                 onPress={() => this.onClose()}>
@@ -224,7 +225,7 @@ class ChangePassword extends Component {
                   />
                 </View>
               </TouchableOpacity>
-            </View>
+            </SafeAreaView>
 
             <View style={styles.inputContainer}>
               <View style={[styles.inputEmailImage]}>

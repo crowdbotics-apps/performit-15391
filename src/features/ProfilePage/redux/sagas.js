@@ -469,9 +469,6 @@ function* handleChangePassword(action) {
 
 function* handleEditProfile(action) {
   const {token, user, userTypes} = action;
-  console.log('--------------------------------token', token);
-  console.log('--------------------------------user', user);
-  console.log('--------------------------------userTypes', userTypes);
 
   try {
     const formData = new FormData();
@@ -485,7 +482,6 @@ function* handleEditProfile(action) {
         formData.append('user_types', userType);
       });
 
-    console.log('--------------------------------formData', formData);
     const {status, data, success} = yield call(
       sendEditProfile,
       formData,

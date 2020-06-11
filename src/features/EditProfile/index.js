@@ -10,6 +10,7 @@ import {
   TextInput,
   Dimensions,
   Platform,
+  SafeAreaView,
 } from 'react-native';
 import RNImagePicker from 'react-native-image-picker';
 import {cloneDeep} from 'lodash';
@@ -173,6 +174,8 @@ class EditProfile extends Component {
         Toast.show('Your profile has been updated successfully');
       }
     } else {
+      const userId = this.props.user && this.props.user.pk;
+      this.props.navigation.navigate('ProfilePage', {userId});
       Toast.show('Your profile has been updated successfully');
     }
   }
@@ -270,7 +273,6 @@ class EditProfile extends Component {
 
     // todo add disable buttons on submit
     await editProfile(accessToken, userObject, userTypes);
-    this.showToastOnErrors();
 
     const {
       user,
@@ -279,15 +281,15 @@ class EditProfile extends Component {
 
     const userId = user && user.pk;
 
-    if (userId && accessToken) {
-      await userDetails(userId, accessToken);
-    }
-
-    setTimeout(() => {
-      this.setState({
-        showError: false,
-        error: '',
-      });
+    setTimeout(async () => {
+      if (userId && accessToken) {
+        await userDetails(userId, accessToken);
+        this.showToastOnErrors();
+        this.setState({
+          showError: false,
+          error: '',
+        });
+      }
       // if (this.state.updateForm) {
       //   console.log('-------------00000');
       //   this.setState({
@@ -297,7 +299,7 @@ class EditProfile extends Component {
       //     showSuccessModal: true,
       //   });
       // }
-    }, 2000);
+    }, 1000);
   };
 
   onClose = () => {
@@ -351,7 +353,7 @@ class EditProfile extends Component {
       <ScrollView
         contentContainerStyle={styles.screen}
         style={{backgroundColor: 'black'}}>
-        <View style={styles.headerContainer}>
+        <SafeAreaView style={styles.headerContainer}>
           <TouchableOpacity
             style={[styles.leftArrowContainer]}
             onPress={() => this.onClose()}>
@@ -385,7 +387,7 @@ class EditProfile extends Component {
               />
             </View>
           </TouchableOpacity>
-        </View>
+        </SafeAreaView>
         <View style={styles.imageContainer}>
           <View style={[styles.profileImageContainer]}>
             <Image style={[styles.profileImage]} source={{uri: profilePic}} />
@@ -456,7 +458,7 @@ class EditProfile extends Component {
           />
         </View>
 
-        <View style={styles.genderTitle}>
+        {/*<View style={styles.genderTitle}>
           <Text style={styles.genderText}>Gender</Text>
         </View>
 
@@ -487,7 +489,7 @@ class EditProfile extends Component {
             </View>
             <Text style={styles.genderText}>Female</Text>
           </TouchableOpacity>
-        </View>
+        </View>*/}
 
         <View
           style={[

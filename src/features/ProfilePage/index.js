@@ -6,6 +6,7 @@ import {
   TouchableOpacity,
   View,
   ActivityIndicator,
+  SafeAreaView,
 } from 'react-native';
 import Toast from 'react-native-simple-toast';
 import {Text, Button} from 'react-native-ui-kitten';
@@ -13,6 +14,8 @@ import {styles} from './styles';
 import * as profileActions from '../ProfilePage/redux/actions';
 import {connect} from 'react-redux';
 import {get} from 'lodash';
+import getPath from '../../utils/getPath';
+import {userTypesConfig} from '../../config/userTypes';
 
 class Profile extends Component {
   constructor(props) {
@@ -125,10 +128,16 @@ class Profile extends Component {
     let followerDataForFollow = '';
     let followerMetaDataForFollow = '';
     let userTypes = '';
-    if (profile && profile.user_types && profile.user_types.length > 0) {
+    if (
+      userTypesConfig &&
+      profile &&
+      profile.user_types &&
+      profile.user_types.length > 0
+    ) {
       profile.user_types.forEach(item => {
-        userTypes = userTypes + item + ', ';
+        userTypes = userTypes + userTypesConfig[item] + ', ';
       });
+      userTypes = userTypes.replace(/,\s*$/, '');
     }
     const followersCount = get(profile, 'followersConnectionsList.total', 0);
     const followingCount = get(profile, 'followingConnectionsList.total', 0);
@@ -180,7 +189,7 @@ class Profile extends Component {
         {!this.state.isLoading ? (
           profile && (
             <>
-              <View style={styles.headerContainer}>
+              <SafeAreaView style={styles.headerContainer}>
                 {!!isOtherProfilePage && (
                   <TouchableOpacity
                     style={[styles.leftArrowContainer]}
@@ -210,7 +219,7 @@ class Profile extends Component {
                     />
                   </View>
                 </TouchableOpacity>
-              </View>
+              </SafeAreaView>
 
               <View style={styles.profileInfoContainer}>
                 <View style={styles.profileLeftInfoContainer}>
@@ -280,7 +289,7 @@ class Profile extends Component {
                       source={{
                         uri:
                           profile.user_details &&
-                          profile.user_details.profile_pic,
+                          getPath(profile.user_details.profile_pic),
                       }}
                     />
                   </View>

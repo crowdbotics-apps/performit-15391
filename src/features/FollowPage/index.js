@@ -7,11 +7,13 @@ import {
   View,
   Text,
   TextInput,
+  SafeAreaView,
 } from 'react-native';
 import {styles} from './styles';
 import * as profileActions from '../ProfilePage/redux/actions';
 import {connect} from 'react-redux';
-import {get} from 'lodash';
+import {get, cloneDeep} from 'lodash';
+import {userTypesConfig} from '../../config/userTypes';
 
 class Follow extends Component {
   constructor(props) {
@@ -124,8 +126,48 @@ class Follow extends Component {
     const {activeTab, searchTerm} = this.state;
     const profile = allProfiles && allProfiles[`${this.state.userId}`];
 
-    let followers = get(profile, 'followersConnectionsList.data', []);
-    let following = get(profile, 'followingConnectionsList.data', []);
+    let followers = cloneDeep(
+      get(profile, 'followersConnectionsList.data', []),
+    );
+    let following = cloneDeep(
+      get(profile, 'followingConnectionsList.data', []),
+    );
+    let userTypes = '';
+    if (userTypesConfig && followers && followers.length > 0) {
+      followers.forEach(follower => {
+        userTypes = '';
+        if (
+          follower &&
+          follower.meta_data &&
+          follower.meta_data.user_types &&
+          follower.meta_data.user_types.length > 0
+        ) {
+          follower.meta_data.user_types.forEach(item => {
+            userTypes = userTypes + userTypesConfig[item] + ', ';
+          });
+          userTypes = userTypes.replace(/,\s*$/, '');
+        }
+        follower.userTypes = userTypes;
+      });
+    }
+
+    if (userTypesConfig && following && following.length > 0) {
+      following.forEach(follower => {
+        userTypes = '';
+        if (
+          follower &&
+          follower.meta_data &&
+          follower.meta_data.user_types &&
+          follower.meta_data.user_types.length > 0
+        ) {
+          follower.meta_data.user_types.forEach(item => {
+            userTypes = userTypes + userTypesConfig[item] + ', ';
+          });
+          userTypes = userTypes.replace(/,\s*$/, '');
+        }
+        follower.userTypes = userTypes;
+      });
+    }
 
     let followersCount = get(profile, 'followersConnectionsList.total', 0);
     let followingCount = get(profile, 'followingConnectionsList.total', 0);
@@ -142,7 +184,7 @@ class Follow extends Component {
       <ScrollView
         contentContainerStyle={styles.screen}
         style={{backgroundColor: 'black'}}>
-        <View style={styles.headerContainer}>
+        <SafeAreaView style={styles.headerContainer}>
           <TouchableOpacity
             style={[styles.inputDrawerContainer]}
             onPress={() => navigation.goBack()}>
@@ -158,7 +200,7 @@ class Follow extends Component {
               {profile && profile.user && profile.user.username}
             </Text>
           </View>
-        </View>
+        </SafeAreaView>
 
         <View style={styles.searchButtonContainer}>
           <TouchableOpacity
@@ -256,13 +298,7 @@ class Follow extends Component {
                     </View>
                     <View style={styles.followProfileRowRoleContainer}>
                       <Text style={styles.followProfileSubText}>
-                        {follower &&
-                          follower.meta_data &&
-                          follower.meta_data.user_types &&
-                          follower.meta_data.user_types.length > 0 &&
-                          follower.meta_data.user_types.map(userType => (
-                            <Text>{userType}, </Text>
-                          ))}
+                        {follower.userTypes}
                       </Text>
                     </View>
                   </View>
@@ -330,13 +366,7 @@ class Follow extends Component {
                     </View>
                     <View style={styles.followProfileRowRoleContainer}>
                       <Text style={styles.followProfileSubText}>
-                        {follower &&
-                          follower.meta_data &&
-                          follower.meta_data.user_types &&
-                          follower.meta_data.user_types.length > 0 &&
-                          follower.meta_data.user_types.map(userType => (
-                            <Text>{userType}, </Text>
-                          ))}
+                        {follower.userTypes}
                       </Text>
                     </View>
                   </View>
