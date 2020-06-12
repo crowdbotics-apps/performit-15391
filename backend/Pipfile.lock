@@ -1,7 +1,7 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "b1567b9546bcb3d2077ba09e1cff2a387a45698ea59136edca0b96050c843996"
+            "sha256": "973bd03e69ba21ff51de0fc9f7fd8ee27f688bebdf7b894a330cef08c88391e7"
         },
         "pipfile-spec": 6,
         "requires": {
@@ -104,6 +104,14 @@
             ],
             "index": "pypi",
             "version": "==0.9.5"
+        },
+        "django-storages": {
+            "hashes": [
+                "sha256:3103991c2ee8cef8a2ff096709973ffe7106183d211a79f22cf855f33533d924",
+                "sha256:a59e9923cbce7068792f75344ed7727021ee4ac20f227cf17297d0d03d141e91"
+            ],
+            "index": "pypi",
+            "version": "==1.9.1"
         },
         "djangorestframework": {
             "hashes": [
@@ -369,10 +377,10 @@
         },
         "twilio": {
             "hashes": [
-                "sha256:7c6329118583852bb06a2065dd2987a012310e5dfd834ef821d736b059bd1c74"
+                "sha256:9d423321d577cab175712e4cc3636b68534572c3ab1c6c5b191925d3abac0223"
             ],
             "index": "pypi",
-            "version": "==6.41.0"
+            "version": "==6.42.0"
         },
         "uritemplate": {
             "hashes": [
