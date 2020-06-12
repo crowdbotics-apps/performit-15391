@@ -170,7 +170,8 @@ STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 AWS_ACCESS_KEY_ID = os.environ.get('AWS_ACCESS_KEY_ID')
 AWS_SECRET_ACCESS_KEY = os.environ.get('AWS_SECRET_ACCESS_KEY')
 AWS_STORAGE_BUCKET_NAME = os.environ.get('AWS_STORAGE_BUCKET_NAME')
-AWS_STORAGE_REGION = os.environ.get("AWS_STORAGE_REGION")
+AWS_S3_REGION_NAME = os.environ.get("AWS_STORAGE_REGION")
+AWS_S3_SIGNATURE_VERSION = 's3v4'
 
 MEDIA_ROOT = os.path.join(BASE_DIR, 'uploads')
 MEDIA_URL = '/uploads/'
