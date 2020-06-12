@@ -1,4 +1,4 @@
-import config from '../config/app';
+import {appConfig as config} from '../config/app';
 
 const getPath = file => {
   if (file) {

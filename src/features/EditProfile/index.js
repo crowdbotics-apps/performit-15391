@@ -22,6 +22,9 @@ import CheckBox from 'react-native-check-box';
 import Toast from 'react-native-simple-toast';
 import {scaleModerate, scaleVertical} from '../../utils/scale';
 import ErrorBox from '../../components/ErrorBox';
+import InstagramLogin from './react-native-instagram-login';
+import CookieManager from '@react-native-community/cookies';
+import FacebookLogin from './react-native-fb-login'
 
 class EditProfile extends Component {
   constructor(props) {
@@ -76,6 +79,12 @@ class EditProfile extends Component {
     let isDancerChecked = false;
     let isProducerChecked = false;
     let isOtherChecked = false;
+
+    CookieManager.clearAll(true)
+      .then((res) => {
+        console.log('CookieManager.clearAll =>', res);
+        this.setState({ token: '' })
+      });
 
     if (profile && profile.user_types && profile.user_types.length > 0) {
       if (profile.user_types.includes('Artist')) {
@@ -590,48 +599,56 @@ class EditProfile extends Component {
             <Text style={styles.genderText}>Other</Text>
           </View>
         </View>
-
-        <View style={styles.socialConnectEditProfileContainer}>
-          <View style={styles.socialConnectEditProfileLeftContainer}>
-            <View style={styles.singleSocialMediaContainer}>
-              <Image
-                style={[styles.facebookIcon]}
-                source={require('../../assets/images/facebook.png')}
-              />
+        <TouchableOpacity onPress={() => {
+          this.facebookLogin.show()
+        }}>
+          <View style={styles.socialConnectEditProfileContainer}>
+            <View style={styles.socialConnectEditProfileLeftContainer}>
+              <View style={styles.singleSocialMediaContainer}>
+                <Image
+                  style={[styles.facebookIcon]}
+                  source={require('../../assets/images/facebook.png')}
+                />
+              </View>
+              <Text style={styles.socialMediaText}>Connect to Facebook</Text>
             </View>
-            <Text style={styles.socialMediaText}>Connect to Facebook</Text>
-          </View>
 
-          <View style={styles.socialConnectEditProfileRightContainer}>
-            <View style={styles.rightIconContainer}>
-              <Image
-                style={[styles.rightIcon]}
-                source={require('../../assets/images/right_arrow.png')}
-              />
-            </View>
-          </View>
-        </View>
-
-        <View style={styles.socialConnectEditProfileContainer}>
-          <View style={styles.socialConnectEditProfileLeftContainer}>
-            <View style={styles.singleSocialMediaContainer}>
-              <Image
-                style={[styles.instagramIcon]}
-                source={require('../../assets/images/instagram.png')}
-              />
-            </View>
-            <Text style={styles.socialMediaText}>Connect to Instagram</Text>
-          </View>
-
-          <View style={styles.socialConnectEditProfileRightContainer}>
-            <View style={styles.rightIconContainer}>
-              <Image
-                style={[styles.rightIcon]}
-                source={require('../../assets/images/right_arrow.png')}
-              />
+            <View style={styles.socialConnectEditProfileRightContainer}>
+              <View style={styles.rightIconContainer}>
+                <Image
+                  style={[styles.rightIcon]}
+                  source={require('../../assets/images/right_arrow.png')}
+                />
+              </View>
             </View>
           </View>
-        </View>
+        </TouchableOpacity>
+        <TouchableOpacity onPress={() => {
+            this.instagramLogin.show();
+        }}>
+          <View style={styles.socialConnectEditProfileContainer}>
+            <View style={styles.socialConnectEditProfileLeftContainer}>
+              <View style={styles.singleSocialMediaContainer}>
+                <Image
+                  style={[styles.instagramIcon]}
+                  source={require('../../assets/images/instagram.png')}
+                />
+              </View>
+              <Text style={styles.socialMediaText}>Connect to Instagram</Text>
+            </View>
+
+            <View style={styles.socialConnectEditProfileRightContainer}>
+              <View style={styles.rightIconContainer}>
+                <Image
+                  style={[styles.rightIcon]}
+                  source={require('../../assets/images/right_arrow.png')}
+                />
+              </View>
+            </View>
+          </View>
+
+        </TouchableOpacity>
+        
 
         <View style={styles.socialConnectEditProfileContainer}>
           <View style={styles.socialConnectEditProfileLeftContainer}>
@@ -655,6 +672,29 @@ class EditProfile extends Component {
         </View>
 
         <View style={{height: scaleModerate(40)}} />
+
+        <InstagramLogin
+          ref={ref => (this.instagramLogin = ref)}
+          appId="287381368975208"
+          appSecret="b0bd61f7942c40fa3b74995458e0fcbe"
+          redirectUrl="https://performit-15391.botics.co/"
+          scopes={['user_profile', 'user_media']}
+          onLoginSuccess={async res => {
+            const data = await fetch(`https://graph.instagram.com/${res.user_id}?fields=id,username&access_token=${res.access_token}`)
+            const user = await data.json()
+            console.log(`https://www.instagram.com/${user.username}`)
+          }}
+          onLoginFailure={data => console.log(data)}
+        />
+         <FacebookLogin
+          ref={ref => (this.facebookLogin = ref)}
+          clientId="1657132321119747"
+          redirectURI="https://performit-15391.botics.co"
+          scope={['public_profile', 'user_link']}
+          onLoginSuccess={res => {
+            console.log('resssssss', res);
+          }}
+        />
       </ScrollView>
     );
   }
