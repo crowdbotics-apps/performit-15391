@@ -359,17 +359,6 @@ class EditProfile(APIView):
                     break
             try:
                 existing_detail = UserDetail.objects.get(user=request.user.id)
-                try:
-                    existing_user = User.objects.get(pk=request.user.id)
-                except User.DoesNotExist:
-                    return Response({"success": False, "message": "Invalid Userid provided"})
-                first_name = request.data.get("first_name")
-                last_name = request.data.get("last_name")
-                if first_name is not None:
-                    existing_user.first_name = first_name
-                if last_name is not None:
-                    existing_user.last_name =  last_name
-                existing_user.save()
                 existing_detail.profile_pic = profile_pic
                 existing_detail.location_address = user_detail_data.get("location_address")
                 existing_detail.location_lat = user_detail_data.get("location_lat")
@@ -379,6 +368,17 @@ class EditProfile(APIView):
                 existing_detail.save()
             except UserDetail.DoesNotExist:
                 user_detail_instance = user_detail_serializer.save()
+            try:
+                existing_user = User.objects.get(pk=request.user.id)
+            except User.DoesNotExist:
+                return Response({"success": False, "message": "Invalid Userid provided"})
+            first_name = request.data.get("first_name")
+            last_name = request.data.get("last_name")
+            if first_name is not None:
+                existing_user.first_name = first_name
+            if last_name is not None:
+                existing_user.last_name = last_name
+            existing_user.save()
             return Response({"success": True, "message": "User Profile Updated"})
         return Response({"success": False, "message": user_detail_serializer.errors}, status=400)
 
