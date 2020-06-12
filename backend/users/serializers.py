@@ -6,7 +6,7 @@ from allauth.account.adapter import get_adapter
 from django.utils.translation import ugettext_lazy as _
 from rest_framework import serializers, exceptions
 from django.conf import settings
-from users.models import UserDetail, UserType, ConnectedSocialMedia
+from users.models import UserDetail, UserType
 
 User = get_user_model()
 
@@ -54,13 +54,6 @@ class UserDetailEditSerializer(serializers.ModelSerializer):
     class Meta:
         model = UserDetail
         fields = '__all__'
-
-
-class ConnectedSocialMediaSerializer(serializers.ModelSerializer):
-
-    class Meta:
-        model = ConnectedSocialMedia
-        fields = "__all__"
 
 
 class CustomLoginSerializer(serializers.Serializer):

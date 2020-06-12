@@ -26,6 +26,7 @@ class VerificationCodeAdmin(admin.ModelAdmin):
 @admin.register(UserDetail)
 class UserDetailAdmin(admin.ModelAdmin):
     list_display = ['user', 'profile_pic', 'location_address', 'location_lat', 'location_long', 'gender', 'bio',
+                    'facebook_link', 'youtube_link', 'instagram_link',
                     'created_at', 'updated_at']
 
 

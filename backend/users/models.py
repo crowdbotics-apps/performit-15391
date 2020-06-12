@@ -49,6 +49,9 @@ class UserDetail(models.Model):
     location_long = models.CharField("Enter Location Longitude", max_length=255, null=True, blank=True)
     gender = models.CharField("Select Gender", choices=GENDER_CHOICES, max_length=10, null=True, blank=True)
     bio = models.TextField("Enter Bio", null=True, blank=True)
+    facebook_link = models.CharField("Facebook Link", max_length=1024, null=True, blank=True)
+    instagram_link = models.CharField("Instagram Link", max_length=1024, null=True, blank=True)
+    youtube_link = models.CharField("Youtube Link", max_length=1024, null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
@@ -88,28 +91,3 @@ class UserType(models.Model):
         verbose_name = 'User Type Management'
         verbose_name_plural = 'User Type Management'
 
-
-class ConnectedSocialMedia(models.Model):
-    FACEBOOK = "Facebook"
-    INSTAGRAM = "Instagram"
-    YOUTUBE = "Youtube"
-    SOCIAL_MEDIA_CHOICES = (
-        (FACEBOOK, FACEBOOK),
-        (INSTAGRAM, INSTAGRAM),
-        (YOUTUBE, YOUTUBE),
-    )
-    social_media_type = models.CharField("Select Social Media Type", choices=SOCIAL_MEDIA_CHOICES, null=False, max_length=20)
-    link = models.CharField("Social Media Link", max_length=1024, null=True, blank=True)
-    social_media_user_id = models.CharField("Social Media User ID", max_length=1024, null=True, blank=True)
-    user_token = models.CharField("Social Media Token", max_length=2048, null=True, blank=True)
-    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="connected_social_media_user_set")
-    created_at = models.DateTimeField(auto_now_add=True)
-    updated_at = models.DateTimeField(auto_now=True)
-
-    def __set__(self):
-        return "{} - {}".format(self.user, self.social_media_type, self.link, self.user_id, self.user_token,
-                                self.created_at, self.updated_at)
-
-    class Meta:
-        verbose_name = 'Connected Social Media Management'
-        verbose_name_plural = 'Connected Social Media Management'
