@@ -16,12 +16,11 @@ from rest_framework.views import APIView, Response
 from connections.models import UserRelationship
 from posts.models import Post
 from posts.serializers import PostSerializer
-from users.models import VerificationCode, UserType, UserDetail, ConnectedSocialMedia
+from users.models import VerificationCode, UserType, UserDetail
 from users.send_verification_code import SendVerificationCode
 from users.serializers import SignupWithEmailSerializer, SignUpWithPhoneSerializer, CustomTokenSerializer, \
-    UserDetailSerializer, CustomUserSerializer, UserTypeSerializer, UserDetailEditSerializer, ConnectedSocialMediaSerializer
+    UserDetailSerializer, CustomUserSerializer, UserTypeSerializer, UserDetailEditSerializer
 from users.verification_code_generator import VerificationCodeGenerator
-import facebook
 
 User = get_user_model()
 
@@ -388,31 +387,64 @@ class EditProfile(APIView):
 class ConnectSocialMedia(APIView):
     def post(self, request):
         social_media_type = request.data.get("social_media_type")
-        token = request.data.get("token")
-        if social_media_type is None or token is None:
-            return Response({"success": False, "message": "Required Param social_media_type, token is missing."}, status=400)
-        if social_media_type == ConnectedSocialMedia.FACEBOOK:
-            try:
-                graph = facebook.GraphAPI(access_token=token)
-                user_info = graph.get_object(
-                    id='me',
-                    fields='first_name, middle_name, last_name, id, '
-                           'currency, hometown, location, locale, '
-                           'email, gender, interested_in, picture.type(large),'
-                           ' birthday, cover, link')
-                data = {"user": request.user.id, "social_media_type": ConnectedSocialMedia.FACEBOOK,
-                        "link": user_info.get("link"), "user_token": token, "social_media_user_id": user_info.get("id")}
-            except facebook.GraphAPIError as e:
-                return Response({"success": False, "message": "Unable to call FB / Invalid Token provided"}, status=400)
-            return Response({"success": True, "message": "Facebook"})
-        elif social_media_type == ConnectedSocialMedia.YOUTUBE:
-            return Response({"success": True, "message": "Youtube"})
-        elif social_media_type == ConnectedSocialMedia.INSTAGRAM:
-            return Response({"success": True, "message": "Instagram"})
+        link = request.data.get("link")
+        if social_media_type is None or link is None:
+            return Response({"success": False, "message": "Required Param social_media_type, link is missing."},
+                            status=400)
+        user_detail_exist = True
+        try:
+            user_details = UserDetail.objects.get(user=request.user.id)
+        except UserDetail.DoesNotExist:
+            user_detail_exist = False
+        if social_media_type == "Facebook":
+            if user_detail_exist:
+                user_details.facebook_link = link
+            else:
+                data = {"facebook_link": link, "user": request.user.id}
+        elif social_media_type == "Youtube":
+            if user_detail_exist:
+                user_details.youtube_link = link
+            else:
+                data = {"youtube_link": link, "user": request.user.id}
+        elif social_media_type == "Instagram":
+            if user_detail_exist:
+                user_details.instagram_link = link
+            else:
+                data = {"instagram_link": link, "user": request.user.id}
         else:
             return Response({"success": False, "message": "Invalid social_media_type param is provided."})
-        connected_social_media = ConnectedSocialMediaSerializer(data=data)
-        if connected_social_media.is_valid():
-            instance = connected_social_media.save()
-            serializer = ConnectedSocialMediaSerializer(instance, many=False)
-            return Response({"success": True, "message": "Social Media Connected.", "data": serializer.data})
+        if user_detail_exist:
+            user_details.save()
+            serializer = UserDetailSerializer(user_details, many=False)
+            return Response({"success": True, "message": "Link Updated", "data": serializer.data})
+        else:
+            user_detail_serializer = UserDetailSerializer(data=data)
+            if user_detail_serializer.is_valid():
+                instance = user_detail_serializer.save()
+                serializer = UserDetailSerializer(instance, many=False)
+                return Response({"success": True, "message": "Link Updated", "data": serializer.data})
+            return Response({"success": False, "message": user_detail_serializer.errors})
+
+
+@permission_classes([IsAuthenticated])
+class DisconnectSocialMedia(APIView):
+    def post(self, request):
+        social_media_type = request.data.get("social_media_type")
+        if social_media_type is None:
+            return Response({"success": False, "message": "Required Param social_media_type, link is missing."},
+                            status=400)
+        try:
+            user_details = UserDetail.objects.get(user=request.user.id)
+        except UserDetail.DoesNotExist:
+            return Response({"success": False, "message": "Please Connect Social Media First"}, status=400)
+        if social_media_type == "Facebook":
+            user_details.facebook_link = None
+        elif social_media_type == "Youtube":
+            user_details.youtube_link = None
+        elif social_media_type == "Instagram":
+            user_details.instagram_link = None
+        else:
+            return Response({"success": False, "message": "Invalid social_media_type param is provided."})
+        user_details.save()
+        serializer = UserDetailSerializer(user_details, many=False)
+        return Response({"success": True, "messsage": "Social Media Disconnected", "data": serializer.data})
