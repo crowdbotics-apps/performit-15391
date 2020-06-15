@@ -50,7 +50,8 @@ LOCAL_APPS = [
     'home',
     'users.apps.UsersConfig',
     'posts',
-    'connections'
+    'connections',
+    'groups'
 ]
 THIRD_PARTY_APPS = [
     'rest_framework',
@@ -150,7 +151,6 @@ USE_TZ = True
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/2.2/howto/static-files/
-DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
 
 STATIC_URL = '/static/'
 
@@ -241,6 +241,8 @@ FCM_DJANGO_SETTINGS = {
 # end fcm_django push notifications
 
 
+if DEBUG == False:
+    DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
 # if DEBUG:
 #     # output email to console instead of sending
 #     EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
