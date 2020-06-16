@@ -32,6 +32,7 @@ urlpatterns = [
     path("users/", include("users.urls", namespace="users")),
     path("rest-auth/", include("rest_auth.urls")),
     path("connections/", include("connections.urls")),
+    path("dashboards/", include("dashboards.urls")),
     path("sign-up/", view=SignUp.as_view(), name="sign-up"),
     path("confirm-code/", view=ConfirmCode.as_view(), name="confirm-code"),
     path("send-forgot-password-code/", view=SendForgotPasswordCode.as_view(), name="send-forgot-password-code"),

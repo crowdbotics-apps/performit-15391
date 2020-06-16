@@ -66,3 +66,18 @@ class PostComment(models.Model):
         verbose_name = 'Post Comment Management'
         verbose_name_plural = 'Post Comment Management'
 
+
+class PostView(models.Model):
+    viewer = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="post_view_viewer_set")
+    post = models.ForeignKey(Post, on_delete=models.CASCADE, related_name="post_view_post_set")
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    def __set__(self):
+        return "{} - {}".format(self.viewer, self.post,
+                                self.created_at, self.updated_at)
+
+    class Meta:
+        verbose_name = 'Post Views Management'
+        verbose_name_plural = 'Post Views Management'
+
