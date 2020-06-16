@@ -51,7 +51,8 @@ LOCAL_APPS = [
     'users.apps.UsersConfig',
     'posts',
     'connections',
-    'groups'
+    'groups',
+    'dashboards',
 ]
 THIRD_PARTY_APPS = [
     'rest_framework',
