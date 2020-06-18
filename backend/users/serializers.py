@@ -19,11 +19,20 @@ class UserDetailSerializer(serializers.ModelSerializer):
 
 
 class CustomUserSerializer(serializers.ModelSerializer):
+    meta_data = serializers.SerializerMethodField()
 
     class Meta:
         model = User
-        fields = ('pk', 'username', 'email', 'first_name', 'last_name', "phone_number", "phone_number_verified", "name")
+        fields = ('pk','meta_data', 'username', 'email', 'first_name', 'last_name', "phone_number", "phone_number_verified", "name")
         read_only_fields = ('email', )
+
+    def get_meta_data(self, obj):
+        try:
+            user_details = UserDetail.objects.get(user=obj.id)
+        except UserDetail.DoesNotExist:
+            user_details = None
+        user_detail_serializer = UserDetailSerializer(user_details, many=False)
+        return {"user_details": user_detail_serializer.data}
 
 
 class CustomTokenSerializer(serializers.ModelSerializer):
