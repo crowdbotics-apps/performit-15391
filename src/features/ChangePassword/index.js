@@ -10,6 +10,7 @@ import {
   TextInput,
   Dimensions,
   SafeAreaView,
+  ActivityIndicator,
 } from 'react-native';
 import Modal from 'react-native-modalbox';
 import {styles} from './styles';
@@ -34,6 +35,7 @@ class ChangePassword extends Component {
       error: '',
       updateForm: false,
       showSuccessModal: false,
+      isChangePasswordLoading: false,
     };
   }
 
@@ -112,7 +114,7 @@ class ChangePassword extends Component {
 
   changePassword = async () => {
     let validation = true;
-    this.setState({error: ''});
+    this.setState({error: '', isChangePasswordLoading: true});
     const {
       actions: {changePassword},
       accessToken,
@@ -150,6 +152,7 @@ class ChangePassword extends Component {
       setTimeout(() => {
         this.setState({
           showError: false,
+          isChangePasswordLoading: false,
         });
         if (this.state.updateForm) {
           this.setState({
@@ -164,6 +167,7 @@ class ChangePassword extends Component {
       setTimeout(() => {
         this.setState({
           showError: false,
+          isChangePasswordLoading: false,
         });
       }, 2000);
     }
@@ -187,6 +191,7 @@ class ChangePassword extends Component {
       showNewPassword,
       confirmNewPassword,
       showConfirmNewPassword,
+      isChangePasswordLoading,
     } = this.state;
     return (
       <ScrollView
@@ -215,16 +220,24 @@ class ChangePassword extends Component {
               <View style={styles.headerTextContainer}>
                 <Text style={styles.headerText}>Change Password</Text>
               </View>
-              <TouchableOpacity
-                style={[styles.inputDrawerContainer]}
-                onPress={() => this.changePassword()}>
-                <View style={[styles.inputDrawer]}>
-                  <Image
-                    style={[styles.inputDrawer]}
-                    source={require('../../assets/images/right_tick_icon.png')}
-                  />
+              {!isChangePasswordLoading ? (
+                <TouchableOpacity
+                  style={[styles.inputDrawerContainer]}
+                  onPress={() => this.changePassword()}>
+                  <View style={[styles.inputDrawer]}>
+                    <Image
+                      style={[styles.inputDrawer]}
+                      source={require('../../assets/images/right_tick_icon.png')}
+                    />
+                  </View>
+                </TouchableOpacity>
+              ) : (
+                <View style={[styles.inputDrawerContainer]}>
+                  <View style={[styles.inputDrawer]}>
+                    <ActivityIndicator animating />
+                  </View>
                 </View>
-              </TouchableOpacity>
+              )}
             </SafeAreaView>
 
             <View style={styles.inputContainer}>

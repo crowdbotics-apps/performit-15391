@@ -124,7 +124,7 @@ class Profile extends Component {
       userId = this.props.user && this.props.user.pk;
     }
     const profile = allProfiles && allProfiles[`${this.state.userId}`];
-    const loggedInProfile = allProfiles && allProfiles[`${user.pk}`];
+    const loggedInProfile = user && allProfiles && allProfiles[`${user.pk}`];
     let followerDataForFollow = '';
     let followerMetaDataForFollow = '';
     let userTypes = '';
@@ -141,7 +141,7 @@ class Profile extends Component {
     }
     const followersCount = get(profile, 'followersConnectionsList.total', 0);
     const followingCount = get(profile, 'followingConnectionsList.total', 0);
-    if (userId !== user.pk) {
+    if (user && userId !== user.pk) {
       isOtherProfilePage = true;
       // const followers = get(profile, 'followersConnectionsList.data', []);
       // followers &&
@@ -182,6 +182,8 @@ class Profile extends Component {
         });
     }
 
+    console.log('-----------------------------profile', profile);
+
     return (
       <ScrollView
         contentContainerStyle={styles.screen}
@@ -194,6 +196,7 @@ class Profile extends Component {
                   <TouchableOpacity
                     style={[styles.leftArrowContainer]}
                     onPress={() =>
+                      user &&
                       navigation.navigate('ProfilePage', {userId: user.pk})
                     }>
                     <View style={[styles.leftArrow]}>
@@ -289,7 +292,7 @@ class Profile extends Component {
                       source={{
                         uri:
                           profile.user_details &&
-                          getPath(profile.user_details.profile_pic),
+                          profile.user_details.profile_pic,
                       }}
                     />
                   </View>

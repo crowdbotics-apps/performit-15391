@@ -1,41 +1,49 @@
 {
   "project_info": {
-    "project_number": "900242611780",
-    "firebase_url": "https://funproject-2aa1a.firebaseio.com",
-    "project_id": "funproject-2aa1a",
-    "storage_bucket": "funproject-2aa1a.appspot.com"
+    "project_number": "681043818459",
+    "firebase_url": "https://performit-1591955825350.firebaseio.com",
+    "project_id": "performit-1591955825350",
+    "storage_bucket": "performit-1591955825350.appspot.com"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:900242611780:android:c118cb0b118b0fd8",
+        "mobilesdk_app_id": "1:681043818459:android:4824ecbbb31d5af62659fe",
         "android_client_info": {
-          "package_name": "com.status.company"
+          "package_name": "com.performit"
         }
       },
       "oauth_client": [
         {
-          "client_id": "900242611780-97ap6sitqk9tmapp75ogi9kaviinbbfk.apps.googleusercontent.com",
+          "client_id": "681043818459-j1ct862123cpfni3i9gpu18fctgjm1rd.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.performit",
+            "certificate_hash": "5e8f16062ea3cd2c4a0d547876baa6f38cabf625"
+          }
+        },
+        {
+          "client_id": "681043818459-ga1uv8rcvp9kangf07jq2chd4099nolr.apps.googleusercontent.com",
           "client_type": 3
         }
       ],
       "api_key": [
         {
-          "current_key": "AIzaSyD4rHYFXhlJHT6Xur3gvAXdjHMEhB8C9d4"
+          "current_key": "AIzaSyBf8GOQgvj_ogirpEiU97p1TU-K0NwjuO0"
         }
       ],
       "services": {
         "appinvite_service": {
           "other_platform_oauth_client": [
             {
-              "client_id": "900242611780-97ap6sitqk9tmapp75ogi9kaviinbbfk.apps.googleusercontent.com",
+              "client_id": "681043818459-ga1uv8rcvp9kangf07jq2chd4099nolr.apps.googleusercontent.com",
               "client_type": 3
             },
             {
-              "client_id": "900242611780-4rid5s96gr5680erc42013i0tj3f3lb2.apps.googleusercontent.com",
+              "client_id": "681043818459-kf18uq7r4uca7junlrufbcnuvjuprqvq.apps.googleusercontent.com",
               "client_type": 2,
               "ios_info": {
-                "bundle_id": "com.fun.fun"
+                "bundle_id": "com.crowdbotics.performit-15391"
               }
             }
           ]

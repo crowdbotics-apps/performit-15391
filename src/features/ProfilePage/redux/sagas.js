@@ -481,7 +481,7 @@ function* handleEditProfile(action) {
       userTypes.forEach(userType => {
         formData.append('user_types', userType);
       });
-
+    console.log('----------------------formData', formData);
     const {status, data, success} = yield call(
       sendEditProfile,
       formData,

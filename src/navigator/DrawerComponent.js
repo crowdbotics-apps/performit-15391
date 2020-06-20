@@ -29,7 +29,7 @@ class DrawerComponent extends Component {
       <ScrollView
         contentContainerStyle={{
           flex: 0,
-          minHeight: '90%',
+          height: '90%',
           flexDirection: 'column',
           justifyContent: 'flex-start',
           alignItems: 'flex-start',

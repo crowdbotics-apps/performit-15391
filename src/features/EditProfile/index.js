@@ -11,6 +11,7 @@ import {
   Dimensions,
   Platform,
   SafeAreaView,
+  ActivityIndicator,
 } from 'react-native';
 import RNImagePicker from 'react-native-image-picker';
 import {cloneDeep} from 'lodash';
@@ -24,7 +25,9 @@ import {scaleModerate, scaleVertical} from '../../utils/scale';
 import ErrorBox from '../../components/ErrorBox';
 import InstagramLogin from './react-native-instagram-login';
 import CookieManager from '@react-native-community/cookies';
-import FacebookLogin from './react-native-fb-login'
+import FacebookLogin from './react-native-fb-login';
+import {GoogleSignin, statusCodes} from '@react-native-community/google-signin';
+import {appConfig} from '../../config/app';
 
 class EditProfile extends Component {
   constructor(props) {
@@ -57,6 +60,7 @@ class EditProfile extends Component {
       isOtherChecked: false,
       profilePic: '',
       profileSource: {},
+      isEditLoading: false,
     };
   }
 
@@ -70,6 +74,17 @@ class EditProfile extends Component {
       isLoading: true,
     });
 
+    GoogleSignin.configure({
+      webClientId: appConfig.googleWebClientID,
+      // androidClientId: appConfig.androidClientId,
+      scopes: [
+        'profile',
+        'email',
+        'openid',
+        'https://www.googleapis.com/auth/youtube.readonly',
+      ],
+    });
+
     const {profile: allProfiles, user} = this.props;
     const userId = this.props.user && this.props.user.pk;
     const profile = allProfiles && allProfiles[`${userId}`];
@@ -80,11 +95,10 @@ class EditProfile extends Component {
     let isProducerChecked = false;
     let isOtherChecked = false;
 
-    CookieManager.clearAll(true)
-      .then((res) => {
-        console.log('CookieManager.clearAll =>', res);
-        this.setState({ token: '' })
-      });
+    CookieManager.clearAll(true).then(res => {
+      console.log('CookieManager.clearAll =>', res);
+      this.setState({token: ''});
+    });
 
     if (profile && profile.user_types && profile.user_types.length > 0) {
       if (profile.user_types.includes('Artist')) {
@@ -215,6 +229,9 @@ class EditProfile extends Component {
   };
 
   editProfile = async () => {
+    this.setState({
+      isEditLoading: true,
+    });
     let validation = true;
     this.setState({error: ''});
     const {
@@ -250,7 +267,7 @@ class EditProfile extends Component {
       userObject.gender = 'Female';
     }
 
-    if (profileSource) {
+    if (profileSource && profileSource.uri) {
       userObject.profile_pic = profileSource;
     }
 
@@ -297,6 +314,7 @@ class EditProfile extends Component {
         this.setState({
           showError: false,
           error: '',
+          isEditLoading: false,
         });
       }
       // if (this.state.updateForm) {
@@ -352,8 +370,79 @@ class EditProfile extends Component {
     });
   };
 
+  youtubeSignIn = async () => {
+    try {
+      await GoogleSignin.hasPlayServices();
+      await GoogleSignin.signIn().then(res => {
+        console.log('------------------ login res', res);
+        if (res && res.idToken) {
+          console.log(
+            '------------------ url',
+            `https://www.googleapis.com/youtube/v3/channels?part=snippet,statistic&mine=true&key=AIzaSyBf8GOQgvj_ogirpEiU97p1TU-K0NwjuO0&access_token=${
+              res.idToken
+            }`,
+          );
+          fetch(
+            `https://www.googleapis.com/youtube/v3/channels?part=snippet,statistic&mine=true&access_token=${
+              res.idToken
+            }&key=AIzaSyBf8GOQgvj_ogirpEiU97p1TU-K0NwjuO0`,
+          )
+            .then(res => res.json())
+            .then(res => {
+              console.log('----------------------res', res);
+            });
+        }
+      });
+    } catch (error) {
+      if (error.code === statusCodes.SIGN_IN_CANCELLED) {
+        // user cancelled the login flow
+        console.log('----------------------error user cancelled');
+      } else if (error.code === statusCodes.IN_PROGRESS) {
+        // operation (e.g. sign in) is in progress already
+        console.log('----------------------error in progress');
+      } else if (error.code === statusCodes.PLAY_SERVICES_NOT_AVAILABLE) {
+        // play services not available or outdated
+        console.log('----------------------error outdated');
+      } else {
+        // some other error happened
+        console.log('----------------------error user cancelled');
+      }
+    }
+  };
+
+  // youtubeSignIn = async () => {
+  //   try {
+  //     console.log('----------------youtube sign in');
+  //     await GoogleSignin.hasPlayServices();
+  //     const userInfo = await GoogleSignin.signIn();
+  //     this.setState({userInfo});
+  //   } catch (error) {
+  //     if (error.code === statusCodes.SIGN_IN_CANCELLED) {
+  //       // user cancelled the login flow
+  //       console.log('----------------------error user cancelled');
+  //     } else if (error.code === statusCodes.IN_PROGRESS) {
+  //       // operation (e.g. sign in) is in progress already
+  //       console.log('----------------------error in progress');
+  //     } else if (error.code === statusCodes.PLAY_SERVICES_NOT_AVAILABLE) {
+  //       // play services not available or outdated
+  //       console.log('----------------------error outdated');
+  //     } else {
+  //       // some other error happened
+  //       console.log('----------------------error user cancelled');
+  //     }
+  //   }
+  // };
+
   render() {
-    const {firstName, lastName, address, bio, isMale, profilePic} = this.state;
+    const {
+      firstName,
+      lastName,
+      address,
+      bio,
+      isMale,
+      profilePic,
+      isEditLoading,
+    } = this.state;
     const {profile: allProfiles, user} = this.props;
     const userId = this.props.user && this.props.user.pk;
     const profile = allProfiles && allProfiles[`${userId}`];
@@ -386,16 +475,24 @@ class EditProfile extends Component {
               </Text>
             )}
           </View>
-          <TouchableOpacity
-            style={[styles.inputDrawerContainer]}
-            onPress={() => this.editProfile()}>
-            <View style={[styles.inputDrawer]}>
-              <Image
-                style={[styles.inputDrawer]}
-                source={require('../../assets/images/right_tick_icon.png')}
-              />
+          {!isEditLoading ? (
+            <TouchableOpacity
+              style={[styles.inputDrawerContainer]}
+              onPress={() => this.editProfile()}>
+              <View style={[styles.inputDrawer]}>
+                <Image
+                  style={[styles.inputDrawer]}
+                  source={require('../../assets/images/right_tick_icon.png')}
+                />
+              </View>
+            </TouchableOpacity>
+          ) : (
+            <View style={[styles.inputDrawerContainer]}>
+              <View style={[styles.inputDrawer]}>
+                <ActivityIndicator animating />
+              </View>
             </View>
-          </TouchableOpacity>
+          )}
         </SafeAreaView>
         <View style={styles.imageContainer}>
           <View style={[styles.profileImageContainer]}>
@@ -599,9 +696,10 @@ class EditProfile extends Component {
             <Text style={styles.genderText}>Other</Text>
           </View>
         </View>
-        <TouchableOpacity onPress={() => {
-          this.facebookLogin.show()
-        }}>
+        <TouchableOpacity
+          onPress={() => {
+            this.facebookLogin.show();
+          }}>
           <View style={styles.socialConnectEditProfileContainer}>
             <View style={styles.socialConnectEditProfileLeftContainer}>
               <View style={styles.singleSocialMediaContainer}>
@@ -623,9 +721,10 @@ class EditProfile extends Component {
             </View>
           </View>
         </TouchableOpacity>
-        <TouchableOpacity onPress={() => {
+        <TouchableOpacity
+          onPress={() => {
             this.instagramLogin.show();
-        }}>
+          }}>
           <View style={styles.socialConnectEditProfileContainer}>
             <View style={styles.socialConnectEditProfileLeftContainer}>
               <View style={styles.singleSocialMediaContainer}>
@@ -646,11 +745,11 @@ class EditProfile extends Component {
               </View>
             </View>
           </View>
-
         </TouchableOpacity>
-        
 
-        <View style={styles.socialConnectEditProfileContainer}>
+        <TouchableOpacity
+          onPress={() => this.youtubeSignIn()}
+          style={styles.socialConnectEditProfileContainer}>
           <View style={styles.socialConnectEditProfileLeftContainer}>
             <View style={styles.singleSocialMediaContainer}>
               <Image
@@ -669,7 +768,7 @@ class EditProfile extends Component {
               />
             </View>
           </View>
-        </View>
+        </TouchableOpacity>
 
         <View style={{height: scaleModerate(40)}} />
 
@@ -680,13 +779,17 @@ class EditProfile extends Component {
           redirectUrl="https://performit-15391.botics.co/"
           scopes={['user_profile', 'user_media']}
           onLoginSuccess={async res => {
-            const data = await fetch(`https://graph.instagram.com/${res.user_id}?fields=id,username&access_token=${res.access_token}`)
-            const user = await data.json()
-            console.log(`https://www.instagram.com/${user.username}`)
+            const data = await fetch(
+              `https://graph.instagram.com/${
+                res.user_id
+              }?fields=id,username&access_token=${res.access_token}`,
+            );
+            const user = await data.json();
+            console.log(`https://www.instagram.com/${user.username}`);
           }}
           onLoginFailure={data => console.log(data)}
         />
-         <FacebookLogin
+        <FacebookLogin
           ref={ref => (this.facebookLogin = ref)}
           clientId="1657132321119747"
           redirectURI="https://performit-15391.botics.co"

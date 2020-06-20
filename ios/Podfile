@@ -29,6 +29,10 @@ target 'Performit' do
   pod 'Folly', :podspec => '../node_modules/react-native/third-party-podspecs/Folly.podspec'
 
   pod 'RNVectorIcons', :path => '../node_modules/react-native-vector-icons'
+  pod 'Firebase/Analytics'
+
+
+  pod 'GoogleSignIn', '~> 5.0.2'
 
   pod 'GoogleMaps'
   pod 'Google-Maps-iOS-Utils'

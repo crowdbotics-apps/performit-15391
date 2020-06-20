@@ -3,21 +3,23 @@
 <plist version="1.0">
 <dict>
 	<key>CLIENT_ID</key>
-	<string>151121818515-8gker8ol2cbv66m0dclfseflpsrd45jc.apps.googleusercontent.com</string>
+	<string>681043818459-kf18uq7r4uca7junlrufbcnuvjuprqvq.apps.googleusercontent.com</string>
 	<key>REVERSED_CLIENT_ID</key>
-	<string>com.googleusercontent.apps.151121818515-8gker8ol2cbv66m0dclfseflpsrd45jc</string>
+	<string>com.googleusercontent.apps.681043818459-kf18uq7r4uca7junlrufbcnuvjuprqvq</string>
+	<key>ANDROID_CLIENT_ID</key>
+	<string>681043818459-j1ct862123cpfni3i9gpu18fctgjm1rd.apps.googleusercontent.com</string>
 	<key>API_KEY</key>
-	<string>AIzaSyAu0MbAsKO0UG3hf8j-cdk0-hpm4hwipAM</string>
+	<string>AIzaSyDQPHTaIZCufGotpBl1MI1UiA1bHQtz5VM</string>
 	<key>GCM_SENDER_ID</key>
-	<string>151121818515</string>
+	<string>681043818459</string>
 	<key>PLIST_VERSION</key>
 	<string>1</string>
 	<key>BUNDLE_ID</key>
-	<string>com.crowdbotics.rodman-golf-dev</string>
+	<string>com.crowdbotics.performit-15391</string>
 	<key>PROJECT_ID</key>
-	<string>rodman-golf-dev</string>
+	<string>performit-1591955825350</string>
 	<key>STORAGE_BUCKET</key>
-	<string>rodman-golf-dev.appspot.com</string>
+	<string>performit-1591955825350.appspot.com</string>
 	<key>IS_ADS_ENABLED</key>
 	<false></false>
 	<key>IS_ANALYTICS_ENABLED</key>
@@ -29,8 +31,8 @@
 	<key>IS_SIGNIN_ENABLED</key>
 	<true></true>
 	<key>GOOGLE_APP_ID</key>
-	<string>1:151121818515:ios:154a9fd52a1d0a46</string>
+	<string>1:681043818459:ios:ced465924727b8032659fe</string>
 	<key>DATABASE_URL</key>
-	<string>https://rodman-golf-dev.firebaseio.com</string>
+	<string>https://performit-1591955825350.firebaseio.com</string>
 </dict>
 </plist>
