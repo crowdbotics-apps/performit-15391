@@ -6,8 +6,8 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.views import APIView, Response
 from django.core.paginator import Paginator, EmptyPage, InvalidPage
 
-from posts.models import Post, PostComment
-from posts.serializers import CommentSerializer
+from posts.models import Post, PostComment, PostRank, PostView
+from posts.serializers import CommentSerializer, PostRankSerializer, PostViewSerializer
 
 
 @permission_classes([IsAuthenticated])
@@ -52,14 +52,71 @@ class CommentsList(APIView):
         return Response({"success": True, "data": post_comment_serializer.data, "total": paginated_data.count,
                          "pages": paginated_data.num_pages, "current_page": int(page)})
 
+
 @permission_classes([IsAuthenticated])
-class AddPostRank(APIView):
+class AddEditPostRank(APIView):
     def post(self, request):
-        return Response("OK")
+        post_id = request.data.get("post_id")
+        if post_id is None:
+            return Response({"success": False, "message": "Required Param post_id is missing"}, status=400)
+        try:
+            post = Post.objects.get(pk=post_id)
+        except Post.DoesNotExist:
+            return Response({"success": False, "message": "Invalid post_id param provided"}, status=400)
+        already_ranked = PostRank.objects.filter(ranker=request.user.id, post=post.id)
+        if already_ranked.exists():
+            already_ranked.delete()
+        data = {"ranker": request.user.id, "post": post.id, "rank": request.data.get("rank")}
+        post_rank = PostRankSerializer(data=data)
+        if post_rank.is_valid():
+            instance = post_rank.save()
+            serializer = PostRankSerializer(instance, many=False)
+            return Response({"success": True, "message": "Post Ranked By the user", "data": serializer.data})
+        return Response({"success": False, "message": post_rank.errors})
 
 
 @permission_classes([IsAuthenticated])
 class PostRankers(APIView):
     def post(self, request):
-        return Response("OK")
+        post_id = request.data.get("post_id")
+        if post_id is None:
+            return Response({"success": False, "message": "Required Param post_id is missing"}, status=400)
+        try:
+            post = Post.objects.get(pk=post_id)
+        except Post.DoesNotExist:
+            return Response({"success": False, "message": "Invalid post_id param provided"}, status=400)
+        page = request.data.get("page")
+        if page is None:
+            page = 1
+        size = 10
+        post_rankers = PostRank.objects.filter(post=post.id).order_by('created_at')
+        try:
+            paginated_data = Paginator(post_rankers, size)
+        except (EmptyPage, InvalidPage):
+            return Response({"success": False, "message": "Empty Page"}, status=400)
+        serializer = PostRankSerializer(paginated_data.page(page), many=True)
+        return Response({"success": True, "data": serializer.data, "total": paginated_data.count,
+                         "pages": paginated_data.num_pages, "current_page": int(page)})
+
+
+@permission_classes([IsAuthenticated])
+class AddPostView(APIView):
+    def post(self, request):
+        post_id = request.data.get("post_id")
+        if post_id is None:
+            return Response({"success": False, "message": "Required Param post_id is missing"}, status=400)
+        try:
+            post = Post.objects.get(pk=post_id)
+        except Post.DoesNotExist:
+            return Response({"success": False, "message": "Invalid post_id param provided"}, status=400)
+        already_viewed = PostView.objects.filter(viewer=request.user.id, post=post.id)
+        if already_viewed.exists():
+            already_viewed.delete()
+        data = {"viewer": request.user.id, "post": post.id}
+        post_view = PostViewSerializer(data=data)
+        if post_view.is_valid():
+            instance = post_view.save()
+            serializer = PostViewSerializer(instance, many=False)
+            return Response({"success": True, "message": "Post View Recorded", "data": serializer.data})
+        return Response({"success": False, "message": post_view.errors})
 

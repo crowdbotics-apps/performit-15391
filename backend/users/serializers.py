@@ -32,7 +32,12 @@ class CustomUserSerializer(serializers.ModelSerializer):
         except UserDetail.DoesNotExist:
             user_details = None
         user_detail_serializer = UserDetailSerializer(user_details, many=False)
-        return {"user_details": user_detail_serializer.data}
+        user_type_qs = UserType.objects.filter(user=obj.id)
+        user_type_serializer = UserTypeSerializer(user_type_qs, many=True)
+        user_types = []
+        for type in user_type_serializer.data:
+            user_types.append(type['user_type'])
+        return {"user_details": user_detail_serializer.data, "user_types": user_types}
 
 
 class CustomTokenSerializer(serializers.ModelSerializer):

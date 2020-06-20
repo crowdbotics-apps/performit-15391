@@ -1,3 +1,4 @@
+from django.core.validators import RegexValidator
 from django.db import models
 from django.conf import settings
 from django.db.models import Sum
@@ -22,10 +23,12 @@ class Post(models.Model):
 
 
 class PostRank(models.Model):
+    rank_regex = RegexValidator(regex=r'^[1-5]$',
+                                 message="Please choose 1-5")
     ranker = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="post_rank_ranker")
     post = models.ForeignKey(Post, on_delete=models.CASCADE, related_name="post_rank_post")
-    rank = models.IntegerField("Enter Rank", null=False)
-    average_rank = models.DecimalField("Enter Average Rank", max_digits=7, decimal_places=2, null=False)
+    rank = models.IntegerField("Enter Rank", null=False, validators=[rank_regex])
+    average_rank = models.DecimalField("Enter Average Rank", max_digits=7, decimal_places=2, null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
