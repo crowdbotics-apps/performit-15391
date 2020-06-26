@@ -112,8 +112,6 @@ function sendSearchDashBoard(tab, term, token) {
 function* handleGetUserPosts(action) {
   const {tab, token, userId} = action;
   try {
-    console.log('--------------------------tab saga', tab);
-    console.log('--------------------------userId saga', userId);
     const {status, data} = yield call(sendUserPosts, tab, token);
 
     if (status === 200) {
@@ -178,8 +176,6 @@ function* handleGetUserPostComments(action) {
 
 function* handleEditPostRank(action) {
   const {postId, rating, token} = action;
-  console.log('----------------------postId', postId);
-  console.log('----------------------rating', rating);
   try {
     const {status, data} = yield call(
       sendEditUserPostRank,
@@ -217,7 +213,6 @@ function* handleEditPostRank(action) {
 
 function* handleAddPostView(action) {
   const {postId, token} = action;
-  console.log('----------------------postId', postId);
   try {
     const {status, data} = yield call(sendAddPostView, postId, token);
 
@@ -250,7 +245,6 @@ function* handleAddPostView(action) {
 
 function* handleAddPostComment(action) {
   const {postId, comment, token} = action;
-  console.log('----------------------postId', postId);
   try {
     const {status, data} = yield call(
       sendAddPostComment,

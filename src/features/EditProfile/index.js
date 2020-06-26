@@ -450,6 +450,7 @@ class EditProfile extends Component {
     return (
       <ScrollView
         contentContainerStyle={styles.screen}
+        keyboardShouldPersistTaps={'handled'}
         style={{backgroundColor: 'black'}}>
         <SafeAreaView style={styles.headerContainer}>
           <TouchableOpacity

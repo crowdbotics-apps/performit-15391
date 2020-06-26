@@ -41,7 +41,6 @@ class CommentsPage extends Component {
     });
 
     const postId = this.props.navigation.getParam('postId', '');
-    console.log('----------------------postId 00000', postId);
     const {
       actions: {fetchCommentsForPost},
     } = this.props;
@@ -78,7 +77,6 @@ class CommentsPage extends Component {
     const {navigation, commentsList} = this.props;
     let comments = commentsList && commentsList[`${this.state.postId}`];
     comments = get(comments, 'comments.data', []);
-    console.log('-------------------------------this.state.comments', comments);
     return (
       <ScrollView
         contentContainerStyle={styles.screen}

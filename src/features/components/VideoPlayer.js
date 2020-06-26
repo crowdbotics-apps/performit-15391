@@ -83,7 +83,7 @@ export default class VideoPlayer extends Component {
       duration: 0,
       seekLoading: false,
       showSubtitle: true,
-      videoHeight: scaleModerate(350),
+      videoHeight: scaleModerate(this.props.videoHeight || 350),
       source: '',
       isSourcePresent: false,
       showPoster: true,
@@ -1320,10 +1320,6 @@ export default class VideoPlayer extends Component {
    * Provide all of our options and render the whole component.
    */
   render() {
-    console.log(
-      '-------------------------this.state.source',
-      this.state.source,
-    );
     return (
       <View
         style={[
@@ -1367,7 +1363,7 @@ export default class VideoPlayer extends Component {
               />
               {this.renderLoader()}
               {this.renderPlayPauseControls()}
-              {this.renderBottomControls()}
+              {this.props.showBottomcontrol && this.renderBottomControls()}
             </View>
           </TouchableWithoutFeedback>
         )}

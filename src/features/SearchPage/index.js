@@ -49,7 +49,6 @@ class SearchPage extends Component {
 
   async componentDidUpdate(prevProps) {
     // write code here
-    console.log('-------------------------');
   }
 
   switchTab = tab => {
@@ -83,7 +82,6 @@ class SearchPage extends Component {
   };
 
   getUserTypes = userTypesArray => {
-    console.log('---------------userTypesArray', userTypesArray);
     let userTypes = '';
     if (userTypesArray && userTypesArray.length > 0) {
       userTypesArray.forEach(item => {
@@ -102,20 +100,6 @@ class SearchPage extends Component {
       searchGroupsList,
       searchHashTagsList,
     } = this.props;
-
-    console.log(
-      '-----------------------searchTopAccountsList',
-      searchTopAccountsList,
-    );
-    console.log(
-      '-----------------------searchAccountsList',
-      searchAccountsList,
-    );
-    console.log('-----------------------searchGroupsList', searchGroupsList);
-    console.log(
-      '-----------------------searchHashTagsList',
-      searchHashTagsList,
-    );
 
     const {activeTab, searchTerm} = this.state;
 
@@ -398,7 +382,11 @@ class SearchPage extends Component {
             <View style={styles.followProfileRowContainer}>
               <View style={styles.followProfileRowLeftContainer}>
                 <TouchableOpacity
-                  onPress={() => console.log('-----------go to Group')}
+                  onPress={() =>
+                    navigation.navigate('HashTagHomePage', {
+                      hashtag: this.state.searchTerm,
+                    })
+                  }
                   style={[styles.profileRowImageContainer]}>
                   <Image
                     style={[styles.hashTagImage]}

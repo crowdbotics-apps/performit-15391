@@ -32,6 +32,7 @@ import DrawerComponent from './DrawerComponent';
 import HomePage from '../features/HomePage';
 import SearchPage from '../features/SearchPage';
 import CommentsPage from '../features/CommentsPage';
+import HashTagHomePage from '../features/HashTagHomePage';
 
 /**
  * new navigators can be imported here
@@ -79,8 +80,14 @@ const AppNavigator = {
   // Tutorial: { screen: TutorialNavigator },
   // Camera: { screen: CameraNavigator },
   EmailAuth: {screen: EmailAuthNavigator},
-  HomePage: {screen: HomePage},
+  HomePage: {
+    screen: HomePage,
+    navigationOptions: {
+      gesturesEnabled: false,
+    },
+  },
   SearchPage: {screen: SearchPage},
+  HashTagHomePage: {screen: HashTagHomePage},
   CommentsPage: {screen: CommentsPage},
   /** new navigators can be added here */
 };
@@ -197,9 +204,9 @@ const LoggedInBottomTabNavigator = createBottomTabNavigator(
       },
     },
     Location: {
-      screen: EmailAuthStackNavigator,
+      screen: DrawerAppNavigator,
       navigationOptions: ({navigation}) => ({
-        tabBarVisible: false,
+        tabBarVisible: navigation.state.index === 0 ? true : false,
         title: null,
         tabBarIcon: ({focused}) => (
           <Image
@@ -210,9 +217,9 @@ const LoggedInBottomTabNavigator = createBottomTabNavigator(
       }),
     },
     CreatePost: {
-      screen: EmailAuthStackNavigator,
+      screen: DrawerAppNavigator,
       navigationOptions: ({navigation}) => ({
-        tabBarVisible: false,
+        tabBarVisible: navigation.state.index === 0 ? true : false,
         title: null,
         tabBarIcon: ({focused}) => (
           <Image
@@ -223,9 +230,9 @@ const LoggedInBottomTabNavigator = createBottomTabNavigator(
       }),
     },
     Notifications: {
-      screen: EmailAuthStackNavigator,
+      screen: DrawerAppNavigator,
       navigationOptions: ({navigation}) => ({
-        tabBarVisible: false,
+        tabBarVisible: navigation.state.index === 0 ? true : false,
         title: null,
         tabBarIcon: ({focused}) => (
           <Image

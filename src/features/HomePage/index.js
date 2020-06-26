@@ -33,6 +33,7 @@ class Home extends Component {
       duration: 0,
       seekTime: -1,
       showControls: false,
+      postsData: [],
     };
   }
 
@@ -50,16 +51,7 @@ class Home extends Component {
     if (!userId) {
       userId = this.props.user && this.props.user.pk;
     }
-
-    console.log('-------------------userId', userId);
-
     const accessToken = this.props.accessToken;
-    console.log('-------------------accessToken', accessToken);
-
-    console.log(
-      '-------------------this.state.activeTab',
-      this.state.activeTab,
-    );
 
     const {
       actions: {userDetails, followersConnectionsList, userPosts},
@@ -91,16 +83,72 @@ class Home extends Component {
       await userDetails(userId, accessToken);
       await followersConnectionsList(userId, accessToken);
       await userPosts('following', accessToken, userId);
+
       this.setState({
         isLoading: false,
         userId,
+      });
+    }
+
+    if (this.props.posts !== prevProps.posts) {
+      const {activeTab} = this.state;
+      let postsToShow =
+        this.props.posts && this.props.posts[`${this.state.userId}`];
+
+      let postsFollowing = cloneDeep(
+        get(postsToShow, 'postsFollowing.data', []),
+      );
+      let postsTopTalents = cloneDeep(
+        get(postsToShow, 'postsTalents.data', []),
+      );
+
+      if (postsFollowing && postsFollowing.length > 0) {
+        postsFollowing.sort((item1, item2) => {
+          const keyA = new Date(item1.created_at),
+            keyB = new Date(item2.created_at);
+          // Compare the 2 dates
+          if (keyA < keyB) {
+            return -1;
+          }
+          if (keyA > keyB) {
+            return 1;
+          }
+          return 0;
+        });
+        postsFollowing.reverse();
+      }
+
+      if (postsTopTalents && postsTopTalents.length > 0) {
+        postsTopTalents.sort((item1, item2) => {
+          const keyA = new Date(item1.created_at),
+            keyB = new Date(item2.created_at);
+          // Compare the 2 dates
+          if (keyA < keyB) {
+            return -1;
+          }
+          if (keyA > keyB) {
+            return 1;
+          }
+          return 0;
+        });
+        postsTopTalents.reverse();
+      }
+
+      let postsData = [];
+
+      if (activeTab === 'following') {
+        postsData = cloneDeep(postsFollowing);
+      } else {
+        postsData = cloneDeep(postsTopTalents);
+      }
+      this.setState({
+        postsData,
       });
     }
   }
 
   handleCommentChange = (postId, text) => {
     // write code here
-    console.log('---------------text', text);
     this.setState({
       [`newComment${postId}`]: text,
     });
@@ -108,7 +156,6 @@ class Home extends Component {
 
   handleOnFocus = postId => {
     // write code here
-    console.log('---------------postId', postId);
     this.setState({
       [`isFocus${postId}`]: true,
     });
@@ -116,14 +163,12 @@ class Home extends Component {
 
   handleOnBlur = postId => {
     // write code here
-    console.log('---------------postId', postId);
     this.setState({
       [`isFocus${postId}`]: false,
     });
   };
 
   postComment = async postId => {
-    console.log('---------------postId 0000000', postId);
     const accessToken = this.props.accessToken;
     const userId = this.state.userId;
     const {
@@ -163,20 +208,26 @@ class Home extends Component {
   };
 
   ratePost = async (postId, rating) => {
-    console.log('----------------------postId 00000', postId);
-    console.log('----------------------rating 00000', rating);
     const accessToken = this.props.accessToken;
     const userId = this.state.userId;
     const {
       actions: {userPosts, addEditPostRank},
     } = this.props;
+    let postsData = cloneDeep(this.state.postsData);
+    postsData.length > 0 &&
+      postsData.forEach(elem => {
+        if (elem.id === postId) {
+          elem.meta_data.ratings.rating_by_login = rating;
+        }
+      });
+    this.setState({
+      postsData,
+    });
     await addEditPostRank(postId, rating, accessToken);
     await userPosts(this.state.activeTab, accessToken, userId);
   };
 
   callPostViewed = (postId, isViewed) => {
-    console.log('----------------------postId 00000', postId);
-    console.log('----------------------isViewed 00000', isViewed);
     const {
       actions: {addPostView},
     } = this.props;
@@ -188,11 +239,6 @@ class Home extends Component {
   };
 
   viewAllComments = async postId => {
-    // console.log('----------------------postId 00000', postId);
-    // const {
-    //   actions: {fetchCommentsForPost},
-    // } = this.props;
-    // const accessToken = this.props.accessToken;
     this.props.navigation.navigate('CommentsPage', {postId});
   };
 
@@ -212,63 +258,12 @@ class Home extends Component {
 
   render() {
     const {profile: allProfiles, posts, navigation, commentsList} = this.props;
-    const {activeTab} = this.state;
-    console.log(
-      '-------------------------------this.state.userId',
-      this.state.userId,
-    );
+    const {activeTab, postsData} = this.state;
     const profile = allProfiles && allProfiles[`${this.state.userId}`];
-    let postsToShow = posts && posts[`${this.state.userId}`];
 
     let followers = cloneDeep(
       get(profile, 'followersConnectionsList.data', []),
     );
-
-    let postsFollowing = cloneDeep(get(postsToShow, 'postsFollowing.data', []));
-    let postsTopTalents = cloneDeep(get(postsToShow, 'postsTalents.data', []));
-
-    if (postsFollowing && postsFollowing.length > 0) {
-      postsFollowing.sort((item1, item2) => {
-        const keyA = new Date(item1.created_at),
-          keyB = new Date(item2.created_at);
-        // Compare the 2 dates
-        if (keyA < keyB) {
-          return -1;
-        }
-        if (keyA > keyB) {
-          return 1;
-        }
-        return 0;
-      });
-      postsFollowing.reverse();
-    }
-
-    if (postsTopTalents && postsTopTalents.length > 0) {
-      postsTopTalents.sort((item1, item2) => {
-        const keyA = new Date(item1.created_at),
-          keyB = new Date(item2.created_at);
-        // Compare the 2 dates
-        if (keyA < keyB) {
-          return -1;
-        }
-        if (keyA > keyB) {
-          return 1;
-        }
-        return 0;
-      });
-      postsTopTalents.reverse();
-    }
-
-    let postsData = [];
-
-    if (activeTab === 'following') {
-      postsData = cloneDeep(postsFollowing);
-    } else {
-      postsData = cloneDeep(postsTopTalents);
-    }
-
-    console.log('-------------------------------postsData', postsData);
-    console.log('-------------------------------commentsList', commentsList);
 
     return (
       <KeyboardAvoidingView
@@ -441,6 +436,8 @@ class Home extends Component {
 
                   <View style={styles.postImageContainer}>
                     <VideoPlayer
+                      showBottomcontrol={true}
+                      videoHeight={350}
                       postId={postData && postData.id}
                       source={postData && postData.content}
                       navigation={this.props.navigation}

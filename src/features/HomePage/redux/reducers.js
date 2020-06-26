@@ -19,7 +19,6 @@ const initialState = {
 export default (HomePageReducer = (state = initialState, action) => {
   switch (action.type) {
     case actions.USER_POSTS_SUCCESS:
-      console.log('--------------------action', action && action.tab);
       if (action.tab === 'following') {
         return {
           ...state,
@@ -77,7 +76,6 @@ export default (HomePageReducer = (state = initialState, action) => {
       return {...state, errors: {UserAddCommentToPost: action.error}};
 
     case actions.USER_SEARCH_PERFORMIT_SUCCESS:
-      console.log('-------------------data', action && action.data);
       if (action.tab === 'top') {
         return {
           ...state,

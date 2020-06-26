@@ -189,7 +189,7 @@ export const styles = StyleSheet.create({
     fontSize: scaleVertical(16),
     fontFamily: 'Nunito-Regular',
     marginTop: scaleModerate(10),
-    // width: '90%'
+    width: '90%'
   },
 
   inputEyeImage: {
