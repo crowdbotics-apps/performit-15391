@@ -17,7 +17,7 @@ import {connect} from 'react-redux';
 import {scaleModerate} from '../../utils/scale';
 import * as profileActions from '../ProfilePage/redux/actions';
 import {cloneDeep, get} from 'lodash';
-import InView from 'react-native-component-inview';
+import VideoPlayer from '../components/VideoPlayer';
 
 class Home extends Component {
   constructor(props) {
@@ -27,6 +27,12 @@ class Home extends Component {
       userId: '',
       activeTab: 'following',
       newComment: '',
+      currentTime: 0,
+      paused: true,
+      progress: 0,
+      duration: 0,
+      seekTime: -1,
+      showControls: false,
     };
   }
 
@@ -175,7 +181,10 @@ class Home extends Component {
       actions: {addPostView},
     } = this.props;
     const accessToken = this.props.accessToken;
-    isViewed && addPostView(postId, accessToken);
+    !isViewed && addPostView(postId, accessToken);
+    this.setState({
+      [`isViewed${postId}`]: true,
+    });
   };
 
   viewAllComments = async postId => {
@@ -185,6 +194,20 @@ class Home extends Component {
     // } = this.props;
     // const accessToken = this.props.accessToken;
     this.props.navigation.navigate('CommentsPage', {postId});
+  };
+
+  // setting current time of video to a timestamp
+  setVideoCurrentTime = (time, postId) => {
+    this.setState({
+      [`currentTime${postId}`]: time,
+    });
+  };
+
+  // initializing seekTime to -1 in beginning to differentiate later
+  initializeSeekTime = postId => {
+    this.setState({
+      [`seekTime${postId}`]: -1,
+    });
   };
 
   render() {
@@ -417,10 +440,48 @@ class Home extends Component {
                   </View>
 
                   <View style={styles.postImageContainer}>
-                    <Image
-                      style={[styles.postImage]}
-                      source={{
-                        uri: postData && postData.content,
+                    <VideoPlayer
+                      postId={postData && postData.id}
+                      source={postData && postData.content}
+                      navigation={this.props.navigation}
+                      disableVolume="false"
+                      disableBack="false"
+                      paused={this.state[`paused${postData && postData.id}`]}
+                      onVideoProgress={time => {
+                        this.setVideoCurrentTime(time, postData && postData.id);
+                      }}
+                      initializeSeek={() => {
+                        this.initializeSeekTime(postData && postData.id);
+                      }}
+                      onEnd={() => {
+                        this.setState({
+                          [`paused${postData && postData.id}`]: true,
+                        });
+                      }}
+                      onPause={() => {
+                        this.setState({
+                          [`paused${postData && postData.id}`]: true,
+                        });
+                      }}
+                      onPlay={() => {
+                        this.setState({
+                          [`paused${postData && postData.id}`]: false,
+                        });
+                      }}
+                      onLoad={fields => {
+                        this.callPostViewed(
+                          postData && postData.id,
+                          this.state[`isViewed${postData && postData.id}`],
+                        );
+                        this.setState({
+                          [`duration${postData &&
+                            postData.id}`]: fields.duration,
+                        });
+                      }}
+                      showControls={value => {
+                        this.setState({
+                          [`showControls${postData && postData.id}`]: value,
+                        });
                       }}
                     />
                   </View>
@@ -591,7 +652,24 @@ class Home extends Component {
                     <View style={styles.captionParentContainer}>
                       <View style={styles.captionContainer}>
                         <Text style={styles.captionText}>
-                          {postData.caption}
+                          {postData.caption &&
+                            postData.caption
+                              .split(' ')
+                              .map(elem =>
+                                elem.includes('#') || elem.includes('@') ? (
+                                  <Text
+                                    style={[
+                                      styles.captionText,
+                                      {color: '#B88746'},
+                                    ]}>
+                                    {elem}
+                                  </Text>
+                                ) : (
+                                  <Text style={[styles.captionText]}>
+                                    {elem}{' '}
+                                  </Text>
+                                ),
+                              )}
                         </Text>
                       </View>
                     </View>
