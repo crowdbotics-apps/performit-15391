@@ -25,3 +25,18 @@ export const fetchCommentsForPost = (postId, token) => ({
   postId,
   token,
 });
+
+export const addCommentToPost = (postId, comment, token) => ({
+  type: actions.USER_ADD_COMMENT_POST_REQUEST,
+  postId,
+  comment,
+  token,
+});
+
+export const searchDashboard = (tab, page, token, term) => ({
+  type: actions.USER_SEARCH_PERFORMIT_REQUEST,
+  tab,
+  page,
+  token,
+  term,
+});

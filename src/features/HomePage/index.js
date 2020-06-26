@@ -9,6 +9,7 @@ import {
   SafeAreaView,
   TextInput,
   Text,
+  KeyboardAvoidingView,
 } from 'react-native';
 import {styles} from './styles';
 import * as homeActions from '../HomePage/redux/actions';
@@ -91,9 +92,47 @@ class Home extends Component {
     }
   }
 
-  handleCommentChange = () => {
+  handleCommentChange = (postId, text) => {
     // write code here
-    console.log('---------------this.state.newComment', this.state.newComment);
+    console.log('---------------text', text);
+    this.setState({
+      [`newComment${postId}`]: text,
+    });
+  };
+
+  handleOnFocus = postId => {
+    // write code here
+    console.log('---------------postId', postId);
+    this.setState({
+      [`isFocus${postId}`]: true,
+    });
+  };
+
+  handleOnBlur = postId => {
+    // write code here
+    console.log('---------------postId', postId);
+    this.setState({
+      [`isFocus${postId}`]: false,
+    });
+  };
+
+  postComment = async postId => {
+    console.log('---------------postId 0000000', postId);
+    const accessToken = this.props.accessToken;
+    const userId = this.state.userId;
+    const {
+      actions: {userPosts, addCommentToPost},
+    } = this.props;
+
+    await addCommentToPost(
+      postId,
+      this.state[`newComment${postId}`],
+      accessToken,
+    );
+    await userPosts(this.state.activeTab, accessToken, userId);
+    this.setState({
+      [`newComment${postId}`]: '',
+    });
   };
 
   switchTab = async tab => {
@@ -140,12 +179,12 @@ class Home extends Component {
   };
 
   viewAllComments = async postId => {
-    console.log('----------------------postId 00000', postId);
-    const {
-      actions: {fetchCommentsForPost},
-    } = this.props;
-    const accessToken = this.props.accessToken;
-    await fetchCommentsForPost(postId, accessToken);
+    // console.log('----------------------postId 00000', postId);
+    // const {
+    //   actions: {fetchCommentsForPost},
+    // } = this.props;
+    // const accessToken = this.props.accessToken;
+    this.props.navigation.navigate('CommentsPage', {postId});
   };
 
   render() {
@@ -158,7 +197,9 @@ class Home extends Component {
     const profile = allProfiles && allProfiles[`${this.state.userId}`];
     let postsToShow = posts && posts[`${this.state.userId}`];
 
-    let followers = [];
+    let followers = cloneDeep(
+      get(profile, 'followersConnectionsList.data', []),
+    );
 
     let postsFollowing = cloneDeep(get(postsToShow, 'postsFollowing.data', []));
     let postsTopTalents = cloneDeep(get(postsToShow, 'postsTalents.data', []));
@@ -207,392 +248,429 @@ class Home extends Component {
     console.log('-------------------------------commentsList', commentsList);
 
     return (
-      <ScrollView
-        contentContainerStyle={styles.screen}
-        style={{backgroundColor: 'black'}}>
-        {!this.state.isLoading ? (
-          <>
-            <SafeAreaView style={styles.headerContainer}>
-              <View style={styles.headerLeftContainer}>
-                <View style={[styles.performItLogoContainer]}>
-                  <View style={[styles.performItLogo]}>
-                    <Image
-                      style={[styles.performItLogo]}
-                      source={require('../../assets/images/logo_performit.png')}
-                    />
+      <KeyboardAvoidingView
+        behavior={'position'}
+        style={{flex: 1, backgroundColor: 'black'}}>
+        <ScrollView
+          contentContainerStyle={styles.screen}
+          keyboardShouldPersistTaps={'handled'}
+          style={{backgroundColor: 'black'}}>
+          {!this.state.isLoading ? (
+            <>
+              <SafeAreaView style={styles.headerContainer}>
+                <View style={styles.headerLeftContainer}>
+                  <View style={[styles.performItLogoContainer]}>
+                    <View style={[styles.performItLogo]}>
+                      <Image
+                        style={[styles.performItLogo]}
+                        source={require('../../assets/images/logo_performit.png')}
+                      />
+                    </View>
                   </View>
+                  <Text style={styles.headerText}>PERFORMIT</Text>
                 </View>
-                <Text style={styles.headerText}>PERFORMIT</Text>
-              </View>
-              <View style={styles.headerRightContainer}>
-                <TouchableOpacity
-                  style={[styles.searchIconContainer]}
-                  onPress={() => this.props.navigation.navigate('SearchPage')}>
-                  <View style={[styles.searchIcon]}>
-                    <Image
-                      style={[styles.searchIcon]}
-                      source={require('../../assets/images/search_icon.png')}
-                    />
-                  </View>
-                </TouchableOpacity>
-                <TouchableOpacity
-                  style={[styles.messageIconContainer]}
-                  onPress={() => this.toggleDrawer()}>
-                  <View style={[styles.messageIcon]}>
-                    <Image
-                      style={[styles.messageIcon]}
-                      source={require('../../assets/images/message_icon.png')}
-                    />
-                  </View>
-                </TouchableOpacity>
-              </View>
-            </SafeAreaView>
+                <View style={styles.headerRightContainer}>
+                  <TouchableOpacity
+                    style={[styles.searchIconContainer]}
+                    onPress={() =>
+                      this.props.navigation.navigate('SearchPage')
+                    }>
+                    <View style={[styles.searchIcon]}>
+                      <Image
+                        style={[styles.searchIcon]}
+                        source={require('../../assets/images/search_icon.png')}
+                      />
+                    </View>
+                  </TouchableOpacity>
+                  <TouchableOpacity
+                    style={[styles.messageIconContainer]}
+                    onPress={() => this.toggleDrawer()}>
+                    <View style={[styles.messageIcon]}>
+                      <Image
+                        style={[styles.messageIcon]}
+                        source={require('../../assets/images/message_icon.png')}
+                      />
+                    </View>
+                  </TouchableOpacity>
+                </View>
+              </SafeAreaView>
 
-            {followers && followers.length > 0 && (
-              <View style={styles.followersView}>
-                <ScrollView
-                  contentContainerStyle={styles.followersContainer}
-                  horizontal={true}>
-                  {followers.map(follower => (
-                    <TouchableOpacity
-                      onPress={() =>
-                        navigation.navigate('ProfilePage', {
-                          userId: follower.follower && follower.follower.pk,
-                        })
-                      }
-                      style={styles.followerProfileContainer}>
-                      <View style={[styles.profileImageContainer]}>
+              {followers && followers.length > 0 && (
+                <View style={styles.followersView}>
+                  <ScrollView
+                    contentContainerStyle={styles.followersContainer}
+                    horizontal={true}>
+                    {followers.map(follower => (
+                      <TouchableOpacity
+                        onPress={() =>
+                          navigation.navigate('ProfilePage', {
+                            userId: follower.follower && follower.follower.pk,
+                          })
+                        }
+                        style={styles.followerProfileContainer}>
+                        <View style={[styles.profileImageContainer]}>
+                          <Image
+                            style={[styles.profileImage]}
+                            source={{
+                              uri:
+                                follower &&
+                                follower.follower &&
+                                follower.follower.profile_pic,
+                            }}
+                          />
+                        </View>
+                        <View style={styles.profileTextContainer}>
+                          {follower &&
+                          follower.follower &&
+                          (follower.follower.first_name ||
+                            follower.follower.last_name) ? (
+                            <Text style={styles.profileText}>
+                              {this.trimText(
+                                `${follower.follower.first_name} ${
+                                  follower.follower.last_name
+                                }`,
+                                8,
+                              )}
+                            </Text>
+                          ) : (
+                            <Text style={styles.profileText}>
+                              {this.trimText(follower.follower.username, 8)}
+                            </Text>
+                          )}
+                        </View>
+                      </TouchableOpacity>
+                    ))}
+                  </ScrollView>
+                </View>
+              )}
+              <View style={styles.homeHeaderTabs}>
+                <TouchableOpacity
+                  onPress={() => this.switchTab('following')}
+                  style={[
+                    this.state.activeTab === 'talent' && {
+                      flexDirection: 'row',
+                      justifyContent: 'center',
+                      alignItems: 'center',
+                    },
+                    this.state.activeTab === 'following' &&
+                      styles.headerTabButton,
+                  ]}>
+                  <Text style={styles.homeHeaderText}>Following</Text>
+                </TouchableOpacity>
+                <View
+                  style={{
+                    flexDirection: 'row',
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                    marginRight: scaleModerate(10),
+                  }}>
+                  <Text style={styles.homeHeaderLine}>|</Text>
+                </View>
+                <TouchableOpacity
+                  onPress={() => this.switchTab('talent')}
+                  style={[
+                    this.state.activeTab === 'following' && {
+                      flexDirection: 'row',
+                      justifyContent: 'center',
+                      alignItems: 'center',
+                    },
+                    this.state.activeTab === 'talent' && styles.headerTabButton,
+                  ]}>
+                  <Text style={styles.homeHeaderText}>Talent Pool</Text>
+                </TouchableOpacity>
+              </View>
+
+              {postsData.map(postData => (
+                <>
+                  <View style={styles.postParentContainer}>
+                    <View style={styles.postProfileContainer}>
+                      <View style={[styles.postProfileImage]}>
                         <Image
-                          style={[styles.profileImage]}
+                          style={[styles.postProfileImage]}
                           source={{
                             uri:
-                              follower &&
-                              follower.follower &&
-                              follower.follower.profile_pic,
+                              postData &&
+                              postData.user &&
+                              postData.user.meta_data &&
+                              postData.user.meta_data.user_details &&
+                              postData.user.meta_data.user_details.profile_pic,
                           }}
                         />
                       </View>
-                      <View style={styles.profileTextContainer}>
-                        {follower &&
-                        follower.follower &&
-                        (follower.follower.first_name ||
-                          follower.follower.last_name) ? (
-                          <Text style={styles.profileText}>
-                            {this.trimText(
-                              `${follower.follower.first_name} ${
-                                follower.follower.last_name
-                              }`,
-                              8,
-                            )}
+                      <View style={styles.postProfileTextContainer}>
+                        {postData &&
+                        postData.user &&
+                        (postData.user.first_name ||
+                          postData.user.last_name) ? (
+                          <Text style={styles.postProfileText}>
+                            {`${postData.user.first_name} ${
+                              postData.user.last_name
+                            }`}
                           </Text>
                         ) : (
-                          <Text style={styles.profileText}>
-                            {this.trimText(follower.follower.username, 8)}
+                          <Text style={styles.postProfileText}>
+                            {postData.user.username}
                           </Text>
                         )}
                       </View>
-                    </TouchableOpacity>
-                  ))}
-                </ScrollView>
-              </View>
-            )}
-            <View style={styles.homeHeaderTabs}>
-              <TouchableOpacity
-                onPress={() => this.switchTab('following')}
-                style={[
-                  this.state.activeTab === 'talent' && {
-                    flexDirection: 'row',
-                    justifyContent: 'center',
-                    alignItems: 'center',
-                  },
-                  this.state.activeTab === 'following' &&
-                    styles.headerTabButton,
-                ]}>
-                <Text style={styles.homeHeaderText}>Following</Text>
-              </TouchableOpacity>
-              <View
-                style={{
-                  flexDirection: 'row',
-                  justifyContent: 'center',
-                  alignItems: 'center',
-                  marginRight: scaleModerate(10),
-                }}>
-                <Text style={styles.homeHeaderLine}>|</Text>
-              </View>
-              <TouchableOpacity
-                onPress={() => this.switchTab('talent')}
-                style={[
-                  this.state.activeTab === 'following' && {
-                    flexDirection: 'row',
-                    justifyContent: 'center',
-                    alignItems: 'center',
-                  },
-                  this.state.activeTab === 'talent' && styles.headerTabButton,
-                ]}>
-                <Text style={styles.homeHeaderText}>Talent Pool</Text>
-              </TouchableOpacity>
-            </View>
-
-            {postsData.map(postData => (
-              <>
-                <View style={styles.postParentContainer}>
-                  <View style={styles.postProfileContainer}>
-                    <View style={[styles.postProfileImage]}>
-                      <Image
-                        style={[styles.postProfileImage]}
-                        source={{
-                          uri:
-                            postData &&
-                            postData.user &&
-                            postData.user.meta_data &&
-                            postData.user.meta_data.user_details &&
-                            postData.user.meta_data.user_details.profile_pic,
-                        }}
-                      />
-                    </View>
-                    <View style={styles.postProfileTextContainer}>
-                      {postData &&
-                      postData.user &&
-                      (postData.user.first_name || postData.user.last_name) ? (
-                        <Text style={styles.postProfileText}>
-                          {`${postData.user.first_name} ${
-                            postData.user.last_name
-                          }`}
-                        </Text>
-                      ) : (
-                        <Text style={styles.postProfileText}>
-                          {postData.user.username}
-                        </Text>
-                      )}
                     </View>
                   </View>
-                </View>
 
-                <View style={styles.postImageContainer}>
-                  <Image
-                    style={[styles.postImage]}
-                    source={{
-                      uri: postData && postData.content,
-                    }}
-                  />
-                </View>
-                <View style={styles.postStatsParentContainer}>
-                  <View style={styles.postStatsContainer}>
-                    <View style={styles.postStatsLeftContainer}>
-                      <TouchableOpacity
-                        onPress={() =>
-                          this.ratePost(postData && postData.id, 1)
-                        }
-                        style={[styles.starImage]}>
-                        {postData &&
-                        postData.meta_data &&
-                        postData.meta_data.ratings &&
-                        postData.meta_data.ratings.rating_by_login >= 1 ? (
-                          <Image
-                            style={[styles.starImage]}
-                            source={require('../../assets/images/filled_star.png')}
-                          />
-                        ) : (
-                          <Image
-                            style={[styles.starImage]}
-                            source={require('../../assets/images/empty_star.png')}
-                          />
-                        )}
-                      </TouchableOpacity>
-                      <TouchableOpacity
-                        onPress={() =>
-                          this.ratePost(postData && postData.id, 2)
-                        }
-                        style={[styles.starImage]}>
-                        {postData &&
-                        postData.meta_data &&
-                        postData.meta_data.ratings &&
-                        postData.meta_data.ratings.rating_by_login >= 2 ? (
-                          <Image
-                            style={[styles.starImage]}
-                            source={require('../../assets/images/filled_star.png')}
-                          />
-                        ) : (
-                          <Image
-                            style={[styles.starImage]}
-                            source={require('../../assets/images/empty_star.png')}
-                          />
-                        )}
-                      </TouchableOpacity>
-                      <TouchableOpacity
-                        onPress={() =>
-                          this.ratePost(postData && postData.id, 3)
-                        }
-                        style={[styles.starImage]}>
-                        {postData &&
-                        postData.meta_data &&
-                        postData.meta_data.ratings &&
-                        postData.meta_data.ratings.rating_by_login >= 3 ? (
-                          <Image
-                            style={[styles.starImage]}
-                            source={require('../../assets/images/filled_star.png')}
-                          />
-                        ) : (
-                          <Image
-                            style={[styles.starImage]}
-                            source={require('../../assets/images/empty_star.png')}
-                          />
-                        )}
-                      </TouchableOpacity>
-                      <TouchableOpacity
-                        onPress={() =>
-                          this.ratePost(postData && postData.id, 4)
-                        }
-                        style={[styles.starImage]}>
-                        {postData &&
-                        postData.meta_data &&
-                        postData.meta_data.ratings &&
-                        postData.meta_data.ratings.rating_by_login >= 4 ? (
-                          <Image
-                            style={[styles.starImage]}
-                            source={require('../../assets/images/filled_star.png')}
-                          />
-                        ) : (
-                          <Image
-                            style={[styles.starImage]}
-                            source={require('../../assets/images/empty_star.png')}
-                          />
-                        )}
-                      </TouchableOpacity>
-                      <TouchableOpacity
-                        onPress={() =>
-                          this.ratePost(postData && postData.id, 5)
-                        }
-                        style={[styles.starImage]}>
-                        {postData &&
-                        postData.meta_data &&
-                        postData.meta_data.ratings &&
-                        postData.meta_data.ratings.rating_by_login >= 5 ? (
-                          <Image
-                            style={[styles.starImage]}
-                            source={require('../../assets/images/filled_star.png')}
-                          />
-                        ) : (
-                          <Image
-                            style={[styles.starImage]}
-                            source={require('../../assets/images/empty_star.png')}
-                          />
-                        )}
-                      </TouchableOpacity>
-                      <View style={styles.postStatsLeftTextContainer}>
-                        <Text style={styles.postStatsLeftText}>
-                          {(postData &&
-                            postData.meta_data &&
-                            postData.meta_data.ratings &&
-                            postData.meta_data.ratings.average_rating) ||
-                            0}{' '}
-                          /5{' '}
-                        </Text>
-                        <Text style={styles.postStatsLeftText}>
-                          {' '}
-                          (
+                  <View style={styles.postImageContainer}>
+                    <Image
+                      style={[styles.postImage]}
+                      source={{
+                        uri: postData && postData.content,
+                      }}
+                    />
+                  </View>
+                  <View style={styles.postStatsParentContainer}>
+                    <View style={styles.postStatsContainer}>
+                      <View style={styles.postStatsLeftContainer}>
+                        <TouchableOpacity
+                          onPress={() =>
+                            this.ratePost(postData && postData.id, 1)
+                          }
+                          style={[styles.starImage]}>
+                          {postData &&
+                          postData.meta_data &&
+                          postData.meta_data.ratings &&
+                          postData.meta_data.ratings.rating_by_login >= 1 ? (
+                            <Image
+                              style={[styles.starImage]}
+                              source={require('../../assets/images/filled_star.png')}
+                            />
+                          ) : (
+                            <Image
+                              style={[styles.starImage]}
+                              source={require('../../assets/images/empty_star.png')}
+                            />
+                          )}
+                        </TouchableOpacity>
+                        <TouchableOpacity
+                          onPress={() =>
+                            this.ratePost(postData && postData.id, 2)
+                          }
+                          style={[styles.starImage]}>
+                          {postData &&
+                          postData.meta_data &&
+                          postData.meta_data.ratings &&
+                          postData.meta_data.ratings.rating_by_login >= 2 ? (
+                            <Image
+                              style={[styles.starImage]}
+                              source={require('../../assets/images/filled_star.png')}
+                            />
+                          ) : (
+                            <Image
+                              style={[styles.starImage]}
+                              source={require('../../assets/images/empty_star.png')}
+                            />
+                          )}
+                        </TouchableOpacity>
+                        <TouchableOpacity
+                          onPress={() =>
+                            this.ratePost(postData && postData.id, 3)
+                          }
+                          style={[styles.starImage]}>
+                          {postData &&
+                          postData.meta_data &&
+                          postData.meta_data.ratings &&
+                          postData.meta_data.ratings.rating_by_login >= 3 ? (
+                            <Image
+                              style={[styles.starImage]}
+                              source={require('../../assets/images/filled_star.png')}
+                            />
+                          ) : (
+                            <Image
+                              style={[styles.starImage]}
+                              source={require('../../assets/images/empty_star.png')}
+                            />
+                          )}
+                        </TouchableOpacity>
+                        <TouchableOpacity
+                          onPress={() =>
+                            this.ratePost(postData && postData.id, 4)
+                          }
+                          style={[styles.starImage]}>
+                          {postData &&
+                          postData.meta_data &&
+                          postData.meta_data.ratings &&
+                          postData.meta_data.ratings.rating_by_login >= 4 ? (
+                            <Image
+                              style={[styles.starImage]}
+                              source={require('../../assets/images/filled_star.png')}
+                            />
+                          ) : (
+                            <Image
+                              style={[styles.starImage]}
+                              source={require('../../assets/images/empty_star.png')}
+                            />
+                          )}
+                        </TouchableOpacity>
+                        <TouchableOpacity
+                          onPress={() =>
+                            this.ratePost(postData && postData.id, 5)
+                          }
+                          style={[styles.starImage]}>
+                          {postData &&
+                          postData.meta_data &&
+                          postData.meta_data.ratings &&
+                          postData.meta_data.ratings.rating_by_login >= 5 ? (
+                            <Image
+                              style={[styles.starImage]}
+                              source={require('../../assets/images/filled_star.png')}
+                            />
+                          ) : (
+                            <Image
+                              style={[styles.starImage]}
+                              source={require('../../assets/images/empty_star.png')}
+                            />
+                          )}
+                        </TouchableOpacity>
+                        <View style={styles.postStatsLeftTextContainer}>
+                          <Text style={styles.postStatsLeftText}>
+                            {(postData &&
+                              postData.meta_data &&
+                              postData.meta_data.ratings &&
+                              postData.meta_data.ratings.average_rating) ||
+                              0}{' '}
+                            /5{' '}
+                          </Text>
+                          <Text style={styles.postStatsLeftText}>
+                            {' '}
+                            (
+                            {postData &&
+                              postData.meta_data &&
+                              postData.meta_data.ratings &&
+                              postData.meta_data.ratings.votes}{' '}
+                            Votes)
+                          </Text>
+                        </View>
+                      </View>
+                      <View style={styles.postStatsRightContainer}>
+                        <Text style={styles.postStatsRightText}>
                           {postData &&
                             postData.meta_data &&
-                            postData.meta_data.ratings &&
-                            postData.meta_data.ratings.votes}{' '}
-                          Votes)
+                            postData.meta_data.counts &&
+                            postData.meta_data.counts.views_count}{' '}
+                          view
+                          {postData &&
+                            postData.meta_data &&
+                            postData.meta_data.counts &&
+                            postData.meta_data.counts.views_count > 1 &&
+                            's'}
                         </Text>
                       </View>
                     </View>
-                    <View style={styles.postStatsRightContainer}>
-                      <Text style={styles.postStatsRightText}>
-                        {postData &&
-                          postData.meta_data &&
-                          postData.meta_data.counts &&
-                          postData.meta_data.counts.views_count}{' '}
-                        view
-                        {postData &&
-                          postData.meta_data &&
-                          postData.meta_data.counts &&
-                          postData.meta_data.counts.views_count > 1 &&
-                          's'}
-                      </Text>
-                    </View>
                   </View>
-                </View>
 
-                <View style={styles.commentShareParentContainer}>
-                  <View style={styles.commentShareContainer}>
-                    <View style={[styles.commentImage]}>
-                      <Image
-                        style={[styles.commentImage]}
-                        source={require('../../assets/images/comment_icon.png')}
-                      />
-                    </View>
-                    <View style={[styles.shareImage]}>
-                      <Image
-                        style={[styles.shareImage]}
-                        source={require('../../assets/images/share_icon.png')}
-                      />
-                    </View>
-                  </View>
-                </View>
-
-                {postData && postData.caption && postData.caption.length > 0 ? (
-                  <View style={styles.captionParentContainer}>
-                    <View style={styles.captionContainer}>
-                      <Text style={styles.captionText}>{postData.caption}</Text>
-                    </View>
-                  </View>
-                ) : (
-                  <></>
-                )}
-
-                {postData &&
-                postData.meta_data &&
-                postData.meta_data.counts &&
-                postData.meta_data.counts.comments_count ? (
-                  <View style={styles.commentsParentContainer}>
-                    <View style={styles.commentsContainer}>
+                  <View style={styles.commentShareParentContainer}>
+                    <View style={styles.commentShareContainer}>
                       <TouchableOpacity
+                        style={[styles.commentImage]}
                         onPress={() =>
                           this.viewAllComments(postData && postData.id)
                         }>
-                        <Text style={styles.commentsText}>
-                          View all {postData.meta_data.counts.comments_count}{' '}
-                          comment
-                          {postData.meta_data.counts.comments_count > 1 && 's'}
-                        </Text>
+                        <Image
+                          style={[styles.commentImage]}
+                          source={require('../../assets/images/comment_icon.png')}
+                        />
                       </TouchableOpacity>
+                      <View style={[styles.shareImage]}>
+                        <Image
+                          style={[styles.shareImage]}
+                          source={require('../../assets/images/share_icon.png')}
+                        />
+                      </View>
                     </View>
                   </View>
-                ) : (
-                  <></>
-                )}
 
-                <View style={styles.enterCommentContainer}>
-                  <TextInput
-                    value={this.state.newComment}
-                    onChangeText={this.handleCommentChange}
-                    placeholder="Add Comment"
-                    style={styles.commentInput}
-                    autoCapitalize="none"
-                    placeholderTextColor="#989ba5"
-                    underlineColorAndroid="transparent"
-                    multiline={true}
-                  />
-                </View>
-              </>
-            ))}
-          </>
-        ) : (
-          <View
-            style={{
-              flexDirection: 'row',
-              width: '100%',
-              height: '100%',
-              alignItems: 'center',
-              justifyContent: 'center',
-            }}>
-            <ActivityIndicator animating />
-          </View>
-        )}
-      </ScrollView>
+                  {postData &&
+                  postData.caption &&
+                  postData.caption.length > 0 ? (
+                    <View style={styles.captionParentContainer}>
+                      <View style={styles.captionContainer}>
+                        <Text style={styles.captionText}>
+                          {postData.caption}
+                        </Text>
+                      </View>
+                    </View>
+                  ) : (
+                    <></>
+                  )}
+
+                  {postData &&
+                  postData.meta_data &&
+                  postData.meta_data.counts &&
+                  postData.meta_data.counts.comments_count ? (
+                    <View style={styles.commentsParentContainer}>
+                      <View style={styles.commentsContainer}>
+                        <TouchableOpacity
+                          onPress={() =>
+                            this.viewAllComments(postData && postData.id)
+                          }>
+                          <Text style={styles.commentsText}>
+                            View all {postData.meta_data.counts.comments_count}{' '}
+                            comment
+                            {postData.meta_data.counts.comments_count > 1 &&
+                              's'}
+                          </Text>
+                        </TouchableOpacity>
+                      </View>
+                    </View>
+                  ) : (
+                    <></>
+                  )}
+                  {postData && postData.id && (
+                    <View style={styles.enterCommentContainer}>
+                      <TextInput
+                        value={this.state[`newComment${postData.id}`]}
+                        onChangeText={text =>
+                          this.handleCommentChange(postData.id, text)
+                        }
+                        onFocus={() => this.handleOnFocus(postData.id)}
+                        onBlur={() => this.handleOnBlur(postData.id)}
+                        placeholder="Add Comment"
+                        style={styles.commentInput}
+                        autoCapitalize="none"
+                        placeholderTextColor="#989ba5"
+                        underlineColorAndroid="transparent"
+                        multiline={true}
+                      />
+                      {this.state[`isFocus${postData.id}`] && (
+                        <TouchableOpacity
+                          style={[styles.postButton]}
+                          onPress={() => this.postComment(postData.id)}>
+                          <Text
+                            style={{
+                              color: '#ffffff',
+                              fontSize: scaleModerate(14),
+                              fontFamily: 'Nunito',
+                              lineHeight: undefined,
+                            }}>
+                            Post
+                          </Text>
+                        </TouchableOpacity>
+                      )}
+                    </View>
+                  )}
+                </>
+              ))}
+            </>
+          ) : (
+            <View
+              style={{
+                flexDirection: 'row',
+                width: '100%',
+                height: '100%',
+                alignItems: 'center',
+                justifyContent: 'center',
+              }}>
+              <ActivityIndicator animating />
+            </View>
+          )}
+        </ScrollView>
+      </KeyboardAvoidingView>
     );
   }
 }
@@ -626,6 +704,9 @@ const mapDispatchToProps = dispatch => ({
     },
     fetchCommentsForPost: (postId, accessToken) => {
       dispatch(homeActions.fetchCommentsForPost(postId, accessToken));
+    },
+    addCommentToPost: (postId, comment, accessToken) => {
+      dispatch(homeActions.addCommentToPost(postId, comment, accessToken));
     },
   },
 });

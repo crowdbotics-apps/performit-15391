@@ -13,6 +13,12 @@ import {
   USER_ADD_POST_VIEW_REQUEST,
   USER_ADD_POST_VIEW_SUCCESS,
   USER_ADD_POST_VIEW_ERROR,
+  USER_ADD_COMMENT_POST_REQUEST,
+  USER_ADD_COMMENT_POST_SUCCESS,
+  USER_ADD_COMMENT_POST_ERROR,
+  USER_SEARCH_PERFORMIT_REQUEST,
+  USER_SEARCH_PERFORMIT_SUCCESS,
+  USER_SEARCH_PERFORMIT_ERROR,
 } from './constants';
 import {request} from '../../../utils/http';
 
@@ -64,6 +70,36 @@ function sendAddPostView(postId, token) {
     '/posts/add-post-view/',
     {
       post_id: postId,
+    },
+    {
+      headers: {
+        Authorization: `Token ${token}`,
+      },
+    },
+  );
+}
+
+function sendAddPostComment(postId, comment, token) {
+  return request.post(
+    '/posts/add-comment/',
+    {
+      post_id: postId,
+      comment,
+    },
+    {
+      headers: {
+        Authorization: `Token ${token}`,
+      },
+    },
+  );
+}
+
+function sendSearchDashBoard(tab, term, token) {
+  return request.post(
+    '/searches/search-dashboard/',
+    {
+      tab,
+      term,
     },
     {
       headers: {
@@ -212,9 +248,81 @@ function* handleAddPostView(action) {
   }
 }
 
+function* handleAddPostComment(action) {
+  const {postId, comment, token} = action;
+  console.log('----------------------postId', postId);
+  try {
+    const {status, data} = yield call(
+      sendAddPostComment,
+      postId,
+      comment,
+      token,
+    );
+
+    if (status === 200) {
+      yield put({
+        type: USER_ADD_COMMENT_POST_SUCCESS,
+      });
+      yield put({
+        type: USER_ADD_COMMENT_POST_SUCCESS,
+        data,
+        postId,
+      });
+      yield put({
+        type: USER_ADD_COMMENT_POST_ERROR,
+        error: '',
+      });
+    } else {
+      yield put({
+        type: USER_ADD_COMMENT_POST_ERROR,
+        error: 'Unknown Error',
+      });
+    }
+  } catch (error) {
+    yield put({
+      type: USER_ADD_COMMENT_POST_ERROR,
+      error: 'Something went wrong',
+    });
+  }
+}
+
+function* handleSearchPerformit(action) {
+  const {tab, token, term} = action;
+  try {
+    const {status, data} = yield call(sendSearchDashBoard, tab, term, token);
+
+    if (status === 200) {
+      yield put({
+        type: USER_SEARCH_PERFORMIT_SUCCESS,
+      });
+      yield put({
+        type: USER_SEARCH_PERFORMIT_SUCCESS,
+        data,
+        tab,
+      });
+      yield put({
+        type: USER_SEARCH_PERFORMIT_ERROR,
+        error: '',
+      });
+    } else {
+      yield put({
+        type: USER_SEARCH_PERFORMIT_ERROR,
+        error: 'Unknown Error',
+      });
+    }
+  } catch (error) {
+    yield put({
+      type: USER_SEARCH_PERFORMIT_ERROR,
+      error: 'Something went wrong',
+    });
+  }
+}
+
 export default all([
   takeLatest(USER_POSTS_REQUEST, handleGetUserPosts),
   takeLatest(USER_POSTS_COMMENTS_REQUEST, handleGetUserPostComments),
   takeLatest(USER_EDIT_POST_RANK_REQUEST, handleEditPostRank),
   takeLatest(USER_ADD_POST_VIEW_REQUEST, handleAddPostView),
+  takeLatest(USER_ADD_COMMENT_POST_REQUEST, handleAddPostComment),
+  takeLatest(USER_SEARCH_PERFORMIT_REQUEST, handleSearchPerformit),
 ]);

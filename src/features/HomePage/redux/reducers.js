@@ -3,10 +3,16 @@ import * as actions from './constants';
 const initialState = {
   userPosts: {},
   userPostsCommentList: {},
+  searchTopAccountsList: [],
+  searchAccountsList: [],
+  searchGroupsList: [],
+  searchHashTagsList: [],
   errors: {
     UserPosts: null,
     UserPostsCommentList: null,
     UserEditPostRank: null,
+    UserAddCommentToPost: null,
+    serchDashBoardError: null,
   },
 };
 
@@ -63,6 +69,42 @@ export default (HomePageReducer = (state = initialState, action) => {
       };
     case actions.USER_ADD_POST_VIEW_ERROR:
       return {...state, errors: {UserEditPostRank: action.error}};
+    case actions.USER_ADD_COMMENT_POST_SUCCESS:
+      return {
+        ...state,
+      };
+    case actions.USER_ADD_COMMENT_POST_ERROR:
+      return {...state, errors: {UserAddCommentToPost: action.error}};
+
+    case actions.USER_SEARCH_PERFORMIT_SUCCESS:
+      console.log('-------------------data', action && action.data);
+      if (action.tab === 'top') {
+        return {
+          ...state,
+          searchTopAccountsList: action.data,
+        };
+      } else if (action.tab === 'accounts') {
+        return {
+          ...state,
+          searchAccountsList: action.data,
+        };
+      } else if (action.tab === 'groups') {
+        return {
+          ...state,
+          searchGroupsList: action.data,
+        };
+      } else if (action.tab === 'hashtags') {
+        return {
+          ...state,
+          searchHashTagsList: action.data,
+        };
+      } else {
+        return {
+          ...state,
+        };
+      }
+    case actions.USER_SEARCH_PERFORMIT_ERROR:
+      return {...state, errors: {serchDashBoardError: action.error}};
     default:
       return state;
   }

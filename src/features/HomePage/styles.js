@@ -5,8 +5,6 @@ const screenSize = Dimensions.get('window');
 
 export const styles = StyleSheet.create({
   screen: {
-    flex: 0,
-    minHeight: '100%',
     flexDirection: 'column',
     justifyContent: 'flex-start',
     alignItems: 'center',
@@ -396,15 +394,15 @@ export const styles = StyleSheet.create({
     width: '95%',
     height: scaleVertical(70),
     borderRadius: scaleVertical(23),
-    flexDirection: 'column',
-    justifyContent: 'flex-start',
-    alignItems: 'flex-start',
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
     marginBottom: scaleVertical(24),
     overflow: 'hidden',
   },
 
   commentInput: {
-    flex: 0,
+    flex: 8,
     height: scaleVertical(70),
     color: '#989ba5',
     marginLeft: scaleVertical(7),
@@ -412,5 +410,17 @@ export const styles = StyleSheet.create({
     fontFamily: 'Nunito-Regular',
     marginTop: scaleModerate(10),
     // width: '90%'
+  },
+
+  postButton: {
+    flex: 1,
+    width: scaleVertical(30),
+    height: scaleVertical(22),
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: '#B88746',
+    borderRadius: scaleModerate(10),
+    marginRight: scaleVertical(10),
   },
 });

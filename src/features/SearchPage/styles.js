@@ -255,4 +255,8 @@ export const styles = StyleSheet.create({
     fontFamily: 'Nunito',
     fontWeight: 'bold',
   },
+
+  hashTagImage: {
+
+  },
 });

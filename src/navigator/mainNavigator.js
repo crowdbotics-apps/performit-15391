@@ -31,6 +31,7 @@ import EditProfile from '../features/EditProfile';
 import DrawerComponent from './DrawerComponent';
 import HomePage from '../features/HomePage';
 import SearchPage from '../features/SearchPage';
+import CommentsPage from '../features/CommentsPage';
 
 /**
  * new navigators can be imported here
@@ -80,6 +81,7 @@ const AppNavigator = {
   EmailAuth: {screen: EmailAuthNavigator},
   HomePage: {screen: HomePage},
   SearchPage: {screen: SearchPage},
+  CommentsPage: {screen: CommentsPage},
   /** new navigators can be added here */
 };
 

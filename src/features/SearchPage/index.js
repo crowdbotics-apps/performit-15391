@@ -16,6 +16,7 @@ import {connect} from 'react-redux';
 import {scaleModerate} from '../../utils/scale';
 import * as profileActions from '../ProfilePage/redux/actions';
 import {cloneDeep, get} from 'lodash';
+import {userTypesConfig} from '../../config/userTypes';
 
 class SearchPage extends Component {
   constructor(props) {
@@ -24,12 +25,15 @@ class SearchPage extends Component {
       isLoading: false,
       userId: '',
       activeTab: 'top',
-      newComment: '',
     };
   }
 
   static navigationOptions = {
     header: null,
+  };
+
+  search = {
+    searchTimeOut: null,
   };
 
   async componentDidMount() {
@@ -48,18 +52,23 @@ class SearchPage extends Component {
     console.log('-------------------------');
   }
 
-  handleCommentChange = () => {
-    // write code here
-    console.log('---------------this.state.newComment', this.state.newComment);
-  };
-
   switchTab = tab => {
     this.setState({
       activeTab: tab,
     });
+    if (this.state.searchTerm) {
+      clearTimeout(this.search.searchTimeOut);
+      this.search.searchTimeOut = setTimeout(async () => {
+        const {
+          accessToken,
+          actions: {searchDashboard},
+        } = this.props;
+        await searchDashboard(tab, 1, accessToken, this.state.searchTerm);
+      }, 500);
+    }
   };
 
-  searchUser = text => {
+  searchDashboard = text => {
     this.setState({
       searchTerm: text,
     });
@@ -67,29 +76,49 @@ class SearchPage extends Component {
     this.search.searchTimeOut = setTimeout(async () => {
       const {
         accessToken,
-        actions: {
-          searchFollowersConnectionsList,
-          searchFollowingConnectionsList,
-        },
+        actions: {searchDashboard},
       } = this.props;
-      // await searchFollowersConnectionsList(
-      //   this.state.userId,
-      //   1,
-      //   accessToken,
-      //   text,
-      // );
-      // await searchFollowingConnectionsList(
-      //   this.state.userId,
-      //   1,
-      //   accessToken,
-      //   text,
-      // );
-    }, 1000);
+      await searchDashboard(this.state.activeTab, 1, accessToken, text);
+    }, 500);
+  };
+
+  getUserTypes = userTypesArray => {
+    console.log('---------------userTypesArray', userTypesArray);
+    let userTypes = '';
+    if (userTypesArray && userTypesArray.length > 0) {
+      userTypesArray.forEach(item => {
+        userTypes = userTypes + userTypesConfig[item] + ', ';
+      });
+      userTypes = userTypes.replace(/,\s*$/, '');
+    }
+    return userTypes;
   };
 
   render() {
-    const {navigation} = this.props;
-    const {activeTab} = this.state;
+    const {
+      navigation,
+      searchTopAccountsList,
+      searchAccountsList,
+      searchGroupsList,
+      searchHashTagsList,
+    } = this.props;
+
+    console.log(
+      '-----------------------searchTopAccountsList',
+      searchTopAccountsList,
+    );
+    console.log(
+      '-----------------------searchAccountsList',
+      searchAccountsList,
+    );
+    console.log('-----------------------searchGroupsList', searchGroupsList);
+    console.log(
+      '-----------------------searchHashTagsList',
+      searchHashTagsList,
+    );
+
+    const {activeTab, searchTerm} = this.state;
+
     return (
       <ScrollView
         contentContainerStyle={styles.screen}
@@ -129,14 +158,14 @@ class SearchPage extends Component {
               placeholder="Search"
               autoCapitalize="none"
               selectionColor="#ffffff"
-              onChangeText={value => this.searchUser(value)}
+              onChangeText={value => this.searchDashboard(value)}
             />
           </View>
         </View>
 
         <View style={styles.followHeaderContainer}>
           <TouchableOpacity
-            onPress={() => this.setState({activeTab: 'top'})}
+            onPress={() => this.switchTab('top')}
             style={[
               styles.followersHeaderContainer,
               activeTab === 'top' ? styles.activeTab : styles.inactiveTab,
@@ -151,7 +180,7 @@ class SearchPage extends Component {
             </Text>
           </TouchableOpacity>
           <TouchableOpacity
-            onPress={() => this.setState({activeTab: 'accounts'})}
+            onPress={() => this.switchTab('accounts')}
             style={[
               styles.followingHeaderContainer,
               activeTab === 'accounts' ? styles.activeTab : styles.inactiveTab,
@@ -167,7 +196,7 @@ class SearchPage extends Component {
           </TouchableOpacity>
 
           <TouchableOpacity
-            onPress={() => this.setState({activeTab: 'groups'})}
+            onPress={() => this.switchTab('groups')}
             style={[
               styles.followingHeaderContainer,
               activeTab === 'groups' ? styles.activeTab : styles.inactiveTab,
@@ -183,7 +212,7 @@ class SearchPage extends Component {
           </TouchableOpacity>
 
           <TouchableOpacity
-            onPress={() => this.setState({activeTab: 'hashtags'})}
+            onPress={() => this.switchTab('hashtags')}
             style={[
               styles.followingHeaderContainer,
               activeTab === 'hashtags' ? styles.activeTab : styles.inactiveTab,
@@ -198,6 +227,203 @@ class SearchPage extends Component {
             </Text>
           </TouchableOpacity>
         </View>
+
+        {searchTerm &&
+        searchTopAccountsList &&
+        searchTopAccountsList.data &&
+        searchTopAccountsList.data.length > 0 &&
+        activeTab === 'top' ? (
+          searchTopAccountsList.data.map(account => (
+            <View style={styles.followProfileRowContainer}>
+              <View style={styles.followProfileRowLeftContainer}>
+                <TouchableOpacity
+                  onPress={() =>
+                    navigation.navigate('ProfilePage', {
+                      userId: account.pk,
+                    })
+                  }
+                  style={[styles.profileRowImageContainer]}>
+                  <Image
+                    style={[styles.profileRowImage]}
+                    source={{
+                      uri:
+                        account &&
+                        account.meta_data &&
+                        account.meta_data.user_details &&
+                        account.meta_data.user_details.profile_pic,
+                    }}
+                  />
+                </TouchableOpacity>
+
+                <View style={styles.followProfileRowTextContainer}>
+                  <View style={styles.followProfileRowNameContainer}>
+                    {account && (account.first_name || account.last_name) ? (
+                      <Text style={styles.followProfileText}>
+                        {account.first_name} {account.last_name}
+                      </Text>
+                    ) : (
+                      <Text style={styles.followProfileText}>
+                        {account.username}
+                      </Text>
+                    )}
+                  </View>
+                  <View style={styles.followProfileRowRoleContainer}>
+                    <Text style={styles.followProfileSubText}>
+                      {this.getUserTypes(
+                        account &&
+                          account.meta_data &&
+                          account.meta_data.user_types,
+                      )}
+                    </Text>
+                  </View>
+                </View>
+              </View>
+            </View>
+          ))
+        ) : (
+          <></>
+        )}
+
+        {searchTerm &&
+        searchAccountsList &&
+        searchAccountsList.data &&
+        searchAccountsList.data.length > 0 &&
+        activeTab === 'accounts' ? (
+          searchAccountsList.data.map(account => (
+            <View style={styles.followProfileRowContainer}>
+              <View style={styles.followProfileRowLeftContainer}>
+                <TouchableOpacity
+                  onPress={() =>
+                    navigation.navigate('ProfilePage', {
+                      userId: account.pk,
+                    })
+                  }
+                  style={[styles.profileRowImageContainer]}>
+                  <Image
+                    style={[styles.profileRowImage]}
+                    source={{
+                      uri:
+                        account &&
+                        account.meta_data &&
+                        account.meta_data.user_details &&
+                        account.meta_data.user_details.profile_pic,
+                    }}
+                  />
+                </TouchableOpacity>
+
+                <View style={styles.followProfileRowTextContainer}>
+                  <View style={styles.followProfileRowNameContainer}>
+                    {account && (account.first_name || account.last_name) ? (
+                      <Text style={styles.followProfileText}>
+                        {account.first_name} {account.last_name}
+                      </Text>
+                    ) : (
+                      <Text style={styles.followProfileText}>
+                        {account.username}
+                      </Text>
+                    )}
+                  </View>
+                  <View style={styles.followProfileRowRoleContainer}>
+                    <Text style={styles.followProfileSubText}>
+                      {this.getUserTypes(
+                        account &&
+                          account.meta_data &&
+                          account.meta_data.user_types,
+                      )}
+                    </Text>
+                  </View>
+                </View>
+              </View>
+            </View>
+          ))
+        ) : (
+          <></>
+        )}
+
+        {searchTerm &&
+        searchGroupsList &&
+        searchGroupsList.data &&
+        searchGroupsList.data.length > 0 &&
+        activeTab === 'groups' ? (
+          searchGroupsList.data.map(group => (
+            <View style={styles.followProfileRowContainer}>
+              <View style={styles.followProfileRowLeftContainer}>
+                <TouchableOpacity
+                  onPress={() => console.log('-----------go to Group')}
+                  style={[styles.profileRowImageContainer]}>
+                  <Image
+                    style={[styles.profileRowImage]}
+                    source={{
+                      uri: group && group.group_icon,
+                    }}
+                  />
+                </TouchableOpacity>
+
+                <View style={styles.followProfileRowTextContainer}>
+                  <View style={styles.followProfileRowNameContainer}>
+                    <Text style={styles.followProfileText}>
+                      {group && group.group_name}
+                      <Text
+                        style={[
+                          styles.followProfileText,
+                          {color: '#B88746', fontSize: scaleModerate(12)},
+                        ]}>
+                        {'  '}(
+                        {group &&
+                          group.meta_data &&
+                          group.meta_data.group_member_count}{' '}
+                        members)
+                      </Text>
+                    </Text>
+                  </View>
+                  <View style={styles.followProfileRowRoleContainer}>
+                    <Text style={styles.followProfileSubText}>
+                      {group && group.group_description}
+                    </Text>
+                  </View>
+                </View>
+              </View>
+            </View>
+          ))
+        ) : (
+          <></>
+        )}
+
+        {searchTerm &&
+        searchHashTagsList &&
+        searchHashTagsList.data &&
+        searchHashTagsList.data.length > 0 &&
+        activeTab === 'hashtags' ? (
+          searchHashTagsList.data.map(hahstag => (
+            <View style={styles.followProfileRowContainer}>
+              <View style={styles.followProfileRowLeftContainer}>
+                <TouchableOpacity
+                  onPress={() => console.log('-----------go to Group')}
+                  style={[styles.profileRowImageContainer]}>
+                  <Image
+                    style={[styles.hashTagImage]}
+                    source={require('../../assets/images/hashtag.png')}
+                  />
+                </TouchableOpacity>
+
+                <View style={styles.followProfileRowTextContainer}>
+                  <View style={styles.followProfileRowNameContainer}>
+                    <Text style={styles.followProfileText}>
+                      {hahstag && hahstag.caption}
+                    </Text>
+                  </View>
+                  <View style={styles.followProfileRowRoleContainer}>
+                    <Text style={styles.followProfileSubText}>
+                      Trending Hashtag
+                    </Text>
+                  </View>
+                </View>
+              </View>
+            </View>
+          ))
+        ) : (
+          <></>
+        )}
       </ScrollView>
     );
   }
@@ -208,6 +434,10 @@ const mapStateToProps = state => ({
   posts: state.Posts.userPosts,
   profile: state.Profile.profile,
   user: state.EmailAuth.user,
+  searchTopAccountsList: state.Posts.searchTopAccountsList,
+  searchAccountsList: state.Posts.searchAccountsList,
+  searchGroupsList: state.Posts.searchGroupsList,
+  searchHashTagsList: state.Posts.searchHashTagsList,
   accessToken: state.EmailAuth.accessToken,
 });
 
@@ -221,6 +451,9 @@ const mapDispatchToProps = dispatch => ({
     },
     followersConnectionsList: (userId, token) => {
       dispatch(profileActions.followersConnectionsList(userId, 1, token));
+    },
+    searchDashboard: (tab, page, token, term) => {
+      dispatch(homeActions.searchDashboard(tab, page, token, term));
     },
   },
 });
