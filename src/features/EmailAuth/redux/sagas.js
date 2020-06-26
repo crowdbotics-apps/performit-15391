@@ -1,5 +1,6 @@
 import {all, takeLatest, put, call} from 'redux-saga/effects';
 import * as NavigationService from '../../../navigator/NavigationService';
+import AsyncStorage from '@react-native-community/async-storage';
 
 import {
   EMAIL_AUTH_LOGIN_REQUEST,
@@ -93,7 +94,7 @@ function* handleLogin(action) {
       });
 
       // you can change the navigate for navigateAndResetStack to go to a protected route
-      NavigationService.navigate('Profile', {userId: ''});
+      NavigationService.navigate('HomePage', {userId: ''});
     } else {
       yield put({
         type: EMAIL_AUTH_LOGIN_ERROR,

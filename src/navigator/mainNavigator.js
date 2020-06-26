@@ -29,6 +29,8 @@ import ChangePassword from '../features/ChangePassword';
 import TermsAndConditions from '../features/EmailAuth/TermsAndConditions';
 import EditProfile from '../features/EditProfile';
 import DrawerComponent from './DrawerComponent';
+import HomePage from '../features/HomePage';
+import SearchPage from '../features/SearchPage';
 
 /**
  * new navigators can be imported here
@@ -76,7 +78,8 @@ const AppNavigator = {
   // Tutorial: { screen: TutorialNavigator },
   // Camera: { screen: CameraNavigator },
   EmailAuth: {screen: EmailAuthNavigator},
-
+  HomePage: {screen: HomePage},
+  SearchPage: {screen: SearchPage},
   /** new navigators can be added here */
 };
 
@@ -89,48 +92,50 @@ const EmailAuthStackNavigator = createStackNavigator(
   },
 );
 
+const commonNavigator = {
+  ProfilePage: {
+    screen: ProfilePage,
+    navigationOptions: {
+      drawerLabel: () => null,
+    },
+  },
+  FollowPage: {
+    screen: FollowPage,
+    navigationOptions: {
+      drawerLabel: () => null,
+    },
+  },
+  ChangePasswordPage: {
+    screen: ChangePassword,
+    navigationOptions: {
+      drawerLabel: 'Change Password',
+      drawerIcon: () => (
+        <Image
+          source={require('../assets/images/small_lock.png')}
+          resizeMode="contain"
+          style={{width: 20, height: 22, tintColor: '#111111'}}
+        />
+      ),
+    },
+  },
+  EditProfilePage: {
+    screen: EditProfile,
+    navigationOptions: {
+      drawerLabel: () => null,
+    },
+  },
+  TermsAndConditionsPage: {
+    screen: TermsAndConditions,
+    navigationOptions: {
+      drawerLabel: 'Terms & Conditions',
+      drawerIcon: () => <IconFA5 name="file-alt" size={25} color={'#111111'} />,
+    },
+  },
+};
+
 const DrawerAppNavigator = createDrawerNavigator(
   {
-    ProfilePage: {
-      screen: ProfilePage,
-      navigationOptions: {
-        drawerLabel: () => null,
-      },
-    },
-    FollowPage: {
-      screen: FollowPage,
-      navigationOptions: {
-        drawerLabel: () => null,
-      },
-    },
-    ChangePasswordPage: {
-      screen: ChangePassword,
-      navigationOptions: {
-        drawerLabel: 'Change Password',
-        drawerIcon: () => (
-          <Image
-            source={require('../assets/images/small_lock.png')}
-            resizeMode="contain"
-            style={{width: 20, height: 22, tintColor: '#111111'}}
-          />
-        ),
-      },
-    },
-    EditProfilePage: {
-      screen: EditProfile,
-      navigationOptions: {
-        drawerLabel: () => null,
-      },
-    },
-    TermsAndConditionsPage: {
-      screen: TermsAndConditions,
-      navigationOptions: {
-        drawerLabel: 'Terms & Conditions',
-        drawerIcon: () => (
-          <IconFA5 name="file-alt" size={25} color={'#111111'} />
-        ),
-      },
-    },
+    ...commonNavigator,
   },
   {
     initialRouteName: 'ProfilePage',
@@ -168,31 +173,26 @@ const DrawerAppNavigator = createDrawerNavigator(
   },
 );
 
-// const ProfileAppNavigator = createStackNavigator(
-//   {
-//
-//     DrawerPage: {
-//       screen: DrawerAppNavigator,
-//     },
-//   },
-//   {
-//     initialRouteName: 'ProfilePage',
-//   },
-// );
-
 const LoggedInBottomTabNavigator = createBottomTabNavigator(
   {
     Home: {
       screen: EmailAuthStackNavigator,
-      navigationOptions: ({navigation}) => ({
-        tabBarVisible: false,
-        tabBarIcon: ({focused}) => (
-          <Image
-            source={require('../assets/images/home_small.png')}
-            style={focused ? focusedHomeImageStyle : homeImageStyle}
-          />
-        ),
-      }),
+      navigationOptions: ({navigation}) => {
+        console.log('----------------navigation', navigation);
+        console.log(
+          '----------------navigation key',
+          navigation && navigation.state && navigation.state.key,
+        );
+        return {
+          tabBarVisible: navigation.state.index === 1 ? true : false,
+          tabBarIcon: ({focused}) => (
+            <Image
+              source={require('../assets/images/home_small.png')}
+              style={focused ? focusedHomeImageStyle : homeImageStyle}
+            />
+          ),
+        };
+      },
     },
     Location: {
       screen: EmailAuthStackNavigator,

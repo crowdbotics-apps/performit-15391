@@ -3,6 +3,7 @@ import {all, takeEvery, take} from 'redux-saga/effects';
 //@BlueprintReduxSagaImportInsertion
 import EmailAuthSaga from '../features/EmailAuth/redux/sagas';
 import ProfilePageSaga from '../features/ProfilePage/redux/sagas';
+import HomePageSaga from '../features/HomePage/redux/sagas';
 
 function* helloSaga() {
   console.log('Hello from saga!');
@@ -16,5 +17,6 @@ export function* mainSaga() {
     //@BlueprintReduxSagaMainInsertion
     EmailAuthSaga,
     ProfilePageSaga,
+    HomePageSaga,
   ]);
 }

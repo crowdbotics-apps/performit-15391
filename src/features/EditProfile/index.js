@@ -785,7 +785,7 @@ class EditProfile extends Component {
               }?fields=id,username&access_token=${res.access_token}`,
             );
             const user = await data.json();
-            console.log(`https://www.instagram.com/${user.username}`);
+            user && console.log(`https://www.instagram.com/${user.username}`);
           }}
           onLoginFailure={data => console.log(data)}
         />
