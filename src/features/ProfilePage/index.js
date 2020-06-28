@@ -182,8 +182,6 @@ class Profile extends Component {
         });
     }
 
-    console.log('-----------------------------profile', profile);
-
     return (
       <ScrollView
         contentContainerStyle={styles.screen}
@@ -253,7 +251,6 @@ class Profile extends Component {
                     </View>
                     <TouchableOpacity
                       onPress={() =>
-                        !isOtherProfilePage &&
                         navigation.navigate('FollowPage', {
                           userId,
                           tab: 'follower',
@@ -269,7 +266,6 @@ class Profile extends Component {
                     </TouchableOpacity>
                     <TouchableOpacity
                       onPress={() =>
-                        !isOtherProfilePage &&
                         navigation.navigate('FollowPage', {
                           userId,
                           tab: 'following',
@@ -326,7 +322,7 @@ class Profile extends Component {
                   <TouchableOpacity
                     style={styles.messageProfileButtonContainer}
                     onPress={() => {
-                      console.log('-------------edit profile');
+                      console.log('-------------message');
                     }}>
                     <Text style={styles.followProfileButtonText}>MESSAGE</Text>
                   </TouchableOpacity>

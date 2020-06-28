@@ -170,15 +170,6 @@ const DrawerAppNavigator = createDrawerNavigator(
       flex: 1,
       ...this.props,
     },
-    // drawerContent: props => (
-    //   <DrawerContentScrollView {...props}>
-    //     <DrawerItemList {...props} />
-    //     <DrawerItem
-    //       label="Help"
-    //       onPress={() => console.log('------link pressed')}
-    //     />
-    //   </DrawerContentScrollView>
-    // ),
   },
 );
 
@@ -187,11 +178,6 @@ const LoggedInBottomTabNavigator = createBottomTabNavigator(
     Home: {
       screen: EmailAuthStackNavigator,
       navigationOptions: ({navigation}) => {
-        console.log('----------------navigation', navigation);
-        console.log(
-          '----------------navigation key',
-          navigation && navigation.state && navigation.state.key,
-        );
         return {
           tabBarVisible: navigation.state.index === 1 ? true : false,
           tabBarIcon: ({focused}) => (
@@ -204,7 +190,7 @@ const LoggedInBottomTabNavigator = createBottomTabNavigator(
       },
     },
     Location: {
-      screen: DrawerAppNavigator,
+      screen: EmailAuthStackNavigator,
       navigationOptions: ({navigation}) => ({
         tabBarVisible: navigation.state.index === 0 ? true : false,
         title: null,
@@ -217,7 +203,7 @@ const LoggedInBottomTabNavigator = createBottomTabNavigator(
       }),
     },
     CreatePost: {
-      screen: DrawerAppNavigator,
+      screen: EmailAuthStackNavigator,
       navigationOptions: ({navigation}) => ({
         tabBarVisible: navigation.state.index === 0 ? true : false,
         title: null,
@@ -230,7 +216,7 @@ const LoggedInBottomTabNavigator = createBottomTabNavigator(
       }),
     },
     Notifications: {
-      screen: DrawerAppNavigator,
+      screen: EmailAuthStackNavigator,
       navigationOptions: ({navigation}) => ({
         tabBarVisible: navigation.state.index === 0 ? true : false,
         title: null,

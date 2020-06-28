@@ -16,10 +16,11 @@ export const styles = StyleSheet.create({
   headerContainer: {
     backgroundColor: '#111111',
     width: '100%',
-    height: scaleModerate(80, 1),
+    height: '10%',
     flexDirection: 'row',
     justifyContent: 'flex-start',
     alignItems: 'center',
+    zIndex: 99999,
   },
 
   headerTextContainer: {
@@ -87,5 +88,43 @@ export const styles = StyleSheet.create({
     fontSize: scaleModerate(14),
     fontFamily: 'Nunito-Regular',
     lineHeight: undefined,
+  },
+
+  enterCommentContainer: {
+    width: '95%',
+    height: '8%',
+    borderRadius: scaleVertical(23),
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
+    overflow: 'hidden',
+    position: 'absolute',
+    bottom: 0,
+    left: scaleModerate(10),
+    marginBottom: scaleModerate(15),
+    backgroundColor: '#111111',
+  },
+
+  commentInput: {
+    flex: 8,
+    height: scaleVertical(70),
+    color: '#989ba5',
+    marginLeft: scaleVertical(7),
+    fontSize: scaleVertical(16),
+    fontFamily: 'Nunito-Regular',
+    marginTop: scaleModerate(10),
+    // width: '90%'
+  },
+
+  postButton: {
+    flex: 1,
+    width: scaleVertical(30),
+    height: scaleVertical(22),
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: '#B88746',
+    borderRadius: scaleModerate(10),
+    marginRight: scaleVertical(10),
   },
 });

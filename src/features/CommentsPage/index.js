@@ -8,6 +8,8 @@ import {
   ActivityIndicator,
   SafeAreaView,
   TextInput,
+  KeyboardAvoidingView,
+  Keyboard,
 } from 'react-native';
 import {Text, Button} from 'react-native-ui-kitten';
 import {styles} from './styles';
@@ -41,6 +43,7 @@ class CommentsPage extends Component {
     });
 
     const postId = this.props.navigation.getParam('postId', '');
+    const activeTab = this.props.navigation.getParam('activeTab', 'following');
     const {
       actions: {fetchCommentsForPost},
     } = this.props;
@@ -50,12 +53,14 @@ class CommentsPage extends Component {
     this.setState({
       isLoading: false,
       postId,
+      activeTab,
     });
   }
 
   async componentDidUpdate(prevProps) {
     const prevPostId = prevProps.navigation.getParam('postId', '');
     const postId = this.props.navigation.getParam('postId', '');
+    const activeTab = this.props.navigation.getParam('activeTab', 'following');
     if (prevPostId !== postId) {
       this.setState({
         isLoading: true,
@@ -69,18 +74,58 @@ class CommentsPage extends Component {
       this.setState({
         isLoading: false,
         postId,
+        activeTab,
       });
     }
   }
+
+  handleCommentChange = (postId, text) => {
+    // write code here
+    this.setState({
+      [`newComment${postId}`]: text,
+    });
+  };
+
+  postComment = async postId => {
+    const accessToken = this.props.accessToken;
+    const userId = this.props.user && this.props.user.pk;
+    const {
+      actions: {userPosts, addCommentToPost, fetchCommentsForPost},
+    } = this.props;
+
+    await addCommentToPost(
+      postId,
+      this.state[`newComment${postId}`],
+      accessToken,
+    );
+    await fetchCommentsForPost(postId, accessToken);
+    Keyboard.dismiss();
+    await userPosts(this.state.activeTab, accessToken, userId);
+    this.setState({
+      [`newComment${postId}`]: '',
+    });
+  };
+
+  handleOnFocus = postId => {
+    // write code here
+    this.setState({
+      [`isFocus${postId}`]: true,
+    });
+  };
+
+  handleOnBlur = postId => {
+    // write code here
+    this.setState({
+      [`isFocus${postId}`]: false,
+    });
+  };
 
   render() {
     const {navigation, commentsList} = this.props;
     let comments = commentsList && commentsList[`${this.state.postId}`];
     comments = get(comments, 'comments.data', []);
     return (
-      <ScrollView
-        contentContainerStyle={styles.screen}
-        style={{backgroundColor: 'black'}}>
+      <View style={{flex: 1, backgroundColor: 'black'}}>
         <SafeAreaView style={styles.headerContainer}>
           <TouchableOpacity
             style={[styles.inputDrawerContainer]}
@@ -96,50 +141,103 @@ class CommentsPage extends Component {
             <Text style={styles.headerText}>Comments</Text>
           </View>
         </SafeAreaView>
-        {comments.map(comment => (
-          <View style={styles.postParentContainer}>
-            <View style={styles.postProfileContainer}>
-              <View style={[styles.postProfileImage]}>
-                <Image
-                  style={[styles.postProfileImage]}
-                  source={{
-                    uri:
-                      comment &&
-                      comment.commenter_user &&
-                      comment.commenter_user.meta_data &&
-                      comment.commenter_user.meta_data.user_details &&
-                      comment.commenter_user.meta_data.user_details.profile_pic,
-                  }}
-                />
+        <KeyboardAvoidingView
+          behavior={'position'}
+          style={{flex: 1, backgroundColor: 'black', minHeight: '90%'}}>
+          <ScrollView
+            contentContainerStyle={styles.screen}
+            keyboardShouldPersistTaps={'handled'}
+            style={{backgroundColor: 'black'}}>
+            {comments.map(comment => (
+              <View style={styles.postParentContainer}>
+                <View style={styles.postProfileContainer}>
+                  <TouchableOpacity
+                    onPress={() =>
+                      navigation.navigate('ProfilePage', {
+                        userId:
+                          comment &&
+                          comment.commenter_user &&
+                          comment.commenter_user.pk,
+                      })
+                    }
+                    style={[styles.postProfileImage]}>
+                    <Image
+                      style={[styles.postProfileImage]}
+                      source={{
+                        uri:
+                          comment &&
+                          comment.commenter_user &&
+                          comment.commenter_user.meta_data &&
+                          comment.commenter_user.meta_data.user_details &&
+                          comment.commenter_user.meta_data.user_details
+                            .profile_pic,
+                      }}
+                    />
+                  </TouchableOpacity>
+                  <View style={styles.postProfileTextContainer}>
+                    {comment &&
+                    comment.commenter_user &&
+                    (comment.commenter_user.first_name ||
+                      comment.commenter_user.last_name) ? (
+                      <Text
+                        style={[styles.postProfileText, {color: '#B88746'}]}>
+                        {`${comment.commenter_user.first_name} ${
+                          comment.commenter_user.last_name
+                        }`}
+                        {'  '}
+                        <Text style={styles.postProfileText}>
+                          {comment && comment.comment}
+                        </Text>
+                      </Text>
+                    ) : (
+                      <Text
+                        style={[styles.postProfileText, {color: '#B88746'}]}>
+                        {comment.commenter_user.username}
+                        {'  '}
+                        <Text style={styles.postProfileText}>
+                          {comment && comment.comment}
+                        </Text>
+                      </Text>
+                    )}
+                  </View>
+                </View>
               </View>
-              <View style={styles.postProfileTextContainer}>
-                {comment &&
-                comment.commenter_user &&
-                (comment.commenter_user.first_name ||
-                  comment.commenter_user.last_name) ? (
-                  <Text style={[styles.postProfileText, {color: '#B88746'}]}>
-                    {`${comment.commenter_user.first_name} ${
-                      comment.commenter_user.last_name
-                    }`}
-                    {'  '}
-                    <Text style={styles.postProfileText}>
-                      {comment && comment.comment}
-                    </Text>
-                  </Text>
-                ) : (
-                  <Text style={[styles.postProfileText, {color: '#B88746'}]}>
-                    {comment.commenter_user.username}
-                    {'  '}
-                    <Text style={styles.postProfileText}>
-                      {comment && comment.comment}
-                    </Text>
-                  </Text>
-                )}
-              </View>
-            </View>
+            ))}
+          </ScrollView>
+
+          <View style={styles.enterCommentContainer}>
+            <TextInput
+              value={this.state[`newComment${this.state.postId}`]}
+              onChangeText={text =>
+                this.handleCommentChange(this.state.postId, text)
+              }
+              onFocus={() => this.handleOnFocus(this.state.postId)}
+              onBlur={() => this.handleOnBlur(this.state.postId)}
+              placeholder="Add Comment"
+              style={styles.commentInput}
+              autoCapitalize="none"
+              placeholderTextColor="#989ba5"
+              underlineColorAndroid="transparent"
+              multiline={true}
+            />
+            {this.state[`isFocus${this.state.postId}`] && (
+              <TouchableOpacity
+                style={[styles.postButton]}
+                onPress={() => this.postComment(this.state.postId)}>
+                <Text
+                  style={{
+                    color: '#ffffff',
+                    fontSize: scaleModerate(14),
+                    fontFamily: 'Nunito',
+                    lineHeight: undefined,
+                  }}>
+                  Post
+                </Text>
+              </TouchableOpacity>
+            )}
           </View>
-        ))}
-      </ScrollView>
+        </KeyboardAvoidingView>
+      </View>
     );
   }
 }
@@ -164,6 +262,9 @@ const mapDispatchToProps = dispatch => ({
     },
     fetchCommentsForPost: (postId, accessToken) => {
       dispatch(homeActions.fetchCommentsForPost(postId, accessToken));
+    },
+    addCommentToPost: (postId, comment, accessToken) => {
+      dispatch(homeActions.addCommentToPost(postId, comment, accessToken));
     },
   },
 });

@@ -66,30 +66,69 @@ class Follow extends Component {
     });
   }
 
-  componentDidUpdate(prevProps) {
+  async componentDidUpdate(prevProps) {
+    const userId = this.props.navigation.getParam('userId', '');
+    const prevUserId = prevProps.navigation.getParam('userId', '');
     const prevActiveTab = prevProps.navigation.getParam('tab', 'follower');
     const activeTab = this.props.navigation.getParam('tab', 'follower');
+
     if (prevActiveTab !== activeTab) {
       this.setState({
         activeTab,
       });
+    }
+    if (userId !== prevUserId) {
+      const accessToken = this.props.accessToken;
+
+      const {
+        actions: {followersConnectionsList, followingConnectionsList},
+      } = this.props;
+
+      const {followersCurrentPage, followingCurrentPage} = this.state;
+
+      if (userId && accessToken) {
+        await followersConnectionsList(
+          userId,
+          followersCurrentPage,
+          accessToken,
+        );
+        await followingConnectionsList(
+          userId,
+          followingCurrentPage,
+          accessToken,
+        );
+        this.setState({
+          followersCurrentPage: followersCurrentPage + 1,
+          followingCurrentPage: followingCurrentPage + 1,
+          activeTab,
+          userId,
+        });
+      }
     }
   }
 
   followUser = async (userId, user, metaData, origin) => {
     const {accessToken, user: loggedInUser} = this.props;
     const {
-      actions: {followUser},
+      actions: {followUser, followersConnectionsList, followingConnectionsList},
     } = this.props;
     await followUser(userId, user, metaData, accessToken, loggedInUser, origin);
+    await followersConnectionsList(this.state.userId, 1, accessToken);
+    await followingConnectionsList(this.state.userId, 1, accessToken);
   };
 
   unFollowUser = async (userId, origin) => {
     const {accessToken, user: loggedInUser} = this.props;
     const {
-      actions: {unFollowUser},
+      actions: {
+        unFollowUser,
+        followersConnectionsList,
+        followingConnectionsList,
+      },
     } = this.props;
     await unFollowUser(userId, accessToken, loggedInUser, origin);
+    await followersConnectionsList(this.state.userId, 1, accessToken);
+    await followingConnectionsList(this.state.userId, 1, accessToken);
   };
 
   searchUser = text => {
@@ -125,6 +164,7 @@ class Follow extends Component {
     const {navigation, profile: allProfiles} = this.props;
     const {activeTab, searchTerm} = this.state;
     const profile = allProfiles && allProfiles[`${this.state.userId}`];
+    const loggedInUserId = this.props.user && this.props.user.pk;
 
     let followers = cloneDeep(
       get(profile, 'followersConnectionsList.data', []),
@@ -275,7 +315,9 @@ class Follow extends Component {
                         uri:
                           follower &&
                           follower.follower &&
-                          follower.follower.profile_pic,
+                          follower.follower.meta_data &&
+                          follower.follower.meta_data.user_details &&
+                          follower.follower.meta_data.user_details.profile_pic,
                       }}
                     />
                   </TouchableOpacity>
@@ -303,28 +345,74 @@ class Follow extends Component {
                     </View>
                   </View>
                 </View>
-                <View style={styles.followProfileRowRightContainer}>
-                  {follower &&
-                  follower.meta_data &&
-                  follower.meta_data.is_following ? (
-                    <View style={styles.followingButtonContainer}>
-                      <Text style={styles.followingButtonText}>Following</Text>
+                {loggedInUserId === this.state.userId && (
+                  <View style={styles.followProfileRowRightContainer}>
+                    {follower &&
+                    follower.meta_data &&
+                    follower.meta_data.is_following ? (
+                      <View style={styles.followingButtonContainer}>
+                        <Text style={styles.followingButtonText}>
+                          Following
+                        </Text>
+                      </View>
+                    ) : (
+                      <TouchableOpacity
+                        onPress={() =>
+                          this.followUser(
+                            follower &&
+                              follower.follower &&
+                              follower.follower.pk,
+                            follower.follower,
+                            follower.meta_data,
+                            origin,
+                          )
+                        }
+                        style={styles.followButtonContainer}>
+                        <Text style={styles.followButtonText}>Follow</Text>
+                      </TouchableOpacity>
+                    )}
+                  </View>
+                )}
+                {loggedInUserId !== this.state.userId &&
+                  follower &&
+                  follower.follower &&
+                  follower.follower.pk !== loggedInUserId && (
+                    <View style={styles.followProfileRowRightContainer}>
+                      {follower &&
+                      follower.meta_data &&
+                      follower.meta_data.is_following ? (
+                        <TouchableOpacity
+                          onPress={() =>
+                            this.unFollowUser(
+                              follower &&
+                                follower.follower &&
+                                follower.follower.pk,
+                              origin,
+                            )
+                          }
+                          style={styles.followingButtonContainer}>
+                          <Text style={styles.followingButtonText}>
+                            Unfollow
+                          </Text>
+                        </TouchableOpacity>
+                      ) : (
+                        <TouchableOpacity
+                          onPress={() =>
+                            this.followUser(
+                              follower &&
+                                follower.follower &&
+                                follower.follower.pk,
+                              follower.follower,
+                              follower.meta_data,
+                              origin,
+                            )
+                          }
+                          style={styles.followButtonContainer}>
+                          <Text style={styles.followButtonText}>Follow</Text>
+                        </TouchableOpacity>
+                      )}
                     </View>
-                  ) : (
-                    <TouchableOpacity
-                      onPress={() =>
-                        this.followUser(
-                          follower && follower.follower && follower.follower.pk,
-                          follower.follower,
-                          follower.meta_data,
-                          origin,
-                        )
-                      }
-                      style={styles.followButtonContainer}>
-                      <Text style={styles.followButtonText}>Follow</Text>
-                    </TouchableOpacity>
                   )}
-                </View>
               </View>
             ))
           : following.map(follower => (
@@ -343,7 +431,9 @@ class Follow extends Component {
                         uri:
                           follower &&
                           follower.following &&
-                          follower.following.profile_pic,
+                          follower.following.meta_data &&
+                          follower.following.meta_data.user_details &&
+                          follower.following.meta_data.user_details.profile_pic,
                       }}
                     />
                   </TouchableOpacity>
@@ -371,18 +461,60 @@ class Follow extends Component {
                     </View>
                   </View>
                 </View>
-                <View style={styles.followProfileRowRightContainer}>
-                  <TouchableOpacity
-                    onPress={() =>
-                      this.unFollowUser(
-                        follower && follower.following && follower.following.pk,
-                        origin,
-                      )
-                    }
-                    style={styles.followingButtonContainer}>
-                    <Text style={styles.followingButtonText}>Unfollow</Text>
-                  </TouchableOpacity>
-                </View>
+                {loggedInUserId === this.state.userId && (
+                  <View style={styles.followProfileRowRightContainer}>
+                    <TouchableOpacity
+                      onPress={() =>
+                        this.unFollowUser(
+                          follower &&
+                            follower.following &&
+                            follower.following.pk,
+                          origin,
+                        )
+                      }
+                      style={styles.followingButtonContainer}>
+                      <Text style={styles.followingButtonText}>Unfollow</Text>
+                    </TouchableOpacity>
+                  </View>
+                )}
+                {loggedInUserId !== this.state.userId &&
+                  follower &&
+                  follower.following &&
+                  follower.following.pk !== loggedInUserId && (
+                    <View style={styles.followProfileRowRightContainer}>
+                      {follower.meta_data && follower.meta_datais_following ? (
+                        <TouchableOpacity
+                          onPress={() =>
+                            this.unFollowUser(
+                              follower &&
+                                follower.following &&
+                                follower.following.pk,
+                              origin,
+                            )
+                          }
+                          style={styles.followingButtonContainer}>
+                          <Text style={styles.followingButtonText}>
+                            Unfollow
+                          </Text>
+                        </TouchableOpacity>
+                      ) : (
+                        <TouchableOpacity
+                          onPress={() =>
+                            this.followUser(
+                              follower &&
+                                follower.following &&
+                                follower.following.pk,
+                              follower.following,
+                              follower.meta_data,
+                              origin,
+                            )
+                          }
+                          style={styles.followButtonContainer}>
+                          <Text style={styles.followButtonText}>Follow</Text>
+                        </TouchableOpacity>
+                      )}
+                    </View>
+                  )}
               </View>
             ))}
       </ScrollView>

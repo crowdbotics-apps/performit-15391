@@ -239,7 +239,10 @@ class Home extends Component {
   };
 
   viewAllComments = async postId => {
-    this.props.navigation.navigate('CommentsPage', {postId});
+    this.props.navigation.navigate('CommentsPage', {
+      postId,
+      activeTab: this.state.activeTab,
+    });
   };
 
   // setting current time of video to a timestamp
@@ -333,7 +336,10 @@ class Home extends Component {
                               uri:
                                 follower &&
                                 follower.follower &&
-                                follower.follower.profile_pic,
+                                follower.follower.meta_data &&
+                                follower.follower.meta_data.user_details &&
+                                follower.follower.meta_data.user_details
+                                  .profile_pic,
                             }}
                           />
                         </View>
@@ -402,7 +408,14 @@ class Home extends Component {
                 <>
                   <View style={styles.postParentContainer}>
                     <View style={styles.postProfileContainer}>
-                      <View style={[styles.postProfileImage]}>
+                      <TouchableOpacity
+                        onPress={() =>
+                          navigation.navigate('ProfilePage', {
+                            userId:
+                              postData && postData.user && postData.user.pk,
+                          })
+                        }
+                        style={[styles.postProfileImage]}>
                         <Image
                           style={[styles.postProfileImage]}
                           source={{
@@ -414,7 +427,7 @@ class Home extends Component {
                               postData.user.meta_data.user_details.profile_pic,
                           }}
                         />
-                      </View>
+                      </TouchableOpacity>
                       <View style={styles.postProfileTextContainer}>
                         {postData &&
                         postData.user &&
