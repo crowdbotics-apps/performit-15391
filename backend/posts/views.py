@@ -6,11 +6,11 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.views import APIView, Response
 from django.core.paginator import Paginator, EmptyPage, InvalidPage
 
+from posts.PostFunctions import PostFunctions
 from posts.models import Post, PostComment, PostRank, PostView
 from posts.serializers import CommentSerializer, PostRankSerializer, PostViewSerializer,PostSerializer
 import filetype
-import subprocess
-from subprocess import check_output
+
 
 @permission_classes([IsAuthenticated])
 class AddComment(APIView):
@@ -123,7 +123,6 @@ class AddPostView(APIView):
         return Response({"success": False, "message": post_view.errors})\
 
 
-
 @permission_classes([IsAuthenticated])
 class Create(APIView):
     def post(self, request):
@@ -136,7 +135,7 @@ class Create(APIView):
         if kind is None:
             return Response({"success": False, "message": "Can't Determine file type"}, status=400)
         extension = kind.extension
-        if valid_extension(extension):
+        if PostFunctions.valid_extension(extension):
             data = {"content": request.data.get('content'), "caption": request.data.get("caption"), "user": request.user.id}
             post = PostSerializer(data=data)
             if post.is_valid():
@@ -144,15 +143,6 @@ class Create(APIView):
                 serializer = PostSerializer(instance, many=False)
                 return Response({"success": True, "message": "Post Created", "data": serializer.data})
             return Response({"success": False, "message": post.errors}, status=400)
-        return Response({"success": False, "message": "not valid"})
-
-
-def valid_extension(extension):
-    if extension == 'mp4' or extension == 'x-m4v' or extension == 'x-matroska' or \
-            extension == 'webm' or extension == 'quicktime' or extension == 'x-msvideo' or \
-            extension == 'x-ms-wmv'or extension == 'mpeg' or extension == 'x-flv' or \
-            extension == 'mp3' or extension == 'midi' or extension == 'mpeg' or extension == 'm4a' or extension == 'ogg' or extension == 'x-flac' or extension == 'x-wav' or extension == 'amr':
-        return True
-    return False
+        return Response({"success": False, "message": "Invalid post content provided only Audio, video allowed"}, status=400)
 
 
