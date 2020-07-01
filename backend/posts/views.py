@@ -146,3 +146,54 @@ class Create(APIView):
         return Response({"success": False, "message": "Invalid post content provided only Audio, video allowed"}, status=400)
 
 
+
+@permission_classes([IsAuthenticated])
+class EditPost(APIView):
+    def post(self, request):
+        post_id = request.data.get("post_id")
+        if post_id is None:
+            return Response({"success": False, "message": "Required params post_id is missing"})
+        try:
+            post = Post.objects.get(pk=post_id)
+        except Post.DoesNotExist:
+            return Response({"success": False, "message": "Invalid post_id params provided"})
+        try:
+            content = request.FILES['content']
+        except Exception as e:
+            print(e)
+            return Response({"success": False, "message": "Required param content is missing"}, status=400)
+        kind = filetype.guess(content)
+        if kind is None:
+            return Response({"success": False, "message": "Can't Determine file type"}, status=400)
+        extension = kind.extension
+        print(extension)
+        if PostFunctions.valid_extension(extension):
+            data = {"content": request.data.get('content'), "caption": request.data.get("caption"),
+                    "user": request.user.id}
+            validated_data = PostSerializer(data=data)
+            if validated_data.is_valid():
+                post.content = content
+                post.caption = data.get('caption')
+                post.save()
+                serializer = PostSerializer(post,many=False)
+                return Response({"success": True, "message": "Post Edited", "data": serializer.data})
+            return Response({"success": False, "message": validated_data.errors},status=400)
+        return Response({"success": False, "message": "Invalid Post Content provided only Audio,Video allowedd"})
+
+# find post by id
+# No need for validation
+# Post Deleted
+@permission_classes([IsAuthenticated])
+class DeletePost(APIView):
+    def post(self, request):
+        post_id = request.data.get('post_id')
+        if post_id is None:
+            return Response({"success": False, "message": "Required params post_id is missing"})
+        try:
+            post = Post.objects.get(pk=post_id)
+        except Post.DoesNotExist:
+            return Response({"success": False, "message": "Invalid post_id params provided"})
+        post.delete()
+        return Response({"success": True, "message": "Post Deleted successfully"})
+
+
