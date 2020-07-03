@@ -1,6 +1,6 @@
-from django.shortcuts import render
-
 # Create your views here.
+import os
+
 from rest_framework.decorators import permission_classes
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.views import APIView, Response
@@ -10,6 +10,9 @@ from posts.PostFunctions import PostFunctions
 from posts.models import Post, PostComment, PostRank, PostView
 from posts.serializers import CommentSerializer, PostRankSerializer, PostViewSerializer,PostSerializer
 import filetype
+import mutagen
+import re
+import math
 
 
 @permission_classes([IsAuthenticated])
@@ -140,11 +143,21 @@ class Create(APIView):
             post = PostSerializer(data=data)
             if post.is_valid():
                 instance = post.save()
+                file_info = mutagen.File(instance.content.path).info.pprint()
+                second = str(file_info)
+                info_lst = second.split(",")
+                number_of_seconds = str(info_lst[1])
+                number_of_seconds = re.findall('\d*\.?\d+',number_of_seconds)
+                number_of_seconds = math.floor(float(number_of_seconds[0]))
                 serializer = PostSerializer(instance, many=False)
-                return Response({"success": True, "message": "Post Created", "data": serializer.data})
+                if 90 > number_of_seconds:
+                    return Response({"success": True, "message": "Post Created", "data": serializer.data})
+                existing = Post.objects.get(pk=serializer.data.get('id'))
+                existing.delete()
+                return Response({"success": False, "message": "content duration is greater than 90 seconds"},
+                                status=400)
             return Response({"success": False, "message": post.errors}, status=400)
         return Response({"success": False, "message": "Invalid post content provided only Audio, video allowed"}, status=400)
-
 
 
 @permission_classes([IsAuthenticated])
@@ -172,17 +185,26 @@ class EditPost(APIView):
                     "user": request.user.id}
             validated_data = PostSerializer(data=data)
             if validated_data.is_valid():
-                post.content = content
-                post.caption = data.get('caption')
-                post.save()
-                serializer = PostSerializer(post,many=False)
-                return Response({"success": True, "message": "Post Edited", "data": serializer.data})
+                file_info = mutagen.File(post.content.path).info.pprint()
+                second = str(file_info)
+                info_lst = second.split(",")
+                number_of_seconds = str(info_lst[1])
+                number_of_seconds = re.findall('\d*\.?\d+', number_of_seconds)
+                number_of_seconds = math.floor(float(number_of_seconds[0]))
+                if 90 > number_of_seconds:
+                    if content is not None:
+                        os.remove(post.content.path)
+                    post.content = content
+                    post.caption = data.get('caption')
+                    post.save()
+                    serializer = PostSerializer(post,many=False)
+                    return Response({"success": True, "message": "Post Edited", "data": serializer.data})
+                return Response({"success": False, "message": "content duration is greater than 90 seconds"},
+                                status=400)
             return Response({"success": False, "message": validated_data.errors},status=400)
         return Response({"success": False, "message": "Invalid Post Content provided only Audio,Video allowedd"})
 
-# find post by id
-# No need for validation
-# Post Deleted
+
 @permission_classes([IsAuthenticated])
 class DeletePost(APIView):
     def post(self, request):
