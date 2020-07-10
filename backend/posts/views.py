@@ -1,6 +1,7 @@
 # Create your views here.
 import os
 
+from django.utils.datastructures import MultiValueDictKeyError
 from rest_framework.decorators import permission_classes
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.views import APIView, Response
@@ -134,12 +135,16 @@ class Create(APIView):
         except Exception as e:
             print(e)
             return Response({"success": False, "message": "Required param content is missing"}, status=400)
+        try:
+            thumbnail = request.FILES['thumbnail']
+        except MultiValueDictKeyError:
+            thumbnail = None
         kind = filetype.guess(content)
         if kind is None:
             return Response({"success": False, "message": "Can't Determine file type"}, status=400)
         extension = kind.extension
         if PostFunctions.valid_extension(extension):
-            data = {"content": request.data.get('content'), "caption": request.data.get("caption"), "user": request.user.id}
+            data = {"content": request.data.get('content'), "thumbnail": thumbnail, "caption": request.data.get("caption"), "user": request.user.id}
             post = PostSerializer(data=data)
             if post.is_valid():
                 instance = post.save()
@@ -175,6 +180,10 @@ class EditPost(APIView):
         except Exception as e:
             print(e)
             return Response({"success": False, "message": "Required param content is missing"}, status=400)
+        try:
+            thumbnail = request.FILES['thumbnail']
+        except MultiValueDictKeyError:
+            thumbnail = None
         kind = filetype.guess(content)
         if kind is None:
             return Response({"success": False, "message": "Can't Determine file type"}, status=400)
@@ -182,7 +191,7 @@ class EditPost(APIView):
         print(extension)
         if PostFunctions.valid_extension(extension):
             data = {"content": request.data.get('content'), "caption": request.data.get("caption"),
-                    "user": request.user.id}
+                    "user": request.user.id, "thumbnail": thumbnail}
             validated_data = PostSerializer(data=data)
             if validated_data.is_valid():
                 file_info = mutagen.File(post.content.path).info.pprint()
@@ -196,6 +205,7 @@ class EditPost(APIView):
                         os.remove(post.content.path)
                     post.content = content
                     post.caption = data.get('caption')
+                    post.thumbnail = thumbnail
                     post.save()
                     serializer = PostSerializer(post,many=False)
                     return Response({"success": True, "message": "Post Edited", "data": serializer.data})
