@@ -49,6 +49,10 @@ INSTALLED_APPS = [
 LOCAL_APPS = [
     'home',
     'users.apps.UsersConfig',
+    'posts',
+    'connections',
+    'groups',
+    'dashboards',
 ]
 THIRD_PARTY_APPS = [
     'rest_framework',
@@ -164,6 +168,15 @@ STATICFILES_DIRS = [
 ]
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
+AWS_ACCESS_KEY_ID = os.environ.get('AWS_ACCESS_KEY_ID')
+AWS_SECRET_ACCESS_KEY = os.environ.get('AWS_SECRET_ACCESS_KEY')
+AWS_STORAGE_BUCKET_NAME = os.environ.get('AWS_STORAGE_BUCKET_NAME')
+AWS_S3_REGION_NAME = os.environ.get("AWS_STORAGE_REGION")
+AWS_S3_SIGNATURE_VERSION = 's3v4'
+
+MEDIA_ROOT = os.path.join(BASE_DIR, 'uploads')
+MEDIA_URL = '/uploads/'
+
 # allauth / users
 ACCOUNT_EMAIL_REQUIRED = True
 ACCOUNT_AUTHENTICATION_METHOD = 'username'
@@ -229,6 +242,8 @@ FCM_DJANGO_SETTINGS = {
 # end fcm_django push notifications
 
 
+if DEBUG == False:
+    DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
 # if DEBUG:
 #     # output email to console instead of sending
 #     EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"

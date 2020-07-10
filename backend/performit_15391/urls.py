@@ -19,8 +19,10 @@ from allauth.account.views import confirm_email
 from rest_framework import permissions
 from drf_yasg.views import get_schema_view
 from drf_yasg import openapi
-
-from users.views import SignUp, ConfirmCode, SendForgotPasswordCode, ResendCode, ResetPassword
+from django.conf.urls.static import static
+from performit_15391 import settings
+from users.views import SignUp, ConfirmCode, SendForgotPasswordCode, ResendCode, ResetPassword, GetUserDetail, \
+    ChangePassword, EditProfile, ConnectSocialMedia, DisconnectSocialMedia
 
 urlpatterns = [
     path("", include("home.urls")),
@@ -29,11 +31,20 @@ urlpatterns = [
     path("admin/", admin.site.urls),
     path("users/", include("users.urls", namespace="users")),
     path("rest-auth/", include("rest_auth.urls")),
+    path("connections/", include("connections.urls")),
+    path("dashboards/", include("dashboards.urls")),
+    path("posts/", include("posts.urls")),
+    path("searches/", include("searches.urls")),
     path("sign-up/", view=SignUp.as_view(), name="sign-up"),
     path("confirm-code/", view=ConfirmCode.as_view(), name="confirm-code"),
     path("send-forgot-password-code/", view=SendForgotPasswordCode.as_view(), name="send-forgot-password-code"),
     path("resend-code/", view=ResendCode.as_view(), name="resend-code"),
     path("reset-password/", view=ResetPassword.as_view(), name="reset-password"),
+    path("change-password/", view=ChangePassword.as_view(), name="change-password"),
+    path("users-detail/", view=GetUserDetail.as_view(), name="users-detail"),
+    path("edit-profile/", view=EditProfile.as_view(), name="edit-profile"),
+    path("connect-social-media/", view=ConnectSocialMedia.as_view(), name="connect-social-media"),
+    path("disconnect-social-media/", view=DisconnectSocialMedia.as_view(), name="disconnect-social-media"),
     # Override email confirm to use allauth's HTML view instead of rest_auth's API view
     path("rest-auth/registration/account-confirm-email/<str:key>/", confirm_email),
     path("rest-auth/registration/", include("rest_auth.registration.urls")),
@@ -57,3 +68,5 @@ schema_view = get_schema_view(
 urlpatterns += [
     path("api-docs/", schema_view.with_ui("swagger", cache_timeout=0), name="api_docs")
 ]
+
+urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

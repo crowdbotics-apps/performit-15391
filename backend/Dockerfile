@@ -11,14 +11,15 @@ RUN apk add --no-cache --update \
   build-base \
   musl-dev \
   postgresql-dev \
-  'python3~=3.7.5' \
-  'python3-dev~=3.7.5' \
+  'python3~=3.7.7' \
+  'python3-dev~=3.7.7' \
   curl \
 # zlib, zlib-dev, and libjpeg-turbo are required by pillow
   zlib \
   zlib-dev \
   libjpeg-turbo \
-  libjpeg-turbo-dev
+  libjpeg-turbo-dev \
+  libffi-dev
 RUN pip3 install --no-cache-dir -q pipenv
 
 # Add our code

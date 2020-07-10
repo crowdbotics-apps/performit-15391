@@ -33,3 +33,61 @@ class VerificationCode(models.Model):
     class Meta:
         verbose_name = 'User OTP Verification Codes'
         verbose_name_plural = 'User OTP Verification Codes'
+
+
+class UserDetail(models.Model):
+    MALE = "Male"
+    FEMALE = "Female"
+    GENDER_CHOICES = (
+        (MALE, MALE),
+        (FEMALE, FEMALE)
+    )
+    user = models.OneToOneField(User, on_delete=models.CASCADE, related_name="user_detail_user_set")
+    profile_pic = models.ImageField("Select Image", upload_to="profile_images", null=True)
+    location_address = models.TextField("Enter User Address", null=True, blank=True)
+    location_lat = models.CharField("Enter Location Latitude", max_length=255, null=True, blank=True)
+    location_long = models.CharField("Enter Location Longitude", max_length=255, null=True, blank=True)
+    gender = models.CharField("Select Gender", choices=GENDER_CHOICES, max_length=10, null=True, blank=True)
+    bio = models.TextField("Enter Bio", null=True, blank=True)
+    facebook_link = models.CharField("Facebook Link", max_length=1024, null=True, blank=True)
+    instagram_link = models.CharField("Instagram Link", max_length=1024, null=True, blank=True)
+    youtube_link = models.CharField("Youtube Link", max_length=1024, null=True, blank=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    def __set__(self):
+        return "{} - {}".format(self.user, self.location_address,self.location_lat, self.location_long,self.gender,
+                               self.bio, self.created_at, self.updated_at)
+
+    class Meta:
+        verbose_name = 'User Detail Management'
+        verbose_name_plural = 'User Detail Management'
+
+
+class UserType(models.Model):
+    ARTIST = "Artist"
+    SINGER = "Videographer"
+    RAPPER = "Engineer"
+    DANCER = "Dancer"
+    PRODUCER = "Producer"
+    OTHER = "DJ"
+    USER_TYPE_CHOICES = (
+        (ARTIST, ARTIST),
+        (SINGER, SINGER),
+        (RAPPER, RAPPER),
+        (DANCER, DANCER),
+        (PRODUCER, PRODUCER),
+        (OTHER, OTHER)
+    )
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="user_type_user_set")
+    user_type = models.CharField("Select User Type", choices=USER_TYPE_CHOICES, null=False, max_length=15)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    def __set__(self):
+        return "{} - {}".format(self.user, self.user_type, self.created_at, self.updated_at)
+
+    class Meta:
+        verbose_name = 'User Type Management'
+        verbose_name_plural = 'User Type Management'
+

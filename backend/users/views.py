@@ -1,7 +1,9 @@
 from allauth.account.models import EmailAddress
 from django.contrib.auth import get_user_model
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.core.paginator import Paginator, EmptyPage, InvalidPage
 from django.urls import reverse
+from django.utils.datastructures import MultiValueDictKeyError
 from django.views.decorators.csrf import csrf_exempt
 from django.views.generic import DetailView, RedirectView, UpdateView
 from random import randint
@@ -11,9 +13,13 @@ from rest_framework.decorators import permission_classes
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.views import APIView, Response
 
-from users.models import VerificationCode
+from connections.models import UserRelationship
+from posts.models import Post
+from posts.serializers import PostSerializer
+from users.models import VerificationCode, UserType, UserDetail
 from users.send_verification_code import SendVerificationCode
-from users.serializers import SignupWithEmailSerializer, SignUpWithPhoneSerializer, CustomTokenSerializer
+from users.serializers import SignupWithEmailSerializer, SignUpWithPhoneSerializer, CustomTokenSerializer, \
+    UserDetailSerializer, CustomUserSerializer, UserTypeSerializer, UserDetailEditSerializer
 from users.verification_code_generator import VerificationCodeGenerator
 
 User = get_user_model()
@@ -260,4 +266,185 @@ class ResetPassword(APIView):
         return Response({"success": False, "message": "password reset successful.", "user": serializer.data})
 
 
+@permission_classes([IsAuthenticated])
+class ChangePassword(APIView):
+    def post(self, request):
+        user = request.user
+        current_password = request.data.get("current_password")
+        password = request.data.get("password")
+        if current_password is None or password is None:
+            return Response({"success": False, "message": "Required param password or current_password is missing"},
+                            status=400)
+        if user.check_password(current_password):
+            user.set_password(password)
+            user.save()
+            return Response({"success": True, "message": "Password changed successfully"})
+        return Response({"success": False, "message": "Invalid Current Password"})
 
+
+@permission_classes([IsAuthenticated])
+class GetUserDetail(APIView):
+    def post(self, request):
+        user_id = request.data.get("user_id")
+        page = request.data.get("page")
+        if page is None:
+            page = 1
+        size = 10
+        if user_id is None:
+            return Response({"success": False, "message": "Required param user_id is missing"})
+        try:
+            user = User.objects.get(pk=user_id)
+        except User.DoesNotExist:
+            return Response({"success": False, "message": "Invalid User"}, status=400)
+        try:
+            user_details = UserDetail.objects.get(user=user)
+        except UserDetail.DoesNotExist:
+            user_details = None
+        user_types_data = UserType.objects.filter(user=user)
+        user_types_serializer = UserTypeSerializer(user_types_data, many=True)
+        user_types = []
+        for type in user_types_serializer.data:
+            user_types.append(type['user_type'])
+        posts = Post.objects.filter(user=user).order_by("created_at")
+        try:
+            paginated_data = Paginator(posts, size)
+        except (EmptyPage, InvalidPage):
+            return Response({"success": False, "message": "Empty Page"}, status=400)
+        post_serializer = PostSerializer(paginated_data.page(page), many=True)
+        user_details_serializer = UserDetailSerializer(user_details, many=False)
+        user_serializer = CustomUserSerializer(user,many=False)
+        user_follower_qs = UserRelationship.objects.filter(following=user)
+        user_following_qs= UserRelationship.objects.filter(follower=user)
+        can_edit = False
+        if int(user_id) == int(request.user.id):
+            can_edit = True
+        data = {"user": user_serializer.data, "user_details": user_details_serializer.data, "user_types":user_types,
+                "posts": post_serializer.data,
+                "followers_count": user_follower_qs.count(), "user_following_count": user_following_qs.count(),
+                "can_edit": can_edit, "total": paginated_data.count,
+                         "pages": paginated_data.num_pages, "current_page": int(page) }
+        return Response({"success": True, "data": data })
+
+
+@permission_classes([IsAuthenticated])
+class EditProfile(APIView):
+    def post(self, request):
+        try:
+            profile_pic = request.FILES['profile_pic']
+        except MultiValueDictKeyError:
+            profile_pic = None
+
+        user_detail_data = {"user": request.user.id, "profile_pic": profile_pic,
+                            "location_address": request.data.get("location_address"),
+                            "location_lat": request.data.get("location_lat"),
+                            "location_long": request.data.get("location_long"), "gender": request.data.get("gender"),
+                            "bio": request.data.get("bio")}
+        existing = UserDetail.objects.filter(user=request.user.id)
+        if existing.exists():
+            user_detail_serializer = UserDetailEditSerializer(data=user_detail_data)
+        else:
+            user_detail_serializer = UserDetailSerializer(data=user_detail_data)
+        if user_detail_serializer.is_valid():
+            user_type_list = request.data.getlist("user_types")
+            existing_types = UserType.objects.filter(user=request.user.id)
+            if existing_types.exists():
+                existing_types.delete()
+            for i in user_type_list:
+                data = {"user": request.user.id, "user_type": i}
+                user_type_serializer = UserTypeSerializer(data=data)
+                if user_type_serializer.is_valid():
+                    user_type_instance = user_type_serializer.save()
+                else:
+                    return Response({"success": False, "message": user_type_serializer.errors}, status=400)
+                    break
+            try:
+                existing_detail = UserDetail.objects.get(user=request.user.id)
+                existing_detail.profile_pic = profile_pic
+                existing_detail.location_address = user_detail_data.get("location_address")
+                existing_detail.location_lat = user_detail_data.get("location_lat")
+                existing_detail.location_long = user_detail_data.get("location_long")
+                existing_detail.gender = user_detail_data.get("gender")
+                existing_detail.bio = user_detail_data.get("bio")
+                existing_detail.save()
+            except UserDetail.DoesNotExist:
+                user_detail_instance = user_detail_serializer.save()
+            try:
+                existing_user = User.objects.get(pk=request.user.id)
+            except User.DoesNotExist:
+                return Response({"success": False, "message": "Invalid Userid provided"})
+            first_name = request.data.get("first_name")
+            last_name = request.data.get("last_name")
+            if first_name is not None:
+                existing_user.first_name = first_name
+            if last_name is not None:
+                existing_user.last_name = last_name
+            existing_user.save()
+            return Response({"success": True, "message": "User Profile Updated"})
+        return Response({"success": False, "message": user_detail_serializer.errors}, status=400)
+
+
+@permission_classes([IsAuthenticated])
+class ConnectSocialMedia(APIView):
+    def post(self, request):
+        social_media_type = request.data.get("social_media_type")
+        link = request.data.get("link")
+        if social_media_type is None or link is None:
+            return Response({"success": False, "message": "Required Param social_media_type, link is missing."},
+                            status=400)
+        user_detail_exist = True
+        try:
+            user_details = UserDetail.objects.get(user=request.user.id)
+        except UserDetail.DoesNotExist:
+            user_detail_exist = False
+        if social_media_type == "Facebook":
+            if user_detail_exist:
+                user_details.facebook_link = link
+            else:
+                data = {"facebook_link": link, "user": request.user.id}
+        elif social_media_type == "Youtube":
+            if user_detail_exist:
+                user_details.youtube_link = link
+            else:
+                data = {"youtube_link": link, "user": request.user.id}
+        elif social_media_type == "Instagram":
+            if user_detail_exist:
+                user_details.instagram_link = link
+            else:
+                data = {"instagram_link": link, "user": request.user.id}
+        else:
+            return Response({"success": False, "message": "Invalid social_media_type param is provided."})
+        if user_detail_exist:
+            user_details.save()
+            serializer = UserDetailSerializer(user_details, many=False)
+            return Response({"success": True, "message": "Link Updated", "data": serializer.data})
+        else:
+            user_detail_serializer = UserDetailSerializer(data=data)
+            if user_detail_serializer.is_valid():
+                instance = user_detail_serializer.save()
+                serializer = UserDetailSerializer(instance, many=False)
+                return Response({"success": True, "message": "Link Updated", "data": serializer.data})
+            return Response({"success": False, "message": user_detail_serializer.errors})
+
+
+@permission_classes([IsAuthenticated])
+class DisconnectSocialMedia(APIView):
+    def post(self, request):
+        social_media_type = request.data.get("social_media_type")
+        if social_media_type is None:
+            return Response({"success": False, "message": "Required Param social_media_type, link is missing."},
+                            status=400)
+        try:
+            user_details = UserDetail.objects.get(user=request.user.id)
+        except UserDetail.DoesNotExist:
+            return Response({"success": False, "message": "Please Connect Social Media First"}, status=400)
+        if social_media_type == "Facebook":
+            user_details.facebook_link = None
+        elif social_media_type == "Youtube":
+            user_details.youtube_link = None
+        elif social_media_type == "Instagram":
+            user_details.instagram_link = None
+        else:
+            return Response({"success": False, "message": "Invalid social_media_type param is provided."})
+        user_details.save()
+        serializer = UserDetailSerializer(user_details, many=False)
+        return Response({"success": True, "messsage": "Social Media Disconnected", "data": serializer.data})
