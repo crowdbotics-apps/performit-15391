@@ -13,6 +13,7 @@ const initialState = {
     UserEditPostRank: null,
     UserAddCommentToPost: null,
     serchDashBoardError: null,
+    CreatePost: null,
   },
 };
 
@@ -103,6 +104,8 @@ export default (HomePageReducer = (state = initialState, action) => {
       }
     case actions.USER_SEARCH_PERFORMIT_ERROR:
       return {...state, errors: {serchDashBoardError: action.error}};
+    case actions.CREATE_POST_ERROR:
+      return {...state, errors: {CreatePost: action.error}};
     default:
       return state;
   }

@@ -123,6 +123,7 @@ function sendChangePassword(token, current_password, password) {
 }
 
 function sendEditProfile(data, token) {
+  console.log('----------------------data 2222', data);
   return request.post('/edit-profile/', data, {
     headers: {
       Accept: 'application/json',

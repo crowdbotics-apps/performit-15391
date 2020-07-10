@@ -40,3 +40,10 @@ export const searchDashboard = (tab, page, token, term) => ({
   token,
   term,
 });
+
+export const createPost = (token, content, caption) => ({
+  type: actions.CREATE_POST_REQUEST,
+  token,
+  content,
+  caption,
+});

@@ -19,8 +19,15 @@ import {
   USER_SEARCH_PERFORMIT_REQUEST,
   USER_SEARCH_PERFORMIT_SUCCESS,
   USER_SEARCH_PERFORMIT_ERROR,
+  CREATE_POST_REQUEST,
+  CREATE_POST_SUCCESS,
+  CREATE_POST_ERROR,
 } from './constants';
 import {request} from '../../../utils/http';
+import {
+  EDIT_PROFILE_ERROR,
+  EDIT_PROFILE_SUCCESS,
+} from '../../ProfilePage/redux/constants';
 
 function sendUserPosts(tab, token) {
   return request.post(
@@ -107,6 +114,26 @@ function sendSearchDashBoard(tab, term, token) {
       },
     },
   );
+}
+
+// function sendCreatePost(data, token) {
+//   console.log('----------------------data 11111', data);
+//   return request.post('/posts/create/', data, {
+//     headers: {
+//       Accept: 'application/json',
+//       'Content-Type': 'multipart/form-data',
+//       Authorization: `Token ${token}`,
+//     },
+//   });
+// }
+
+function sendCreatePost(data, token) {
+  console.log('----------------------data 11111', data);
+  return request.post('/posts/create/', data, {
+    headers: {
+      Authorization: `Token ${token}`,
+    },
+  });
 }
 
 function* handleGetUserPosts(action) {
@@ -312,6 +339,61 @@ function* handleSearchPerformit(action) {
   }
 }
 
+function* handleCreatePost(action) {
+  const {token, content, caption} = action;
+
+  try {
+    // const formData = new FormData();
+    // Object.keys(content).forEach(key => {
+    //   formData.append(key, content[key]);
+    // });
+
+    // formData.append('caption', caption);
+
+    console.log('----------------------formData');
+    console.log('----------------------token', token);
+    const {status, data, success} = yield call(
+      sendCreatePost,
+      {caption: 'fkjdsjkg'},
+      token,
+    );
+
+    console.log('----------------------result', data);
+    console.log('----------------------status', status);
+
+    if (status === 200) {
+      yield put({
+        type: CREATE_POST_ERROR,
+        error: '',
+      });
+      if (data && data.success === false) {
+        yield put({
+          type: CREATE_POST_ERROR,
+          error: data.message,
+        });
+      } else {
+        yield put({
+          type: CREATE_POST_SUCCESS,
+        });
+      }
+
+      // you can change the navigate for navigateAndResetStack to go to a protected route
+      // NavigationService.navigate('ProfilePage');
+    } else {
+      yield put({
+        type: CREATE_POST_ERROR,
+        error: 'Unknown Error',
+      });
+    }
+  } catch (error) {
+    console.log('----------------------error', error);
+    yield put({
+      type: CREATE_POST_ERROR,
+      error: 'Not able to create post',
+    });
+  }
+}
+
 export default all([
   takeLatest(USER_POSTS_REQUEST, handleGetUserPosts),
   takeLatest(USER_POSTS_COMMENTS_REQUEST, handleGetUserPostComments),
@@ -319,4 +401,5 @@ export default all([
   takeLatest(USER_ADD_POST_VIEW_REQUEST, handleAddPostView),
   takeLatest(USER_ADD_COMMENT_POST_REQUEST, handleAddPostComment),
   takeLatest(USER_SEARCH_PERFORMIT_REQUEST, handleSearchPerformit),
+  takeLatest(CREATE_POST_REQUEST, handleCreatePost),
 ]);

@@ -33,6 +33,9 @@ import HomePage from '../features/HomePage';
 import SearchPage from '../features/SearchPage';
 import CommentsPage from '../features/CommentsPage';
 import HashTagHomePage from '../features/HashTagHomePage';
+import CreatePostStep1 from '../features/CreatePost/CreatePostStep1';
+import CreatePostStep2 from '../features/CreatePost/CreatePostStep2';
+import CreatePostStep3 from '../features/CreatePost/CreatePostStep3';
 
 /**
  * new navigators can be imported here
@@ -173,6 +176,27 @@ const DrawerAppNavigator = createDrawerNavigator(
   },
 );
 
+const PostNavigator = {
+  CreatePostStep1: {
+    screen: CreatePostStep1,
+  },
+  CreatePostStep2: {
+    screen: CreatePostStep2,
+  },
+  CreatePostStep3: {
+    screen: CreatePostStep3,
+  },
+};
+
+const CreatePostNavigator = createStackNavigator(
+  {
+    ...PostNavigator,
+  },
+  {
+    initialRouteName: 'CreatePostStep1',
+  },
+);
+
 const LoggedInBottomTabNavigator = createBottomTabNavigator(
   {
     Home: {
@@ -203,9 +227,9 @@ const LoggedInBottomTabNavigator = createBottomTabNavigator(
       }),
     },
     CreatePost: {
-      screen: EmailAuthStackNavigator,
+      screen: CreatePostNavigator,
       navigationOptions: ({navigation}) => ({
-        tabBarVisible: navigation.state.index === 0 ? true : false,
+        tabBarVisible: false,
         title: null,
         tabBarIcon: ({focused}) => (
           <Image

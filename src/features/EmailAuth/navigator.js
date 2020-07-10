@@ -27,7 +27,7 @@ export default (EmailAuthNavigator = createStackNavigator(
     ConfirmCode: {screen: ConfirmCode},
   },
   {
-    initialRouteName: 'Onboarding',
+    initialRouteName: 'SignIn',
     navigationOptions: {
       header: null,
     },
