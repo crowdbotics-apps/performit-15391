@@ -1,5 +1,9 @@
 import React, {Component} from 'react';
-import {createAppContainer} from 'react-navigation';
+import {
+  NavigationActions,
+  createAppContainer,
+  StackActions,
+} from 'react-navigation';
 import {createStackNavigator} from 'react-navigation-stack';
 import {createBottomTabNavigator} from 'react-navigation-tabs';
 import {
@@ -194,6 +198,13 @@ const CreatePostNavigator = createStackNavigator(
   },
   {
     initialRouteName: 'CreatePostStep1',
+    defaultNavigationOptions: ({navigation}) => ({
+      tabBarOnPress: ({navigation, defaultHandler}) => {
+        // to navigate to the top of stack whenever tab changes
+        navigation.dispatch(StackActions.popToTop());
+        defaultHandler();
+      },
+    }),
   },
 );
 

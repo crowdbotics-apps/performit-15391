@@ -38,7 +38,7 @@ target 'Performit' do
   pod 'Google-Maps-iOS-Utils'
 
   pod 'react-native-camera', :path => '../node_modules/react-native-camera'
-
+  pod 'react-native-fetch-blob', :path => '../node_modules/react-native-fetch-blob'
 
   target 'PerformitTests' do
     inherit! :search_paths

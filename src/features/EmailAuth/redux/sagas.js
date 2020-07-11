@@ -118,7 +118,6 @@ function* handleSignUp(action) {
   const {user} = action;
   try {
     const {status, data} = yield call(sendSignUp, user);
-    console.log('-----------------------------signup user', data);
     if (status === 200) {
       yield put({
         type: EMAIL_AUTH_SIGNUP_SUCCESS,

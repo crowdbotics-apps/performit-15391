@@ -10,6 +10,7 @@ import {
   Switch,
 } from 'react-native';
 import Modal from 'react-native-modalbox';
+import {NavigationEvents} from 'react-navigation';
 import {Text, Button} from 'react-native-ui-kitten';
 import {styles} from './styles';
 import * as homeActions from '../../HomePage/redux/actions';
@@ -41,6 +42,9 @@ class CreatePostStep3 extends Component {
   async componentDidMount() {
     // write code here
     let videoData = this.props.navigation.getParam('videoData', {});
+    if (!videoData.uri) {
+      this.props.navigation.navigate('CreatePostStep1');
+    }
     this.setState({
       videoData,
     });
@@ -51,6 +55,9 @@ class CreatePostStep3 extends Component {
     const prevVideoData = prevProps.navigation.getParam('videoData', {});
     const videoData = this.props.navigation.getParam('videoData', {});
     if (prevVideoData !== videoData) {
+      if (!videoData.uri) {
+        this.props.navigation.navigate('CreatePostStep1');
+      }
       this.setState({
         videoData,
       });
@@ -60,8 +67,10 @@ class CreatePostStep3 extends Component {
   onClose = () => {
     this.setState(
       {
+        isLoading: false,
         showDiscardContentModal: false,
         videoData: {},
+        caption: '',
       },
       () => this.props.navigation.navigate('HomePage', {userId: ''}),
     );
@@ -74,7 +83,6 @@ class CreatePostStep3 extends Component {
     const postObject = {
       content: this.state.videoData,
     };
-    console.log('----------------postObject', postObject);
     const userId = this.props.user && this.props.user.pk;
     const accessToken = this.props.accessToken;
 
@@ -92,9 +100,9 @@ class CreatePostStep3 extends Component {
         isLoading: false,
         showDiscardContentModal: false,
         videoData: {},
+        caption: '',
       },
       () => {
-        console.log('--');
         this.props.navigation.navigate('HomePage', {userId: ''});
       },
     );
@@ -105,12 +113,23 @@ class CreatePostStep3 extends Component {
     // todo change keyboard and add validation
   };
 
+  onScreenFocus = () => {
+    if (!this.state.videoData.uri) {
+      this.props.navigation.navigate('CreatePostStep1');
+    }
+  };
+
   render() {
     const {navigation} = this.props;
-    const {isLoading, caption} = this.state;
+    const {isLoading, caption, videoData} = this.state;
 
     return (
       <View style={styles.screen}>
+        <NavigationEvents
+          onDidFocus={payload => {
+            this.onScreenFocus();
+          }}
+        />
         <SafeAreaView style={styles.headerContainer}>
           <TouchableOpacity
             style={[styles.inputDrawerContainer]}
@@ -126,9 +145,12 @@ class CreatePostStep3 extends Component {
             <Text style={styles.headerText}>New Post</Text>
 
             {!isLoading ? (
-              <TouchableOpacity onPress={() => this.onShare()}>
-                <Text style={styles.headerNextText}>Share</Text>
-              </TouchableOpacity>
+              videoData &&
+              videoData.uri && (
+                <TouchableOpacity onPress={() => this.onShare()}>
+                  <Text style={styles.headerNextText}>Share</Text>
+                </TouchableOpacity>
+              )
             ) : (
               <View style={[styles.inputDrawerContainer]}>
                 <View style={[styles.inputDrawer]}>
@@ -141,10 +163,17 @@ class CreatePostStep3 extends Component {
         <View style={styles.captionContainer}>
           <View style={styles.captionVideoContainer}>
             <View style={[styles.videoIcon]}>
-              <Image
-                style={[styles.videoIcon]}
-                source={require('../../../assets/images/video_icon.png')}
-              />
+              {videoData && videoData.type === 'video' ? (
+                <Image
+                  style={[styles.videoIcon]}
+                  source={require('../../../assets/images/video_icon.png')}
+                />
+              ) : (
+                <Image
+                  style={[styles.videoIcon]}
+                  source={require('../../../assets/images/mike_small.png')}
+                />
+              )}
             </View>
           </View>
           <View style={styles.bioInputContainer}>

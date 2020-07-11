@@ -174,6 +174,8 @@ PODS:
     - React
   - react-native-document-picker (3.5.3):
     - React
+  - react-native-fetch-blob (0.10.6):
+    - React-Core
   - react-native-image-picker (1.1.0):
     - React
   - react-native-mov-to-mp4 (0.2.2):
@@ -213,6 +215,8 @@ PODS:
     - React-Core (= 0.60.5)
   - React-RCTWebSocket (0.60.5):
     - React-Core (= 0.60.5)
+  - RNAudioRecord (0.2.2):
+    - React
   - RNCAsyncStorage (1.11.0):
     - React
   - RNGestureHandler (1.5.3):
@@ -223,6 +227,8 @@ PODS:
   - RNReanimated (1.2.0):
     - React
   - RNScreens (1.0.0-alpha.22):
+    - React
+  - RNSoundRecorder (1.3.6):
     - React
   - RNSVG (9.13.6):
     - React
@@ -249,6 +255,7 @@ DEPENDENCIES:
   - react-native-camera (from `../node_modules/react-native-camera`)
   - "react-native-cookies (from `../node_modules/@react-native-community/cookies`)"
   - react-native-document-picker (from `../node_modules/react-native-document-picker`)
+  - react-native-fetch-blob (from `../node_modules/react-native-fetch-blob`)
   - react-native-image-picker (from `../node_modules/react-native-image-picker`)
   - react-native-mov-to-mp4 (from `../node_modules/react-native-mov-to-mp4`)
   - react-native-simple-toast (from `../node_modules/react-native-simple-toast`)
@@ -265,11 +272,13 @@ DEPENDENCIES:
   - React-RCTText (from `../node_modules/react-native/Libraries/Text`)
   - React-RCTVibration (from `../node_modules/react-native/Libraries/Vibration`)
   - React-RCTWebSocket (from `../node_modules/react-native/Libraries/WebSocket`)
+  - RNAudioRecord (from `../node_modules/react-native-audio-record`)
   - "RNCAsyncStorage (from `../node_modules/@react-native-community/async-storage`)"
   - RNGestureHandler (from `../node_modules/react-native-gesture-handler`)
   - "RNGoogleSignin (from `../node_modules/@react-native-community/google-signin`)"
   - RNReanimated (from `../node_modules/react-native-reanimated`)
   - RNScreens (from `../node_modules/react-native-screens`)
+  - RNSoundRecorder (from `../node_modules/react-native-sound-recorder`)
   - RNSVG (from `../node_modules/react-native-svg`)
   - RNVectorIcons (from `../node_modules/react-native-vector-icons`)
   - yoga (from `../node_modules/react-native/ReactCommon/yoga`)
@@ -325,6 +334,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/@react-native-community/cookies"
   react-native-document-picker:
     :path: "../node_modules/react-native-document-picker"
+  react-native-fetch-blob:
+    :path: "../node_modules/react-native-fetch-blob"
   react-native-image-picker:
     :path: "../node_modules/react-native-image-picker"
   react-native-mov-to-mp4:
@@ -357,6 +368,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native/Libraries/Vibration"
   React-RCTWebSocket:
     :path: "../node_modules/react-native/Libraries/WebSocket"
+  RNAudioRecord:
+    :path: "../node_modules/react-native-audio-record"
   RNCAsyncStorage:
     :path: "../node_modules/@react-native-community/async-storage"
   RNGestureHandler:
@@ -367,6 +380,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native-reanimated"
   RNScreens:
     :path: "../node_modules/react-native-screens"
+  RNSoundRecorder:
+    :path: "../node_modules/react-native-sound-recorder"
   RNSVG:
     :path: "../node_modules/react-native-svg"
   RNVectorIcons:
@@ -407,6 +422,7 @@ SPEC CHECKSUMS:
   react-native-camera: 203091b4bf99d48b788a0682ad573e8718724893
   react-native-cookies: 6fe6a70d3b2fd8e81ddcd94d60a87727010d9b2e
   react-native-document-picker: b1b4a52c0051e10642c54cfc10933759e8ccdda4
+  react-native-fetch-blob: 0cbdf9764c75d9438c162427395f4bc35a857d5a
   react-native-image-picker: 3637d63fef7e32a230141ab4660d3ceb773c824f
   react-native-mov-to-mp4: b63917cb6f96d4c264d8f5213db7961442dd4298
   react-native-simple-toast: a3a8e9033a549c11741debe875e54698cc4c0dd7
@@ -423,16 +439,18 @@ SPEC CHECKSUMS:
   React-RCTText: b074d89033583d4f2eb5faf7ea2db3a13c7553a2
   React-RCTVibration: 2105b2e0e2b66a6408fc69a46c8a7fb5b2fdade0
   React-RCTWebSocket: cd932a16b7214898b6b7f788c8bddb3637246ac4
+  RNAudioRecord: f38c2caac4bbbc34f24563869745110970f1dfe3
   RNCAsyncStorage: db711e29e5e0500d9bd21aa0c2e397efa45302b1
   RNGestureHandler: 02905abe54e1f6e59c081a10b4bd689721e17aa6
   RNGoogleSignin: ccf71ee4b6cfd324fd788a41e457e2043838c0d9
   RNReanimated: 1b52415c4302f198cb581282a0166690bad62c43
   RNScreens: 720a9e6968beb73e8196239801e887d8401f86ed
+  RNSoundRecorder: 92947251b236a463a6aa60b0676c3690c453d4ef
   RNSVG: 8ba35cbeb385a52fd960fd28db9d7d18b4c2974f
   RNVectorIcons: 0bb4def82230be1333ddaeee9fcba45f0b288ed4
   Toast: 91b396c56ee72a5790816f40d3a94dd357abc196
   yoga: 312528f5bbbba37b4dcea5ef00e8b4033fdd9411
 
-PODFILE CHECKSUM: febcb6cdea417b5a2babc6864b520e3385273e9e
+PODFILE CHECKSUM: 3ae5116074f173f482034421e7b4da5c97b0aeb6
 
 COCOAPODS: 1.7.5

@@ -9,7 +9,10 @@ import {
 } from 'react-native';
 import Modal from 'react-native-modalbox';
 import MovToMp4 from 'react-native-mov-to-mp4';
+import AudioRecord from 'react-native-audio-record';
+import SoundRecorder from 'react-native-sound-recorder';
 import DocumentPicker from 'react-native-document-picker';
+import RNFetchBlob from 'react-native-fetch-blob';
 import {cloneDeep} from 'lodash';
 import {RNCamera} from 'react-native-camera';
 import {Text, Button} from 'react-native-ui-kitten';
@@ -76,7 +79,6 @@ class CreatePostStep1 extends Component {
   };
 
   switchType = () => {
-    console.log('-----------------------switch');
     let newType;
     const {back, front} = RNCamera.Constants.Type;
 
@@ -115,7 +117,6 @@ class CreatePostStep1 extends Component {
   };
 
   onPressIn = () => {
-    console.log('-----------------------recording started');
     this.setState(
       {
         isRecording: true,
@@ -123,7 +124,6 @@ class CreatePostStep1 extends Component {
         videoData: {},
       },
       () => {
-        console.log('-----------------------recording fdsgsd');
         let timer = setInterval(this.tick, 1000);
         this.setState({
           timer,
@@ -131,18 +131,17 @@ class CreatePostStep1 extends Component {
         setTimeout(() => {
           clearInterval(this.state.timer);
         }, 90000);
-        this.startRecording();
+        if (this.state.activeTab === 'Video') {
+          this.camera && this.startVideoRecording();
+        } else {
+          this.startAudioRecording();
+        }
       },
     );
   };
 
-  startRecording = () => {
-    console.log('--------this.state.isRecording 00000', this.state.isRecording);
+  startVideoRecording = () => {
     if (this.camera && this.state.isRecording) {
-      console.log(
-        '--------this.state.isRecording 11111',
-        this.state.isRecording,
-      );
       this.setState({isRecording: true});
 
       const options = {
@@ -150,11 +149,6 @@ class CreatePostStep1 extends Component {
         quality: RNCamera.Constants.VideoQuality['480p'],
         maxDuration: 90,
       };
-
-      console.log(
-        '----------------------------------------this.camera',
-        this.camera,
-      );
       this.camera
         .recordAsync(options)
         .then(async data => {
@@ -164,40 +158,19 @@ class CreatePostStep1 extends Component {
             data.uri &&
             MovToMp4.convertMovToMp4(data.uri, filename).then(async results => {
               //here you can upload the video...
-              console.log(results);
               const videoData = {};
               videoData.type = 'video';
               videoData.name = filename + '.mp4';
               videoData.uri = results;
-              // && data.uri.replace('file://', '')
-              console.log('-------------------------videoData', videoData);
               this.setState({videoData});
-              const postObject = {
-                content: videoData,
-              };
-              console.log('----------------postObject', postObject);
-              const userId = this.props.user && this.props.user.pk;
-              const accessToken = this.props.accessToken;
-
-              const {
-                actions: {userPosts, createPost},
-              } = this.props;
-
-              // await createPost(accessToken, postObject, 'lplplp');
-              //
-              // if (userId && accessToken) {
-              //   await userPosts('following', accessToken, userId);
-              // }
             });
         })
         .catch(err => console.log(err, 'errorrrrrr'));
     }
   };
 
-  stopRecording = () => {
-    console.log('-----------------------recording stopped');
-    console.log('----this.state.seconds_Counter', this.state.seconds_Counter);
-    if (this.camera) {
+  stopRecording = async () => {
+    if (this.camera && this.state.activeTab === 'Video') {
       this.setState(
         {
           isRecording: false,
@@ -207,7 +180,28 @@ class CreatePostStep1 extends Component {
           this.camera.stopRecording();
         },
       );
+    } else {
+      clearInterval(this.state.timer);
+      SoundRecorder.stop().then(result => {
+        const filename = Date.now().toString();
+        const videoData = {};
+        videoData.type = 'audio';
+        videoData.name = filename + '.mp3';
+        videoData.uri = result.path;
+        this.setState({
+          isRecording: false,
+          videoData,
+        });
+      });
     }
+  };
+
+  startAudioRecording = async () => {
+    SoundRecorder.start(SoundRecorder.PATH_CACHE + '/test.mp4').then(
+      function() {
+        console.log('started recording');
+      },
+    );
   };
 
   tick = () => {
@@ -223,58 +217,69 @@ class CreatePostStep1 extends Component {
         seconds_Counter: 0,
         videoData: {},
       });
-      const res = await DocumentPicker.pick({
-        type: [DocumentPicker.types.video],
-        //There can me more options as well
-        // DocumentPicker.types.allFiles
-        // DocumentPicker.types.images
-        // DocumentPicker.types.plainText
-        // DocumentPicker.types.audio
-        // DocumentPicker.types.pdf
-      });
-      //Printing the log realted to the file
-      console.log('res : ' + JSON.stringify(res));
-      console.log('URI : ' + res.uri);
-      console.log('Type : ' + res.type);
-      console.log('File Name : ' + res.name);
-      console.log('File Size : ' + res.size);
-      //Setting the state to show single file attributes
-      this.setState({singleFile: res});
-      const filename = Date.now().toString();
       const videoData = {};
-      videoData.type = 'video';
-      videoData.name = filename + '.mp4';
-      videoData.uri = res.uri;
-      // && data.uri.replace('file://', '')
-      console.log('-------------------------videoData', videoData);
-      this.setState({videoData});
-      const postObject = {
-        content: videoData,
-      };
-      console.log('----------------postObject', postObject);
-      const userId = this.props.user && this.props.user.pk;
-      const accessToken = this.props.accessToken;
-
-      const {
-        actions: {userPosts, createPost},
-      } = this.props;
-
-      // await createPost(accessToken, postObject, 'lplplp');
-      //
-      // if (userId && accessToken) {
-      //   await userPosts('following', accessToken, userId);
-      // }
+      if (this.state.activeTab === 'Video') {
+        const res = await DocumentPicker.pick({
+          type: [DocumentPicker.types.video],
+        });
+        const filename = Date.now().toString();
+        videoData.type = 'video';
+        videoData.name = filename + '.mp4';
+        videoData.uri = res.uri;
+      } else {
+        const res = await DocumentPicker.pick({
+          type: [DocumentPicker.types.audio],
+          //There can me more options as well
+          // DocumentPicker.types.allFiles
+          // DocumentPicker.types.images
+          // DocumentPicker.types.plainText
+          // DocumentPicker.types.audio
+          // DocumentPicker.types.pdf
+        });
+        //Printing the log reslted to the file
+        // console.log('res : ' + JSON.stringify(res));
+        // console.log('URI : ' + res.uri);
+        // console.log('Type : ' + res.type);
+        // console.log('File Name : ' + res.name);
+        // console.log('File Size : ' + res.size);
+        //Setting the state to show single file attributes
+        this.setState({singleFile: res});
+        const filename = Date.now().toString();
+        videoData.type = 'audio';
+        videoData.name = filename + '.mp3';
+        videoData.uri = res.uri;
+      }
+      this.setState({videoData}, () => {
+        this.props.navigation.navigate('CreatePostStep3', {videoData});
+      });
     } catch (err) {
       //Handling any exception (If any)
       if (DocumentPicker.isCancel(err)) {
         //If user canceled the document selection
-        alert('File not selected');
+        console.log('File not selected');
       } else {
         //For Unknown Error
-        alert('Unknown Error: ' + JSON.stringify(err));
+        console.log('Unknown Error: ' + JSON.stringify(err));
         throw err;
       }
     }
+  };
+
+  onNextPress = () => {
+    const {activeTab, videoData} = this.state;
+
+    this.setState(
+      {
+        isRecording: false,
+        seconds_Counter: 0,
+        videoData: {},
+      },
+      () => {
+        activeTab === 'Video'
+          ? this.props.navigation.navigate('CreatePostStep3', {videoData})
+          : this.props.navigation.navigate('CreatePostStep3', {videoData});
+      },
+    );
   };
 
   render() {
@@ -285,6 +290,7 @@ class CreatePostStep1 extends Component {
       camera,
       seconds_Counter,
       videoData,
+      isRecording,
     } = this.state;
     const minutes = Math.floor(seconds_Counter / 60);
     const seconds = seconds_Counter - minutes * 60;
@@ -305,12 +311,7 @@ class CreatePostStep1 extends Component {
           <View style={styles.headerTextContainer}>
             <Text style={styles.headerText}>{this.state.activeTab}</Text>
             {videoData && videoData.uri && (
-              <TouchableOpacity
-                onPress={() =>
-                  activeTab === 'Video'
-                    ? navigation.navigate('CreatePostStep3', {videoData})
-                    : navigation.navigate('CreatePostStep2')
-                }>
+              <TouchableOpacity onPress={() => this.onNextPress()}>
                 <Text style={styles.headerNextText}>Next</Text>
               </TouchableOpacity>
             )}
@@ -332,6 +333,18 @@ class CreatePostStep1 extends Component {
                   permissionDialogMessage={
                     'We need your permission to use your camera phone'
                   }
+                  /*androidCameraPermissionOptions={{
+                    title: 'Permission to use camera',
+                    message: 'We need your permission to use your camera',
+                    buttonPositive: 'Ok',
+                    buttonNegative: 'Cancel',
+                  }}
+                  androidRecordAudioPermissionOptions={{
+                    title: 'Permission to use audio recording',
+                    message: 'We need your permission to use your audio',
+                    buttonPositive: 'Ok',
+                    buttonNegative: 'Cancel',
+                  }}*/
                 />
                 <View style={styles.videoControlsContainer}>
                   <TouchableOpacity
@@ -344,7 +357,7 @@ class CreatePostStep1 extends Component {
                       />
                     </View>
                   </TouchableOpacity>
-                  <TouchableOpacity
+                  {/*<TouchableOpacity
                     style={[styles.flashCameraContainer]}
                     onPress={() => this.switchFlash()}>
                     <View style={[styles.flashCamera]}>
@@ -353,13 +366,13 @@ class CreatePostStep1 extends Component {
                         source={require('../../../assets/images/flash.png')}
                       />
                     </View>
-                  </TouchableOpacity>
+                  </TouchableOpacity>*/}
                 </View>
               </>
             )}
             {activeTab === 'Audio' && (
               <View style={styles.upperAudioContainer}>
-                {!recordingStarted && (
+                {!isRecording && (
                   <View style={[styles.audioMike]}>
                     <Image
                       style={[styles.audioMike]}
@@ -368,7 +381,7 @@ class CreatePostStep1 extends Component {
                   </View>
                 )}
 
-                {!!recordingStarted && (
+                {!!isRecording && (
                   <View style={[styles.recordingAudioMike]}>
                     <Image
                       style={[styles.recordingAudioMike]}
