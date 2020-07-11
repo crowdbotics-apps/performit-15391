@@ -5,6 +5,9 @@ import {
   TouchableOpacity,
   View,
   SafeAreaView,
+  ActivityIndicator,
+  TextInput,
+  Switch,
 } from 'react-native';
 import Modal from 'react-native-modalbox';
 import {Text, Button} from 'react-native-ui-kitten';
@@ -22,6 +25,8 @@ class CreatePostStep3 extends Component {
       activeTab: 'Video',
       recordingStarted: false,
       showDiscardContentModal: false,
+      videoData: {},
+      caption: '',
     };
   }
 
@@ -35,31 +40,81 @@ class CreatePostStep3 extends Component {
 
   async componentDidMount() {
     // write code here
+    let videoData = this.props.navigation.getParam('videoData', {});
+    this.setState({
+      videoData,
+    });
   }
 
   async componentDidUpdate(prevProps) {
     // write code here
+    const prevVideoData = prevProps.navigation.getParam('videoData', {});
+    const videoData = this.props.navigation.getParam('videoData', {});
+    if (prevVideoData !== videoData) {
+      this.setState({
+        videoData,
+      });
+    }
   }
 
   onClose = () => {
     this.setState(
       {
         showDiscardContentModal: false,
+        videoData: {},
       },
       () => this.props.navigation.navigate('HomePage', {userId: ''}),
     );
   };
 
+  onShare = async () => {
+    this.setState({
+      isLoading: true,
+    });
+    const postObject = {
+      content: this.state.videoData,
+    };
+    console.log('----------------postObject', postObject);
+    const userId = this.props.user && this.props.user.pk;
+    const accessToken = this.props.accessToken;
+
+    const {
+      actions: {userPosts, createPost},
+    } = this.props;
+
+    await createPost(accessToken, postObject, this.state.caption);
+
+    if (userId && accessToken) {
+      await userPosts('following', accessToken, userId);
+    }
+    this.setState(
+      {
+        isLoading: false,
+        showDiscardContentModal: false,
+        videoData: {},
+      },
+      () => {
+        console.log('--');
+        this.props.navigation.navigate('HomePage', {userId: ''});
+      },
+    );
+  };
+
+  handleCaptionChange = text => {
+    this.setState({caption: text});
+    // todo change keyboard and add validation
+  };
+
   render() {
     const {navigation} = this.props;
-    const {activeTab, recordingStarted} = this.state;
+    const {isLoading, caption} = this.state;
 
     return (
       <View style={styles.screen}>
         <SafeAreaView style={styles.headerContainer}>
           <TouchableOpacity
             style={[styles.inputDrawerContainer]}
-            onPress={() => navigation.goBack()}>
+            onPress={() => this.setState({showDiscardContentModal: true})}>
             <View style={[styles.inputDrawer]}>
               <Image
                 style={[styles.inputDrawer]}
@@ -69,11 +124,100 @@ class CreatePostStep3 extends Component {
           </TouchableOpacity>
           <View style={styles.headerTextContainer}>
             <Text style={styles.headerText}>New Post</Text>
-            <TouchableOpacity onPress={() => console.log('------share')}>
-              <Text style={styles.headerNextText}>Share</Text>
-            </TouchableOpacity>
+
+            {!isLoading ? (
+              <TouchableOpacity onPress={() => this.onShare()}>
+                <Text style={styles.headerNextText}>Share</Text>
+              </TouchableOpacity>
+            ) : (
+              <View style={[styles.inputDrawerContainer]}>
+                <View style={[styles.inputDrawer]}>
+                  <ActivityIndicator animating />
+                </View>
+              </View>
+            )}
           </View>
         </SafeAreaView>
+        <View style={styles.captionContainer}>
+          <View style={styles.captionVideoContainer}>
+            <View style={[styles.videoIcon]}>
+              <Image
+                style={[styles.videoIcon]}
+                source={require('../../../assets/images/video_icon.png')}
+              />
+            </View>
+          </View>
+          <View style={styles.bioInputContainer}>
+            <TextInput
+              value={caption}
+              onChangeText={this.handleCaptionChange}
+              placeholder="Write a caption..."
+              style={styles.bioInput}
+              autoCapitalize="none"
+              placeholderTextColor="#989ba5"
+              underlineColorAndroid="transparent"
+              multiline={true}
+            />
+          </View>
+        </View>
+
+        <View style={styles.followProfileRowContainer}>
+          <Text style={styles.followProfileText}>Also Post to</Text>
+        </View>
+
+        <View style={styles.followProfileRowContainer}>
+          <View style={styles.followProfileRowLeftContainer}>
+            <TouchableOpacity
+              onPress={() => console.log('---')}
+              style={[styles.profileRowImageContainer]}>
+              <Image
+                style={[styles.profileRowImage]}
+                source={{
+                  uri: '',
+                }}
+              />
+            </TouchableOpacity>
+
+            <View style={styles.followProfileRowTextContainer}>
+              <View style={styles.followProfileRowNameContainer}>
+                <Text style={styles.followProfileText}>Group 1</Text>
+              </View>
+            </View>
+          </View>
+          <View style={styles.followingButtonContainer}>
+            <Switch
+              style={styles.switchButton}
+              onTintColor={'#B88746'}
+              value={this.state.isGroupSelected}
+              onValueChange={e => this.setState({isGroupSelected: e})}
+            />
+          </View>
+        </View>
+
+        <Modal
+          isOpen={this.state.showDiscardContentModal}
+          onClosed={() => this.setState({showDiscardContentModal: false})}
+          style={[styles.modal]}
+          position={'center'}
+          backdropPressToClose={false}>
+          <View style={styles.modalTextContainer}>
+            <Text style={styles.modalText}>
+              Are you sure you want to discard this post?
+            </Text>
+          </View>
+          <View style={styles.modalActionContainer}>
+            <TouchableOpacity
+              style={styles.discardTextContainer}
+              onPress={() => this.onClose()}>
+              <Text style={styles.discardText}>Discard</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={styles.keepTextContainer}
+              onPress={() => this.setState({showDiscardContentModal: false})}>
+              <Text style={styles.keepText}>Keep</Text>
+            </TouchableOpacity>
+          </View>
+        </Modal>
       </View>
     );
   }
@@ -101,6 +245,9 @@ const mapDispatchToProps = dispatch => ({
     },
     searchDashboard: (tab, page, token, term) => {
       dispatch(homeActions.searchDashboard(tab, page, token, term));
+    },
+    createPost: (token, content, caption) => {
+      dispatch(homeActions.createPost(token, content, caption));
     },
   },
 });

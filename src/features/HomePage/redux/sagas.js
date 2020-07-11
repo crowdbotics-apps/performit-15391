@@ -116,25 +116,25 @@ function sendSearchDashBoard(tab, term, token) {
   );
 }
 
-// function sendCreatePost(data, token) {
-//   console.log('----------------------data 11111', data);
-//   return request.post('/posts/create/', data, {
-//     headers: {
-//       Accept: 'application/json',
-//       'Content-Type': 'multipart/form-data',
-//       Authorization: `Token ${token}`,
-//     },
-//   });
-// }
-
 function sendCreatePost(data, token) {
-  console.log('----------------------data 11111', data);
+  console.dir('----------------------data 11111', data);
   return request.post('/posts/create/', data, {
     headers: {
+      Accept: 'application/json',
+      'Content-Type': 'multipart/form-data',
       Authorization: `Token ${token}`,
     },
   });
 }
+
+// function sendCreatePost(data, token) {
+//   console.dir('----------------------data 11111', data);
+//   return request.post('/posts/create/', data, {
+//     headers: {
+//       Authorization: `Token ${token}`,
+//     },
+//   });
+// }
 
 function* handleGetUserPosts(action) {
   const {tab, token, userId} = action;
@@ -343,22 +343,18 @@ function* handleCreatePost(action) {
   const {token, content, caption} = action;
 
   try {
-    // const formData = new FormData();
-    // Object.keys(content).forEach(key => {
-    //   formData.append(key, content[key]);
-    // });
+    const formData = new FormData();
+    Object.keys(content).forEach(key => {
+      formData.append(key, content[key]);
+    });
 
-    // formData.append('caption', caption);
+    formData.append('caption', caption);
 
     console.log('----------------------formData');
     console.log('----------------------token', token);
-    const {status, data, success} = yield call(
-      sendCreatePost,
-      {caption: 'fkjdsjkg'},
-      token,
-    );
+    const {status, data, success} = yield call(sendCreatePost, formData, token);
 
-    console.log('----------------------result', data);
+    console.dir('----------------------result', data);
     console.log('----------------------status', status);
 
     if (status === 200) {
@@ -386,7 +382,7 @@ function* handleCreatePost(action) {
       });
     }
   } catch (error) {
-    console.log('----------------------error', error);
+    console.dir(error);
     yield put({
       type: CREATE_POST_ERROR,
       error: 'Not able to create post',

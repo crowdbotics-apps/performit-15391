@@ -172,7 +172,11 @@ PODS:
     - React
   - react-native-cookies (3.0.0):
     - React
+  - react-native-document-picker (3.5.3):
+    - React
   - react-native-image-picker (1.1.0):
+    - React
+  - react-native-mov-to-mp4 (0.2.2):
     - React
   - react-native-simple-toast (1.1.2):
     - React
@@ -244,7 +248,9 @@ DEPENDENCIES:
   - React-jsinspector (from `../node_modules/react-native/ReactCommon/jsinspector`)
   - react-native-camera (from `../node_modules/react-native-camera`)
   - "react-native-cookies (from `../node_modules/@react-native-community/cookies`)"
+  - react-native-document-picker (from `../node_modules/react-native-document-picker`)
   - react-native-image-picker (from `../node_modules/react-native-image-picker`)
+  - react-native-mov-to-mp4 (from `../node_modules/react-native-mov-to-mp4`)
   - react-native-simple-toast (from `../node_modules/react-native-simple-toast`)
   - react-native-splash-screen (from `../node_modules/react-native-splash-screen`)
   - react-native-video (from `../node_modules/react-native-video`)
@@ -317,8 +323,12 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native-camera"
   react-native-cookies:
     :path: "../node_modules/@react-native-community/cookies"
+  react-native-document-picker:
+    :path: "../node_modules/react-native-document-picker"
   react-native-image-picker:
     :path: "../node_modules/react-native-image-picker"
+  react-native-mov-to-mp4:
+    :path: "../node_modules/react-native-mov-to-mp4"
   react-native-simple-toast:
     :path: "../node_modules/react-native-simple-toast"
   react-native-splash-screen:
@@ -396,7 +406,9 @@ SPEC CHECKSUMS:
   React-jsinspector: e08662d1bf5b129a3d556eb9ea343a3f40353ae4
   react-native-camera: 203091b4bf99d48b788a0682ad573e8718724893
   react-native-cookies: 6fe6a70d3b2fd8e81ddcd94d60a87727010d9b2e
+  react-native-document-picker: b1b4a52c0051e10642c54cfc10933759e8ccdda4
   react-native-image-picker: 3637d63fef7e32a230141ab4660d3ceb773c824f
+  react-native-mov-to-mp4: b63917cb6f96d4c264d8f5213db7961442dd4298
   react-native-simple-toast: a3a8e9033a549c11741debe875e54698cc4c0dd7
   react-native-splash-screen: 200d11d188e2e78cea3ad319964f6142b6384865
   react-native-video: aa527b0acb37f94c4491e70df0274cb26979405d

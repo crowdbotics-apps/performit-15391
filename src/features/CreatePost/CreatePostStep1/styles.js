@@ -96,9 +96,17 @@ export const styles = StyleSheet.create({
     width: '100%',
     height: scaleModerate(2, 1),
     flexDirection: 'row',
-    justifyContent: 'space-between',
+    justifyContent: 'flex-start',
     alignItems: 'center',
     backgroundColor: '#ffffff',
+  },
+
+  filledVideoBarContainer: {
+    height: scaleModerate(2, 1),
+    flexDirection: 'row',
+    justifyContent: 'flex-start',
+    alignItems: 'center',
+    backgroundColor: '#B88746',
   },
 
   flipCameraContainer: {

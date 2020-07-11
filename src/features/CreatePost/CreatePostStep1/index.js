@@ -8,6 +8,8 @@ import {
   SafeAreaView,
 } from 'react-native';
 import Modal from 'react-native-modalbox';
+import MovToMp4 from 'react-native-mov-to-mp4';
+import DocumentPicker from 'react-native-document-picker';
 import {cloneDeep} from 'lodash';
 import {RNCamera} from 'react-native-camera';
 import {Text, Button} from 'react-native-ui-kitten';
@@ -62,9 +64,12 @@ class CreatePostStep1 extends Component {
   }
 
   onClose = () => {
+    clearInterval(this.state.timer);
     this.setState(
       {
         showDiscardContentModal: false,
+        seconds_Counter: 0,
+        videoData: {},
       },
       () => this.props.navigation.navigate('HomePage', {userId: ''}),
     );
@@ -114,19 +119,18 @@ class CreatePostStep1 extends Component {
     this.setState(
       {
         isRecording: true,
+        seconds_Counter: 0,
+        videoData: {},
       },
       () => {
         console.log('-----------------------recording fdsgsd');
-        let timer = setInterval(() => {
-          console.log('----56565656565656');
-          // default to mp4 for android as codec is not set
-          let num = this.state.seconds_Counter + 1;
-
-          this.setState({
-            seconds_Counter: num,
-          });
-        }, 10000);
-        this.setState({timer});
+        let timer = setInterval(this.tick, 1000);
+        this.setState({
+          timer,
+        });
+        setTimeout(() => {
+          clearInterval(this.state.timer);
+        }, 90000);
         this.startRecording();
       },
     );
@@ -155,29 +159,36 @@ class CreatePostStep1 extends Component {
         .recordAsync(options)
         .then(async data => {
           // fires first time, does not fire second time
-          const videoData = {};
-          videoData.type = 'video';
-          videoData.name = 'post_video';
-          videoData.uri = data && data.uri;
-          // && data.uri.replace('file://', '')
-          console.log('-------------------------videoData', videoData);
-          this.setState({videoData});
-          const postObject = {
-            content: videoData,
-          };
-          console.log('----------------postObject', postObject);
-          const userId = this.props.user && this.props.user.pk;
-          const accessToken = this.props.accessToken;
+          const filename = Date.now().toString();
+          data &&
+            data.uri &&
+            MovToMp4.convertMovToMp4(data.uri, filename).then(async results => {
+              //here you can upload the video...
+              console.log(results);
+              const videoData = {};
+              videoData.type = 'video';
+              videoData.name = filename + '.mp4';
+              videoData.uri = results;
+              // && data.uri.replace('file://', '')
+              console.log('-------------------------videoData', videoData);
+              this.setState({videoData});
+              const postObject = {
+                content: videoData,
+              };
+              console.log('----------------postObject', postObject);
+              const userId = this.props.user && this.props.user.pk;
+              const accessToken = this.props.accessToken;
 
-          const {
-            actions: {userPosts, createPost},
-          } = this.props;
+              const {
+                actions: {userPosts, createPost},
+              } = this.props;
 
-          await createPost(accessToken, postObject, 'lplplp');
-
-          if (userId && accessToken) {
-            await userPosts('following', accessToken, userId);
-          }
+              // await createPost(accessToken, postObject, 'lplplp');
+              //
+              // if (userId && accessToken) {
+              //   await userPosts('following', accessToken, userId);
+              // }
+            });
         })
         .catch(err => console.log(err, 'errorrrrrr'));
     }
@@ -187,28 +198,103 @@ class CreatePostStep1 extends Component {
     console.log('-----------------------recording stopped');
     console.log('----this.state.seconds_Counter', this.state.seconds_Counter);
     if (this.camera) {
-      clearInterval(this.state.timer);
       this.setState(
         {
           isRecording: false,
         },
         async () => {
+          clearInterval(this.state.timer);
           this.camera.stopRecording();
         },
       );
     }
   };
 
+  tick = () => {
+    this.setState({
+      seconds_Counter: this.state.seconds_Counter + 1,
+    });
+  };
+
+  selectOneFile = async () => {
+    //Opening Document Picker for selection of one file
+    try {
+      this.setState({
+        seconds_Counter: 0,
+        videoData: {},
+      });
+      const res = await DocumentPicker.pick({
+        type: [DocumentPicker.types.video],
+        //There can me more options as well
+        // DocumentPicker.types.allFiles
+        // DocumentPicker.types.images
+        // DocumentPicker.types.plainText
+        // DocumentPicker.types.audio
+        // DocumentPicker.types.pdf
+      });
+      //Printing the log realted to the file
+      console.log('res : ' + JSON.stringify(res));
+      console.log('URI : ' + res.uri);
+      console.log('Type : ' + res.type);
+      console.log('File Name : ' + res.name);
+      console.log('File Size : ' + res.size);
+      //Setting the state to show single file attributes
+      this.setState({singleFile: res});
+      const filename = Date.now().toString();
+      const videoData = {};
+      videoData.type = 'video';
+      videoData.name = filename + '.mp4';
+      videoData.uri = res.uri;
+      // && data.uri.replace('file://', '')
+      console.log('-------------------------videoData', videoData);
+      this.setState({videoData});
+      const postObject = {
+        content: videoData,
+      };
+      console.log('----------------postObject', postObject);
+      const userId = this.props.user && this.props.user.pk;
+      const accessToken = this.props.accessToken;
+
+      const {
+        actions: {userPosts, createPost},
+      } = this.props;
+
+      // await createPost(accessToken, postObject, 'lplplp');
+      //
+      // if (userId && accessToken) {
+      //   await userPosts('following', accessToken, userId);
+      // }
+    } catch (err) {
+      //Handling any exception (If any)
+      if (DocumentPicker.isCancel(err)) {
+        //If user canceled the document selection
+        alert('File not selected');
+      } else {
+        //For Unknown Error
+        alert('Unknown Error: ' + JSON.stringify(err));
+        throw err;
+      }
+    }
+  };
+
   render() {
     const {navigation} = this.props;
-    const {activeTab, recordingStarted, camera} = this.state;
-
+    const {
+      activeTab,
+      recordingStarted,
+      camera,
+      seconds_Counter,
+      videoData,
+    } = this.state;
+    const minutes = Math.floor(seconds_Counter / 60);
+    const seconds = seconds_Counter - minutes * 60;
+    const filledPercentage = (seconds_Counter / 90) * 100;
     return (
       <View style={styles.screen}>
         <SafeAreaView style={styles.headerContainer}>
           <TouchableOpacity
             style={[styles.inputDrawerContainer]}
-            onPress={() => navigation.navigate('HomePage', {userId: ''})}>
+            onPress={() => this.onClose()}>
             <View style={[styles.inputDrawer]}>
               <Image
                 style={[styles.inputDrawer]}
@@ -218,14 +304,16 @@ class CreatePostStep1 extends Component {
           </TouchableOpacity>
           <View style={styles.headerTextContainer}>
             <Text style={styles.headerText}>{this.state.activeTab}</Text>
-            <TouchableOpacity
-              onPress={() =>
-                activeTab === 'Video'
-                  ? navigation.navigate('CreatePostStep3')
-                  : navigation.navigate('CreatePostStep2')
-              }>
-              <Text style={styles.headerNextText}>Next</Text>
-            </TouchableOpacity>
+            {videoData && videoData.uri && (
+              <TouchableOpacity
+                onPress={() =>
+                  activeTab === 'Video'
+                    ? navigation.navigate('CreatePostStep3', {videoData})
+                    : navigation.navigate('CreatePostStep2')
+                }>
+                <Text style={styles.headerNextText}>Next</Text>
+              </TouchableOpacity>
+            )}
           </View>
         </SafeAreaView>
 
@@ -291,15 +379,24 @@ class CreatePostStep1 extends Component {
               </View>
             )}
 
-            <View style={styles.videoBarContainer} />
+            <View style={styles.videoBarContainer}>
+              <View
+                style={[
+                  styles.filledVideoBarContainer,
+                  {width: `${filledPercentage}%`},
+                ]}
+              />
+            </View>
           </View>
 
           <View style={styles.lowerBodyContainer}>
             <View style={styles.recordButtonParentContainer}>
-              {recordingStarted && (
+              {!!seconds_Counter && (
                 <View style={[styles.timeContainer]}>
                   <View style={styles.redDot} />
-                  <Text style={styles.timeText}>01:35</Text>
+                  <Text style={styles.timeText}>
+                    {minutes}:{seconds}
+                  </Text>
                 </View>
               )}
 
@@ -316,11 +413,11 @@ class CreatePostStep1 extends Component {
               </TouchableWithoutFeedback>
             </View>
 
-            {!recordingStarted && (
+            {!seconds_Counter && (
               <View style={styles.libraryButtonParentContainer}>
                 <TouchableOpacity
                   style={[styles.libraryButtonContainer]}
-                  onPress={() => console.log('------rotate')}>
+                  onPress={() => this.selectOneFile()}>
                   <View style={[styles.libraryButton]}>
                     <Image
                       style={[styles.libraryButton]}
@@ -331,7 +428,7 @@ class CreatePostStep1 extends Component {
               </View>
             )}
 
-            {!recordingStarted && (
+            {!seconds_Counter && (
               <View style={styles.bottomTabContainer}>
                 <TouchableOpacity
                   style={[styles.bottomLeftContainer]}
@@ -358,7 +455,7 @@ class CreatePostStep1 extends Component {
                 </TouchableOpacity>
               </View>
             )}
-            {!!recordingStarted && (
+            {!!seconds_Counter && (
               <View style={styles.bottomDeleteParentContainer}>
                 <TouchableOpacity
                   style={[styles.bottomDeleteContainer]}
@@ -414,6 +511,7 @@ const mapStateToProps = state => ({
   user: state.EmailAuth.user,
   searchHashTagsList: state.Posts.searchHashTagsList,
   accessToken: state.EmailAuth.accessToken,
+  createPost: state.Posts.errors.CreatePost,
 });
 
 const mapDispatchToProps = dispatch => ({
