@@ -5,11 +5,14 @@ from django.db.models import Sum
 
 
 # Create your models here.
+from django.db.models.signals import pre_delete
+from django.dispatch import receiver
 
 
 class Post(models.Model):
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="post_user_set")
     content = models.FileField("SELECT Media", null=False, upload_to="posts/")
+    thumbnail = models.ImageField("SELECT Thumbnail", null=True, blank=True, upload_to="posts/")
     caption = models.TextField("Enter Caption for post", null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
@@ -83,4 +86,9 @@ class PostView(models.Model):
     class Meta:
         verbose_name = 'Post Views Management'
         verbose_name_plural = 'Post Views Management'
+
+@receiver(pre_delete, sender=Post)
+def post_delete(sender, instance, **kwargs):
+    # Pass false so FileField doesn't save the model.
+    instance.content.delete(False)
 
