@@ -143,6 +143,7 @@ class Create(APIView):
         if kind is None:
             return Response({"success": False, "message": "Can't Determine file type"}, status=400)
         extension = kind.extension
+        print(extension)
         if PostFunctions.valid_extension(extension):
             data = {"content": request.data.get('content'), "thumbnail": thumbnail, "caption": request.data.get("caption"), "user": request.user.id}
             post = PostSerializer(data=data)
