@@ -4,6 +4,9 @@ require_relative '../node_modules/@react-native-community/cli-platform-ios/nativ
 
 target 'Performit' do
   # Pods for Performit
+  permissions_path = '../node_modules/react-native-permissions/ios'
+  pod 'Permission-Camera', :path => "#{permissions_path}/Camera.podspec"
+  pod 'Permission-Microphone', :path => "#{permissions_path}/Microphone.podspec"
   pod 'React', :path => '../node_modules/react-native/'
   pod 'React-Core', :path => '../node_modules/react-native/React'
   pod 'React-DevSupport', :path => '../node_modules/react-native/React'

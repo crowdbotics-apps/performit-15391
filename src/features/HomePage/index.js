@@ -305,7 +305,7 @@ class Home extends Component {
                   </TouchableOpacity>
                   <TouchableOpacity
                     style={[styles.messageIconContainer]}
-                    onPress={() => this.toggleDrawer()}>
+                    onPress={() => console.log('-------------message')}>
                     <View style={[styles.messageIcon]}>
                       <Image
                         style={[styles.messageIcon]}
@@ -453,6 +453,7 @@ class Home extends Component {
                       videoHeight={350}
                       postId={postData && postData.id}
                       source={postData && postData.content}
+                      poster={postData && postData.thumbnail}
                       navigation={this.props.navigation}
                       disableVolume="false"
                       disableBack="false"

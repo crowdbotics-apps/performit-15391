@@ -16,8 +16,9 @@ import {styles} from './styles';
 import * as homeActions from '../../HomePage/redux/actions';
 import {connect} from 'react-redux';
 import * as profileActions from '../../ProfilePage/redux/actions';
+import VideoPlayer from '../../components/VideoPlayer';
 
-class CreatePostStep3 extends Component {
+class PreviewPost extends Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -27,8 +28,8 @@ class CreatePostStep3 extends Component {
       recordingStarted: false,
       showDiscardContentModal: false,
       videoData: {},
-      caption: '',
       thumbnail: {},
+      paused: true,
     };
   }
 
@@ -60,6 +61,7 @@ class CreatePostStep3 extends Component {
     const prevThumbnail = prevProps.navigation.getParam('thumbnail', {});
     const thumbnail = this.props.navigation.getParam('thumbnail', {});
     if (prevVideoData !== videoData) {
+      console.log('--------------------here 111');
       if (!videoData.uri) {
         this.props.navigation.navigate('CreatePostStep1');
       }
@@ -71,6 +73,7 @@ class CreatePostStep3 extends Component {
     }
 
     if (thumbnail && thumbnail.uri && prevThumbnail !== thumbnail) {
+      console.log('--------------------here 222');
       this.setState({
         thumbnail,
       });
@@ -85,46 +88,15 @@ class CreatePostStep3 extends Component {
         videoData: {},
         caption: '',
       },
-      () => this.props.navigation.navigate('HomePage', {userId: ''}),
+      () => this.props.navigation.navigate('CreatePostStep1'),
     );
   };
 
-  onShare = async () => {
-    this.setState({
-      isLoading: true,
-    });
-    const postObject = {
-      content: this.state.videoData,
+  onNext = () => {
+    this.props.navigation.navigate('CreatePostStep3', {
+      videoData: this.state.videoData,
       thumbnail: this.state.thumbnail,
-    };
-    const userId = this.props.user && this.props.user.pk;
-    const accessToken = this.props.accessToken;
-
-    const {
-      actions: {userDetails, createPost},
-    } = this.props;
-
-    await createPost(accessToken, postObject, this.state.caption);
-
-    if (userId && accessToken) {
-      await userDetails(userId, accessToken);
-    }
-    this.setState(
-      {
-        isLoading: false,
-        showDiscardContentModal: false,
-        videoData: {},
-        caption: '',
-      },
-      () => {
-        this.props.navigation.navigate('HomePage', {userId: ''});
-      },
-    );
-  };
-
-  handleCaptionChange = text => {
-    this.setState({caption: text});
-    // todo change keyboard and add validation
+    });
   };
 
   onScreenFocus = () => {
@@ -133,14 +105,23 @@ class CreatePostStep3 extends Component {
     }
   };
 
-  onPreviewContent = () => {
-    const {thumbnail, videoData} = this.state;
-    this.props.navigation.navigate('PreviewPost', {videoData, thumbnail});
+  // setting current time of video to a timestamp
+  setVideoCurrentTime = (time, postId) => {
+    this.setState({
+      [`currentTime${postId}`]: time,
+    });
+  };
+
+  // initializing seekTime to -1 in beginning to differentiate later
+  initializeSeekTime = postId => {
+    this.setState({
+      [`seekTime${postId}`]: -1,
+    });
   };
 
   render() {
     const {navigation} = this.props;
-    const {isLoading, caption, videoData} = this.state;
+    const {isLoading, caption, videoData, thumbnail} = this.state;
 
     return (
       <View style={styles.screen}>
@@ -152,22 +133,22 @@ class CreatePostStep3 extends Component {
         <SafeAreaView style={styles.headerContainer}>
           <TouchableOpacity
             style={[styles.inputDrawerContainer]}
-            onPress={() => this.setState({showDiscardContentModal: true})}>
+            onPress={() => this.onClose()}>
             <View style={[styles.inputDrawer]}>
               <Image
                 style={[styles.inputDrawer]}
-                source={require('../../../assets/images/cross_icon.png')}
+                source={require('../../../assets/images/left-arrow.png')}
               />
             </View>
           </TouchableOpacity>
           <View style={styles.headerTextContainer}>
-            <Text style={styles.headerText}>New Post</Text>
+            <Text style={styles.headerText}>Preview Post</Text>
 
             {!isLoading ? (
               videoData &&
               videoData.uri && (
-                <TouchableOpacity onPress={() => this.onShare()}>
-                  <Text style={styles.headerNextText}>Share</Text>
+                <TouchableOpacity onPress={() => this.onNext()}>
+                  <Text style={styles.headerNextText}>Next</Text>
                 </TouchableOpacity>
               )
             ) : (
@@ -179,69 +160,50 @@ class CreatePostStep3 extends Component {
             )}
           </View>
         </SafeAreaView>
-        <View style={styles.captionContainer}>
-          <TouchableOpacity
-            onPress={() => console.log('----')}
-            style={styles.captionVideoContainer}>
-            <View style={[styles.videoIcon]}>
-              {videoData && videoData.type === 'video' ? (
-                <Image
-                  style={[styles.videoIcon]}
-                  source={require('../../../assets/images/video_icon.png')}
-                />
-              ) : (
-                <Image
-                  style={[styles.videoIcon]}
-                  source={require('../../../assets/images/mike_small.png')}
-                />
-              )}
-            </View>
-          </TouchableOpacity>
-          <View style={styles.bioInputContainer}>
-            <TextInput
-              value={caption}
-              onChangeText={this.handleCaptionChange}
-              placeholder="Write a caption..."
-              style={styles.bioInput}
-              autoCapitalize="none"
-              placeholderTextColor="#989ba5"
-              underlineColorAndroid="transparent"
-              multiline={true}
-            />
-          </View>
-        </View>
 
-        <View style={styles.followProfileRowContainer}>
-          <Text style={styles.followProfileText}>Also Post to</Text>
-        </View>
-
-        <View style={styles.followProfileRowContainer}>
-          <View style={styles.followProfileRowLeftContainer}>
-            <TouchableOpacity
-              onPress={() => console.log('---')}
-              style={[styles.profileRowImageContainer]}>
-              <Image
-                style={[styles.profileRowImage]}
-                source={{
-                  uri: '',
-                }}
-              />
-            </TouchableOpacity>
-
-            <View style={styles.followProfileRowTextContainer}>
-              <View style={styles.followProfileRowNameContainer}>
-                <Text style={styles.followProfileText}>Group 1</Text>
-              </View>
-            </View>
-          </View>
-          <View style={styles.followingButtonContainer}>
-            <Switch
-              style={styles.switchButton}
-              onTintColor={'#B88746'}
-              value={this.state.isGroupSelected}
-              onValueChange={e => this.setState({isGroupSelected: e})}
-            />
-          </View>
+        <View style={styles.bodyContainer}>
+          <VideoPlayer
+            showBottomcontrol={true}
+            videoHeight={350}
+            postId={'preview-post'}
+            source={videoData && videoData.uri}
+            poster={thumbnail && thumbnail.uri}
+            navigation={this.props.navigation}
+            disableVolume="false"
+            disableBack="false"
+            paused={this.state.paused}
+            onVideoProgress={time => {
+              this.setVideoCurrentTime(time, 'preview-post');
+            }}
+            initializeSeek={() => {
+              this.initializeSeekTime('preview-post');
+            }}
+            onEnd={() => {
+              this.setState({
+                paused: true,
+              });
+            }}
+            onPause={() => {
+              this.setState({
+                paused: true,
+              });
+            }}
+            onPlay={() => {
+              this.setState({
+                paused: false,
+              });
+            }}
+            onLoad={fields => {
+              this.setState({
+                duration: fields.duration,
+              });
+            }}
+            showControls={value => {
+              this.setState({
+                showControls: value,
+              });
+            }}
+          />
         </View>
 
         <Modal
@@ -299,11 +261,11 @@ const mapDispatchToProps = dispatch => ({
   },
 });
 
-CreatePostStep3.navigationOptions = {
+PreviewPost.navigationOptions = {
   header: null,
 };
 
 export default connect(
   mapStateToProps,
   mapDispatchToProps,
-)(CreatePostStep3);
+)(PreviewPost);

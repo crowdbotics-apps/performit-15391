@@ -90,11 +90,6 @@ class HashTagHomePage extends Component {
   render() {
     const {navigation, searchHashTagsList} = this.props;
 
-    console.log(
-      '-----------------------searchHashTagsList',
-      searchHashTagsList,
-    );
-
     return (
       <ScrollView
         contentContainerStyle={styles.screen}

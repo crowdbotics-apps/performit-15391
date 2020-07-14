@@ -34,7 +34,7 @@ export default class VideoPlayer extends Component {
     muted: false,
     title: '',
     rate: 1,
-    seekerWidth: scaleModerate(34),
+    seekerWidth: scaleModerate(0),
     subtitleText: [],
     navigation: '',
   };
@@ -587,7 +587,7 @@ export default class VideoPlayer extends Component {
   setSeekerPosition(position = 0) {
     const state = this.state;
     position = this.constrainToSeekerMinMax(position);
-    state.seekerFillWidth = position + 4;
+    state.seekerFillWidth = position;
     state.seekerPosition = position;
     if (!state.seeking) {
       state.seekerOffset = position;
@@ -1163,12 +1163,7 @@ export default class VideoPlayer extends Component {
         (this.player.seekerWidth - this.props.seekerWidth) * maxPercent;
       state.seekBarMaxPosition = maxPosition;
     }
-    if (
-      this.state.selectedLearningObjective === 'none' ||
-      this.state.selectedLearningObjective === 'revisit'
-    ) {
-      state.seekBarMaxPosition = this.player.seekerWidth;
-    }
+    state.seekBarMaxPosition = this.player.seekerWidth;
     this.setState(state);
     if (!this.state.seeking && this.state.paused) {
       const position = this.calculateSeekerPosition();

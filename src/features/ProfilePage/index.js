@@ -16,6 +16,7 @@ import {connect} from 'react-redux';
 import {get} from 'lodash';
 import getPath from '../../utils/getPath';
 import {userTypesConfig} from '../../config/userTypes';
+import VideoPlayer from '../components/VideoPlayer';
 
 class Profile extends Component {
   constructor(props) {
@@ -113,6 +114,20 @@ class Profile extends Component {
 
   toggleDrawer = () => {
     this.props.navigation.toggleDrawer();
+  };
+
+  // setting current time of video to a timestamp
+  setVideoCurrentTime = (time, postId) => {
+    this.setState({
+      [`currentTime${postId}`]: time,
+    });
+  };
+
+  // initializing seekTime to -1 in beginning to differentiate later
+  initializeSeekTime = postId => {
+    this.setState({
+      [`seekTime${postId}`]: -1,
+    });
   };
 
   render() {
@@ -364,6 +379,63 @@ class Profile extends Component {
                 </TouchableOpacity>
               </View>
 
+              {profile.posts && !!profile.posts.length && (
+                <View style={styles.profileImagesContainer}>
+                  {profile.posts.map(videoData => (
+                    <View style={styles.profileSingleImageConatiner}>
+                      <VideoPlayer
+                        showBottomcontrol={false}
+                        videoHeight={137 * 0.66}
+                        postId={videoData && videoData.id}
+                        source={videoData && videoData.content}
+                        poster={videoData && videoData.thumbnail}
+                        navigation={this.props.navigation}
+                        disableVolume="false"
+                        disableBack="false"
+                        paused={
+                          this.state[`paused${videoData && videoData.id}`]
+                        }
+                        onVideoProgress={time => {
+                          this.setVideoCurrentTime(
+                            time,
+                            videoData && videoData.id,
+                          );
+                        }}
+                        initializeSeek={() => {
+                          this.initializeSeekTime(videoData && videoData.id);
+                        }}
+                        onEnd={() => {
+                          this.setState({
+                            [`paused${videoData && videoData.id}`]: true,
+                          });
+                        }}
+                        onPause={() => {
+                          this.setState({
+                            [`paused${videoData && videoData.id}`]: true,
+                          });
+                        }}
+                        onPlay={() => {
+                          this.setState({
+                            [`paused${videoData && videoData.id}`]: false,
+                          });
+                        }}
+                        onLoad={fields => {
+                          this.setState({
+                            [`duration${videoData &&
+                              videoData.id}`]: fields.duration,
+                          });
+                        }}
+                        showControls={value => {
+                          this.setState({
+                            [`showControls${videoData && videoData.id}`]: value,
+                          });
+                        }}
+                      />
+                    </View>
+                  ))}
+                </View>
+              )}
+
               {/*<View style={styles.profileImagesContainer}>
                 <TouchableOpacity style={styles.profileSingleImageConatiner}>
                   <Image
@@ -420,11 +492,13 @@ class Profile extends Component {
                   />
                 </TouchableOpacity>
               </View>*/}
-              <View style={styles.noProfilePostsContainer}>
-                <Text style={styles.profileSingleStatSecondText}>
-                  There are no posts yet
-                </Text>
-              </View>
+              {(!profile.posts || (profile.posts && !profile.posts.length)) && (
+                <View style={styles.noProfilePostsContainer}>
+                  <Text style={styles.profileSingleStatSecondText}>
+                    There are no posts yet
+                  </Text>
+                </View>
+              )}
             </>
           )
         ) : (

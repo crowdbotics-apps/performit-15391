@@ -40,6 +40,7 @@ import HashTagHomePage from '../features/HashTagHomePage';
 import CreatePostStep1 from '../features/CreatePost/CreatePostStep1';
 import CreatePostStep2 from '../features/CreatePost/CreatePostStep2';
 import CreatePostStep3 from '../features/CreatePost/CreatePostStep3';
+import PreviewPost from '../features/CreatePost/PreviewPost';
 
 /**
  * new navigators can be imported here
@@ -87,21 +88,30 @@ const AppNavigator = {
   // Tutorial: { screen: TutorialNavigator },
   // Camera: { screen: CameraNavigator },
   EmailAuth: {screen: EmailAuthNavigator},
-  HomePage: {
-    screen: HomePage,
-    navigationOptions: {
-      gesturesEnabled: false,
-    },
-  },
-  SearchPage: {screen: SearchPage},
-  HashTagHomePage: {screen: HashTagHomePage},
-  CommentsPage: {screen: CommentsPage},
   /** new navigators can be added here */
 };
 
 const EmailAuthStackNavigator = createStackNavigator(
   {
     ...AppNavigator,
+  },
+  {
+    initialRouteName: 'EmailAuth',
+  },
+);
+
+const HomeAuthStackNavigator = createStackNavigator(
+  {
+    ...AppNavigator,
+    HomePage: {
+      screen: HomePage,
+      navigationOptions: {
+        gesturesEnabled: false,
+      },
+    },
+    SearchPage: {screen: SearchPage},
+    HashTagHomePage: {screen: HashTagHomePage},
+    CommentsPage: {screen: CommentsPage},
   },
   {
     initialRouteName: 'EmailAuth',
@@ -190,6 +200,9 @@ const PostNavigator = {
   CreatePostStep3: {
     screen: CreatePostStep3,
   },
+  PreviewPost: {
+    screen: PreviewPost,
+  },
 };
 
 const CreatePostNavigator = createStackNavigator(
@@ -211,7 +224,7 @@ const CreatePostNavigator = createStackNavigator(
 const LoggedInBottomTabNavigator = createBottomTabNavigator(
   {
     Home: {
-      screen: EmailAuthStackNavigator,
+      screen: HomeAuthStackNavigator,
       navigationOptions: ({navigation}) => {
         return {
           tabBarVisible: navigation.state.index === 1 ? true : false,
@@ -227,7 +240,7 @@ const LoggedInBottomTabNavigator = createBottomTabNavigator(
     Location: {
       screen: EmailAuthStackNavigator,
       navigationOptions: ({navigation}) => ({
-        tabBarVisible: navigation.state.index === 0 ? true : false,
+        tabBarVisible: false,
         title: null,
         tabBarIcon: ({focused}) => (
           <Image
@@ -253,7 +266,7 @@ const LoggedInBottomTabNavigator = createBottomTabNavigator(
     Notifications: {
       screen: EmailAuthStackNavigator,
       navigationOptions: ({navigation}) => ({
-        tabBarVisible: navigation.state.index === 0 ? true : false,
+        tabBarVisible: false,
         title: null,
         tabBarIcon: ({focused}) => (
           <Image

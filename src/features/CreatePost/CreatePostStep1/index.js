@@ -6,12 +6,15 @@ import {
   TouchableWithoutFeedback,
   View,
   SafeAreaView,
+  Platform,
 } from 'react-native';
 import Modal from 'react-native-modalbox';
 import MovToMp4 from 'react-native-mov-to-mp4';
 import AudioRecord from 'react-native-audio-record';
 import SoundRecorder from 'react-native-sound-recorder';
 import DocumentPicker from 'react-native-document-picker';
+import RNImagePicker from 'react-native-image-picker';
+import {check, request, PERMISSIONS, RESULTS} from 'react-native-permissions';
 import RNFetchBlob from 'react-native-fetch-blob';
 import {cloneDeep} from 'lodash';
 import {RNCamera} from 'react-native-camera';
@@ -20,6 +23,7 @@ import {styles} from './styles';
 import * as homeActions from '../../HomePage/redux/actions';
 import {connect} from 'react-redux';
 import * as profileActions from '../../ProfilePage/redux/actions';
+import Toast from 'react-native-simple-toast';
 
 class CreatePostStep1 extends Component {
   constructor(props) {
@@ -117,27 +121,117 @@ class CreatePostStep1 extends Component {
   };
 
   onPressIn = () => {
-    this.setState(
-      {
-        isRecording: true,
-        seconds_Counter: 0,
-        videoData: {},
-      },
-      () => {
-        let timer = setInterval(this.tick, 1000);
-        this.setState({
-          timer,
+    if (Platform.OS === 'ios') {
+      check(PERMISSIONS.IOS.MICROPHONE)
+        .then(result => {
+          switch (result) {
+            case RESULTS.GRANTED:
+              console.log('The permission is granted');
+              if (this.state.activeTab === 'Audio') {
+                this.setState(
+                  {
+                    isRecording: true,
+                    seconds_Counter: 0,
+                    videoData: {},
+                  },
+                  () => {
+                    this.startAudioRecording();
+                    let timer = setInterval(this.tick, 1000);
+                    this.setState({
+                      timer,
+                    });
+                    setTimeout(() => {
+                      clearInterval(this.state.timer);
+                    }, 90000);
+
+                    if (this.state.activeTab === 'Video') {
+                      this.camera && this.startVideoRecording();
+
+                      let timer = setInterval(this.tick, 1000);
+                      this.setState({
+                        timer,
+                      });
+                      setTimeout(() => {
+                        clearInterval(this.state.timer);
+                      }, 90000);
+                    }
+                  },
+                );
+              }
+              check(PERMISSIONS.IOS.CAMERA)
+                .then(result => {
+                  switch (result) {
+                    case RESULTS.GRANTED:
+                      console.log('The permission is granted');
+                      if (this.state.activeTab === 'Video') {
+                        this.setState(
+                          {
+                            isRecording: true,
+                            seconds_Counter: 0,
+                            videoData: {},
+                          },
+                          () => {
+                            this.camera && this.startVideoRecording();
+
+                            let timer = setInterval(this.tick, 1000);
+                            this.setState({
+                              timer,
+                            });
+                            setTimeout(() => {
+                              clearInterval(this.state.timer);
+                            }, 90000);
+                          },
+                        );
+                      }
+                      break;
+                  }
+                })
+                .catch(error => {
+                  // …
+                });
+              break;
+          }
+        })
+        .catch(error => {
+          // …
         });
-        setTimeout(() => {
-          clearInterval(this.state.timer);
-        }, 90000);
-        if (this.state.activeTab === 'Video') {
-          this.camera && this.startVideoRecording();
-        } else {
-          this.startAudioRecording();
-        }
-      },
-    );
+    } else {
+      check(PERMISSIONS.ANDROID.CAMERA)
+        .then(result => {
+          switch (result) {
+            case RESULTS.GRANTED:
+              console.log('The permission is granted');
+              break;
+          }
+        })
+        .catch(error => {
+          // …
+        });
+
+      check(PERMISSIONS.ANDROID.RECORD_AUDIO)
+        .then(result => {
+          switch (result) {
+            case RESULTS.GRANTED:
+              console.log('The permission is granted');
+              break;
+          }
+        })
+        .catch(error => {
+          // …
+        });
+    }
+
+    request(PERMISSIONS.IOS.CAMERA).then(result => {
+      if (result === RESULTS.BLOCKED) {
+        this.state.activeTab === 'Video' && alert('CAMERA Permission Denied.');
+      }
+    });
+
+    request(PERMISSIONS.IOS.MICROPHONE).then(result => {
+      if (result === RESULTS.BLOCKED) {
+        alert('MICROPHONE Permission Denied.');
+      }
+    });
   };
 
   startVideoRecording = () => {
@@ -170,17 +264,17 @@ class CreatePostStep1 extends Component {
   };
 
   stopRecording = async () => {
-    if (this.camera && this.state.activeTab === 'Video') {
+    if (this.state.activeTab === 'Video' && this.state.isRecording) {
       this.setState(
         {
           isRecording: false,
         },
         async () => {
           clearInterval(this.state.timer);
-          this.camera.stopRecording();
+          this.camera && this.camera.stopRecording();
         },
       );
-    } else {
+    } else if (this.state.isRecording) {
       clearInterval(this.state.timer);
       SoundRecorder.stop().then(result => {
         const filename = Date.now().toString();
@@ -210,7 +304,7 @@ class CreatePostStep1 extends Component {
     });
   };
 
-  selectOneFile = async () => {
+  /*selectOneFile = async () => {
     //Opening Document Picker for selection of one file
     try {
       this.setState({
@@ -263,6 +357,84 @@ class CreatePostStep1 extends Component {
         throw err;
       }
     }
+  };*/
+
+  selectOneFile = async () => {
+    //Opening gallery for selection of one file
+    const options = {
+      title: 'Video Picker',
+      mediaType: 'video',
+      storageOptions: {
+        skipBackup: true,
+        path: 'images',
+      },
+    };
+
+    if (this.state.activeTab === 'Audio') {
+      options.mediaType = 'mixed';
+    }
+
+    RNImagePicker.launchImageLibrary(options, response => {
+      // if (response && response.fileSize / 1000000 > 7) {
+      //   Toast.show('The minimum size is 1Kb \n The maximum size is 7 Mb');
+      // }
+      let updatedResponse = cloneDeep(response);
+      const filename = Date.now().toString();
+
+      const videoData = {
+        uri: updatedResponse && updatedResponse.uri,
+        name: filename + '.mp4',
+        type: 'video',
+      };
+      // .replace('file://', '')
+
+      if (this.state.activeTab === 'Audio') {
+        if (
+          (videoData && videoData.uri && videoData.uri.includes('.png')) ||
+          videoData.uri.includes('.jpeg') ||
+          videoData.uri.includes('.jpg') ||
+          videoData.uri.includes('.mov') ||
+          videoData.uri.includes('.MOV') ||
+          videoData.uri.includes('.mp4')
+        ) {
+          alert('Please select an audio file only');
+          return false;
+        } else {
+          videoData.type = 'audio';
+        }
+      }
+
+      if (this.state.activeTab === 'Video') {
+        this.props.navigation.navigate('PreviewPost', {videoData});
+      } else {
+        this.props.navigation.navigate('CreatePostStep2', {videoData});
+      }
+
+      /*if (videoData && videoData.uri && videoData.uri.includes('.mov')) {
+        console.log('------------------videoData 009090', videoData);
+        MovToMp4.convertMovToMp4(videoData.uri, videoData.fileName).then(
+          async results => {
+            //here you can upload the video...
+            // console.log('------------------results', results);
+            console.dir(results);
+            videoData.type = 'video';
+            videoData.uri = results;
+            if (results) {
+              this.setState({videoData, seconds_Counter: 0}, () => {
+                this.props.navigation.navigate('PreviewPost', {videoData});
+              });
+            }
+          },
+        );
+      } else if (videoData && videoData.uri) {
+        console.log('------------------videoData 009090', videoData);
+        if (this.state.activeTab === 'Video') {
+          this.props.navigation.navigate('PreviewPost', {videoData});
+        } else {
+          this.props.navigation.navigate('CreatePostStep2', {videoData});
+        }
+      }*/
+    });
   };
 
   onNextPress = () => {
@@ -276,8 +448,8 @@ class CreatePostStep1 extends Component {
       },
       () => {
         activeTab === 'Video'
-          ? this.props.navigation.navigate('CreatePostStep3', {videoData})
-          : this.props.navigation.navigate('CreatePostStep3', {videoData});
+          ? this.props.navigation.navigate('PreviewPost', {videoData})
+          : this.props.navigation.navigate('CreatePostStep2', {videoData});
       },
     );
   };
@@ -518,31 +690,15 @@ class CreatePostStep1 extends Component {
 }
 
 const mapStateToProps = state => ({
-  userPostsErrors: state.Posts.errors.UserPosts,
-  posts: state.Posts.userPosts,
   profile: state.Profile.profile,
   user: state.EmailAuth.user,
-  searchHashTagsList: state.Posts.searchHashTagsList,
   accessToken: state.EmailAuth.accessToken,
-  createPost: state.Posts.errors.CreatePost,
 });
 
 const mapDispatchToProps = dispatch => ({
   actions: {
     userDetails: (userId, token) => {
       dispatch(profileActions.userDetails(userId, token));
-    },
-    userPosts: (tab, token, userId) => {
-      dispatch(homeActions.userPosts(tab, token, userId));
-    },
-    followersConnectionsList: (userId, token) => {
-      dispatch(profileActions.followersConnectionsList(userId, 1, token));
-    },
-    searchDashboard: (tab, page, token, term) => {
-      dispatch(homeActions.searchDashboard(tab, page, token, term));
-    },
-    createPost: (token, content, caption) => {
-      dispatch(homeActions.createPost(token, content, caption));
     },
   },
 });

@@ -28,6 +28,7 @@ export default (ProfilePageReducer = (state = initialState, action) => {
             user: action.profile && action.profile.user,
             user_details: action.profile && action.profile.user_details,
             user_types: action.profile && action.profile.user_types,
+            posts: action.profile && action.profile.posts,
           },
         },
       };

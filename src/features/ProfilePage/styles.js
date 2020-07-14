@@ -278,9 +278,9 @@ export const styles = StyleSheet.create({
 
   profileSingleImageConatiner: {
     width: scaleModerate(137),
-    height: scaleModerate(137),
+    height: scaleModerate(137 * 0.66),
     borderWidth: scaleModerate(1),
-    borderColor: 'black',
+    borderColor: '#111111',
   },
 
   leftArrowContainer: {

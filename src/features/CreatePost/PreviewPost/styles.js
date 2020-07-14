@@ -80,115 +80,6 @@ export const styles = StyleSheet.create({
     backgroundColor: '#111111',
   },
 
-  videoControlsContainer: {
-    position: 'absolute',
-    width: '90%',
-    height: scaleModerate(70, 1),
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    bottom: 0,
-    left: scaleModerate(20),
-    zIndex: 99999,
-  },
-
-  videoBarContainer: {
-    width: '100%',
-    height: scaleModerate(2, 1),
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    backgroundColor: '#ffffff',
-  },
-
-  flipCameraContainer: {
-    width: scaleModerate(24),
-    height: scaleModerate(24),
-    flexDirection: 'row',
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-
-  flipCamera: {
-    width: scaleModerate(24),
-    height: scaleModerate(20),
-  },
-
-  flashCameraContainer: {
-    width: scaleModerate(24),
-    height: scaleModerate(24),
-    flexDirection: 'row',
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-
-  flashCamera: {
-    width: scaleModerate(15),
-    height: scaleModerate(24),
-  },
-
-  lowerBodyContainer: {
-    width: '100%',
-    height: '48%',
-    flexDirection: 'column',
-    justifyContent: 'flex-start',
-    alignItems: 'center',
-  },
-
-  recordButtonParentContainer: {
-    width: '100%',
-    height: '55%',
-    flexDirection: 'column',
-    justifyContent: 'flex-end',
-    alignItems: 'center',
-  },
-
-  recordButtonContainer: {
-    width: scaleModerate(90),
-    height: scaleModerate(90),
-    flexDirection: 'row',
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-
-  recordButton: {
-    width: scaleModerate(90),
-    height: scaleModerate(90),
-  },
-
-  libraryButtonParentContainer: {
-    width: '90%',
-    height: '15%',
-    flexDirection: 'row',
-    justifyContent: 'flex-start',
-    alignItems: 'center',
-  },
-
-  libraryButtonContainer: {
-    width: scaleModerate(75),
-    height: '100%',
-    flexDirection: 'row',
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-
-  libraryButton: {
-    width: scaleModerate(75),
-    height: '100%',
-  },
-
-  leftArrowButton: {
-    width: scaleModerate(7),
-    height: scaleModerate(10),
-  },
-
-  deleteText: {
-    color: 'red',
-    fontSize: scaleModerate(14),
-    fontFamily: 'Nunito-Regular',
-    marginLeft: scaleModerate(8),
-  },
-
   modal: {
     backgroundColor: '#111111',
     flexDirection: 'column',
@@ -256,27 +147,137 @@ export const styles = StyleSheet.create({
     fontFamily: 'Nunito-Regular',
   },
 
-  upperAudioContainer: {
-    width: '100%',
-    height: '100%',
+  captionContainer: {
+    width: '92%',
+    height: scaleVertical(86),
+    flexDirection: 'row',
+    justifyContent: 'flex-start',
+    alignItems: 'center',
+    borderBottomWidth: scaleModerate(2),
+    borderColor: '#111111',
+  },
+
+  captionVideoContainer: {
+    width: scaleModerate(50),
+    height: scaleModerate(50),
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: '#111111',
+  },
+
+  bioInputContainer: {
+    width: '85%',
+    height: scaleVertical(86),
     flexDirection: 'column',
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: '#B88746',
+    marginBottom: scaleVertical(10),
+    marginTop: scaleVertical(10),
+    overflow: 'hidden',
   },
 
-  audioMike: {
-    width: scaleModerate(240),
-    height: scaleModerate(240),
+  bioInput: {
+    flex: 0,
+    height: scaleVertical(66),
+    color: '#989ba5',
+    marginLeft: scaleVertical(17),
+    fontSize: scaleVertical(16),
+    fontFamily: 'Nunito-Regular',
+    marginTop: scaleModerate(10),
+    width: '90%',
   },
 
-  recordingAudioMike: {
-    width: scaleModerate(300),
-    height: scaleModerate(300),
+  videoIcon: {
+    width: scaleModerate(35),
+    height: scaleModerate(28),
   },
 
-  RNCamera: {
+  followProfileRowContainer: {
+    flex: 0,
+    width: scaleModerate(374),
+    height: scaleVertical(42),
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: scaleModerate(10),
+  },
+
+  followProfileRowLeftContainer: {
+    flex: 3,
+    height: scaleVertical(42),
+    flexDirection: 'row',
+    justifyContent: 'flex-start',
+    alignItems: 'center',
+  },
+
+  followProfileRowRightContainer: {
+    flex: 1,
+    height: scaleVertical(42),
+    flexDirection: 'row',
+    justifyContent: 'flex-end',
+    alignItems: 'center',
+  },
+
+  profileRowImageContainer: {
+    width: scaleModerate(44),
+    height: scaleModerate(44),
+    borderRadius: scaleModerate(22),
+    borderWidth: scaleModerate(1),
+    borderColor: '#707070',
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+
+  profileRowImage: {
+    width: scaleModerate(42),
+    height: scaleModerate(42),
+    borderRadius: scaleModerate(21),
+    backgroundColor: '#111111',
+  },
+
+  followProfileRowTextContainer: {
+    minWidth: scaleModerate(141),
+    height: scaleModerate(42),
+    flexDirection: 'column',
+    justifyContent: 'center',
+    alignItems: 'flex-start',
+    marginLeft: scaleModerate(15),
+  },
+
+  followProfileRowNameContainer: {
+    height: scaleModerate(22),
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+
+  followProfileText: {
+    color: '#ffffff',
+    fontSize: scaleModerate(16),
+    fontFamily: 'Nunito-Bold',
+    fontWeight: 'bold',
+    lineHeight: undefined,
+  },
+
+  followingButtonContainer: {
+    width: scaleModerate(75),
+    height: scaleModerate(24),
+    flexDirection: 'row',
+    justifyContent: 'flex-end',
+    alignItems: 'center',
+  },
+
+  switchButton: {
+    flex: 0,
+  },
+
+  subBodyContainer: {
     width: '100%',
     height: '100%',
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
   },
 });

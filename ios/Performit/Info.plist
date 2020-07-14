@@ -49,11 +49,11 @@
 		</dict>
 	</dict>
 	<key>NSCameraUsageDescription</key>
-	<string>Your message to user when the camera is accessed for the first time</string>
+	<string>Allow to use camera</string>
 	<key>NSLocationWhenInUseUsageDescription</key>
-	<string/>
+	<string></string>
 	<key>NSMicrophoneUsageDescription</key>
-	<string>Your message to user when the microphone is accessed for the first time</string>
+	<string>Allow to use microphone</string>
 	<key>NSPhotoLibraryAddUsageDescription</key>
 	<string>Your message to user when the photo library is accessed for the first time</string>
 	<key>NSPhotoLibraryUsageDescription</key>
