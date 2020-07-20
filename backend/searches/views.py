@@ -69,7 +69,7 @@ class SearchDashboard(APIView):
                 paginated_data = Paginator(posts_with_hashtag, size)
             except (EmptyPage, InvalidPage):
                 return Response({"success": False, "message": "Empty Page"}, status=400)
-            post_serializer = PostSerializer(paginated_data.page(page), many=True)
+            post_serializer = PostSerializer(paginated_data.page(page), many=True, context={'request': request})
             return Response({"success": True, "data": post_serializer.data, "total": paginated_data.count,
                          "pages": paginated_data.num_pages, "current_page": int(page)})
         else:

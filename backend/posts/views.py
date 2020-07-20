@@ -155,7 +155,7 @@ class Create(APIView):
                 number_of_seconds = str(info_lst[1])
                 number_of_seconds = re.findall('\d*\.?\d+',number_of_seconds)
                 number_of_seconds = math.floor(float(number_of_seconds[0]))
-                serializer = PostSerializer(instance, many=False)
+                serializer = PostSerializer(instance, many=False, context={'request': request})
                 if 90 > number_of_seconds:
                     return Response({"success": True, "message": "Post Created", "data": serializer.data})
                 existing = Post.objects.get(pk=serializer.data.get('id'))
@@ -208,7 +208,7 @@ class EditPost(APIView):
                     post.caption = data.get('caption')
                     post.thumbnail = thumbnail
                     post.save()
-                    serializer = PostSerializer(post,many=False)
+                    serializer = PostSerializer(post,many=False, context={'request': request})
                     return Response({"success": True, "message": "Post Edited", "data": serializer.data})
                 return Response({"success": False, "message": "content duration is greater than 90 seconds"},
                                 status=400)
