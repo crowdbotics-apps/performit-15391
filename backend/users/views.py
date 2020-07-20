@@ -310,7 +310,7 @@ class GetUserDetail(APIView):
             paginated_data = Paginator(posts, size)
         except (EmptyPage, InvalidPage):
             return Response({"success": False, "message": "Empty Page"}, status=400)
-        post_serializer = PostSerializer(paginated_data.page(page), many=True)
+        post_serializer = PostSerializer(paginated_data.page(page), many=True, context={'request': request})
         user_details_serializer = UserDetailSerializer(user_details, many=False)
         user_serializer = CustomUserSerializer(user,many=False)
         user_follower_qs = UserRelationship.objects.filter(following=user)
