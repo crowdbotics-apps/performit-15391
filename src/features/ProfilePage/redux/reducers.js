@@ -31,6 +31,7 @@ export default (ProfilePageReducer = (state = initialState, action) => {
             posts: action.profile && action.profile.posts,
           },
         },
+        editProfileSuccess: '',
       };
     case actions.PROFILE_USER_DETAIL_ERROR:
       return {...state, errors: {UserDetail: action.error}};
@@ -316,6 +317,8 @@ export default (ProfilePageReducer = (state = initialState, action) => {
       return {...state, errors: {ChangePassword: action.error}};
     case actions.EDIT_PROFILE_ERROR:
       return {...state, errors: {EditProfile: action.error}};
+    case actions.EDIT_PROFILE_SUCCESS:
+      return {...state, editProfileSuccess: 'success'};
     default:
       return state;
   }

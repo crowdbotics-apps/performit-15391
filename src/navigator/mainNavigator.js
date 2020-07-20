@@ -41,6 +41,7 @@ import CreatePostStep1 from '../features/CreatePost/CreatePostStep1';
 import CreatePostStep2 from '../features/CreatePost/CreatePostStep2';
 import CreatePostStep3 from '../features/CreatePost/CreatePostStep3';
 import PreviewPost from '../features/CreatePost/PreviewPost';
+import MyPosts from '../features/MyPosts';
 
 /**
  * new navigators can be imported here
@@ -127,6 +128,18 @@ const commonNavigator = {
   },
   FollowPage: {
     screen: FollowPage,
+    navigationOptions: {
+      drawerLabel: () => null,
+    },
+  },
+  MyPosts: {
+    screen: MyPosts,
+    navigationOptions: {
+      drawerLabel: () => null,
+    },
+  },
+  MyPostsCommentsPage: {
+    screen: CommentsPage,
     navigationOptions: {
       drawerLabel: () => null,
     },

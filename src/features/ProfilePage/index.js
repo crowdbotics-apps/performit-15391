@@ -7,8 +7,10 @@ import {
   View,
   ActivityIndicator,
   SafeAreaView,
+  Dimensions,
 } from 'react-native';
 import Toast from 'react-native-simple-toast';
+import FastImage from 'react-native-fast-image';
 import {Text, Button} from 'react-native-ui-kitten';
 import {styles} from './styles';
 import * as profileActions from '../ProfilePage/redux/actions';
@@ -17,6 +19,8 @@ import {get} from 'lodash';
 import getPath from '../../utils/getPath';
 import {userTypesConfig} from '../../config/userTypes';
 import VideoPlayer from '../components/VideoPlayer';
+
+const screenSize = Dimensions.get('window');
 
 class Profile extends Component {
   constructor(props) {
@@ -62,7 +66,8 @@ class Profile extends Component {
   async componentDidUpdate(prevProps) {
     // write code here
     const prevUserId = prevProps.navigation.getParam('userId', '');
-    const userId = this.props.navigation.getParam('userId', '');
+    let userId = this.props.navigation.getParam('userId', '');
+    const origin = this.props.navigation.getParam('origin', '');
     const accessToken = this.props.accessToken;
     const {
       actions: {
@@ -298,7 +303,7 @@ class Profile extends Component {
                 </View>
                 <View style={styles.profileRightInfoContainer}>
                   <View style={[styles.profileImageContainer]}>
-                    <Image
+                    <FastImage
                       style={[styles.profileImage]}
                       source={{
                         uri:
@@ -382,19 +387,21 @@ class Profile extends Component {
               {profile.posts && !!profile.posts.length && (
                 <View style={styles.profileImagesContainer}>
                   {profile.posts.map(videoData => (
-                    <View style={styles.profileSingleImageConatiner}>
+                    <TouchableOpacity
+                      onPress={() => {
+                        navigation.navigate('MyPosts', {userId: user.pk});
+                      }}
+                      style={styles.profileSingleImageConatiner}>
                       <VideoPlayer
                         showBottomcontrol={false}
-                        videoHeight={137 * 0.66}
+                        videoHeight={(screenSize.width / 3 - 1) * 0.66}
                         postId={videoData && videoData.id}
                         source={videoData && videoData.content}
                         poster={videoData && videoData.thumbnail}
                         navigation={this.props.navigation}
                         disableVolume="false"
                         disableBack="false"
-                        paused={
-                          this.state[`paused${videoData && videoData.id}`]
-                        }
+                        paused={true}
                         onVideoProgress={time => {
                           this.setVideoCurrentTime(
                             time,
@@ -410,14 +417,10 @@ class Profile extends Component {
                           });
                         }}
                         onPause={() => {
-                          this.setState({
-                            [`paused${videoData && videoData.id}`]: true,
-                          });
+                          console.log('------pause');
                         }}
                         onPlay={() => {
-                          this.setState({
-                            [`paused${videoData && videoData.id}`]: false,
-                          });
+                          navigation.navigate('MyPosts', {userId: user.pk});
                         }}
                         onLoad={fields => {
                           this.setState({
@@ -426,72 +429,13 @@ class Profile extends Component {
                           });
                         }}
                         showControls={value => {
-                          this.setState({
-                            [`showControls${videoData && videoData.id}`]: value,
-                          });
+                          navigation.navigate('MyPosts', {userId: user.pk});
                         }}
                       />
-                    </View>
+                    </TouchableOpacity>
                   ))}
                 </View>
               )}
-
-              {/*<View style={styles.profileImagesContainer}>
-                <TouchableOpacity style={styles.profileSingleImageConatiner}>
-                  <Image
-                    style={[styles.profileSingleImage]}
-                    source={require('../../assets/images/ex_image1.png')}
-                  />
-                </TouchableOpacity>
-                <TouchableOpacity style={styles.profileSingleImageConatiner}>
-                  <Image
-                    style={[styles.profileSingleImage]}
-                    source={require('../../assets/images/ex_image2.png')}
-                  />
-                </TouchableOpacity>
-                <TouchableOpacity style={styles.profileSingleImageConatiner}>
-                  <Image
-                    style={[styles.profileSingleImage]}
-                    source={require('../../assets/images/ex_image3.png')}
-                  />
-                </TouchableOpacity>
-                <TouchableOpacity style={styles.profileSingleImageConatiner}>
-                  <Image
-                    style={[styles.profileSingleImage]}
-                    source={require('../../assets/images/ex_image4.png')}
-                  />
-                </TouchableOpacity>
-                <TouchableOpacity style={styles.profileSingleImageConatiner}>
-                  <Image
-                    style={[styles.profileSingleImage]}
-                    source={require('../../assets/images/ex_image5.png')}
-                  />
-                </TouchableOpacity>
-                <TouchableOpacity style={styles.profileSingleImageConatiner}>
-                  <Image
-                    style={[styles.profileSingleImage]}
-                    source={require('../../assets/images/ex_image6.png')}
-                  />
-                </TouchableOpacity>
-                <TouchableOpacity style={styles.profileSingleImageConatiner}>
-                  <Image
-                    style={[styles.profileSingleImage]}
-                    source={require('../../assets/images/ex_image7.png')}
-                  />
-                </TouchableOpacity>
-                <TouchableOpacity style={styles.profileSingleImageConatiner}>
-                  <Image
-                    style={[styles.profileSingleImage]}
-                    source={require('../../assets/images/ex_image8.png')}
-                  />
-                </TouchableOpacity>
-                <TouchableOpacity style={styles.profileSingleImageConatiner}>
-                  <Image
-                    style={[styles.profileSingleImage]}
-                    source={require('../../assets/images/ex_image9.png')}
-                  />
-                </TouchableOpacity>
-              </View>*/}
               {(!profile.posts || (profile.posts && !profile.posts.length)) && (
                 <View style={styles.noProfilePostsContainer}>
                   <Text style={styles.profileSingleStatSecondText}>

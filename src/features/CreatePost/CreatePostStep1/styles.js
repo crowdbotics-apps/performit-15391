@@ -197,7 +197,7 @@ export const styles = StyleSheet.create({
 
   libraryButton: {
     width: scaleModerate(75),
-    height: '100%',
+    height: scaleModerate(59),
   },
 
   bottomTabContainer: {

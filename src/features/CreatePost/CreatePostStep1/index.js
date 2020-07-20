@@ -361,80 +361,60 @@ class CreatePostStep1 extends Component {
 
   selectOneFile = async () => {
     //Opening gallery for selection of one file
-    const options = {
-      title: 'Video Picker',
-      mediaType: 'video',
-      storageOptions: {
-        skipBackup: true,
-        path: 'images',
-      },
-    };
 
-    if (this.state.activeTab === 'Audio') {
-      options.mediaType = 'mixed';
-    }
-
-    RNImagePicker.launchImageLibrary(options, response => {
-      // if (response && response.fileSize / 1000000 > 7) {
-      //   Toast.show('The minimum size is 1Kb \n The maximum size is 7 Mb');
-      // }
-      let updatedResponse = cloneDeep(response);
-      const filename = Date.now().toString();
-
-      const videoData = {
-        uri: updatedResponse && updatedResponse.uri,
-        name: filename + '.mp4',
-        type: 'video',
+    if (this.state.activeTab === 'Video') {
+      const options = {
+        title: 'Video Picker',
+        mediaType: 'video',
+        storageOptions: {
+          skipBackup: true,
+          path: 'images',
+        },
       };
-      // .replace('file://', '')
 
-      if (this.state.activeTab === 'Audio') {
-        if (
-          (videoData && videoData.uri && videoData.uri.includes('.png')) ||
-          videoData.uri.includes('.jpeg') ||
-          videoData.uri.includes('.jpg') ||
-          videoData.uri.includes('.mov') ||
-          videoData.uri.includes('.MOV') ||
-          videoData.uri.includes('.mp4')
-        ) {
-          alert('Please select an audio file only');
-          return false;
-        } else {
-          videoData.type = 'audio';
-        }
-      }
+      RNImagePicker.launchImageLibrary(options, response => {
+        let updatedResponse = cloneDeep(response);
+        const filename = Date.now().toString();
 
-      if (this.state.activeTab === 'Video') {
+        const videoData = {
+          uri: updatedResponse && updatedResponse.uri,
+          name: filename + '.mp4',
+          type: 'video',
+        };
+        // .replace('file://', '')
         this.props.navigation.navigate('PreviewPost', {videoData});
-      } else {
-        this.props.navigation.navigate('CreatePostStep2', {videoData});
-      }
-
-      /*if (videoData && videoData.uri && videoData.uri.includes('.mov')) {
-        console.log('------------------videoData 009090', videoData);
-        MovToMp4.convertMovToMp4(videoData.uri, videoData.fileName).then(
-          async results => {
-            //here you can upload the video...
-            // console.log('------------------results', results);
-            console.dir(results);
-            videoData.type = 'video';
-            videoData.uri = results;
-            if (results) {
-              this.setState({videoData, seconds_Counter: 0}, () => {
-                this.props.navigation.navigate('PreviewPost', {videoData});
-              });
-            }
-          },
-        );
-      } else if (videoData && videoData.uri) {
-        console.log('------------------videoData 009090', videoData);
-        if (this.state.activeTab === 'Video') {
-          this.props.navigation.navigate('PreviewPost', {videoData});
-        } else {
+      });
+    } else {
+      try {
+        this.setState({
+          seconds_Counter: 0,
+          videoData: {},
+        });
+        const videoData = {};
+        const res = await DocumentPicker.pick({
+          type: [DocumentPicker.types.audio],
+        });
+        //Setting the state to show single file attributes
+        this.setState({singleFile: res});
+        const filename = Date.now().toString();
+        videoData.type = 'audio';
+        videoData.name = filename + '.mp3';
+        videoData.uri = res.uri;
+        this.setState({videoData}, () => {
           this.props.navigation.navigate('CreatePostStep2', {videoData});
+        });
+      } catch (err) {
+        //Handling any exception (If any)
+        if (DocumentPicker.isCancel(err)) {
+          //If user canceled the document selection
+          console.log('File not selected');
+        } else {
+          //For Unknown Error
+          console.log('Unknown Error: ' + JSON.stringify(err));
+          throw err;
         }
-      }*/
-    });
+      }
+    }
   };
 
   onNextPress = () => {

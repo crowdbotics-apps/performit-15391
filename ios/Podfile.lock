@@ -111,6 +111,15 @@ PODS:
   - GTMSessionFetcher/Core (1.4.0)
   - GTMSessionFetcher/Full (1.4.0):
     - GTMSessionFetcher/Core (= 1.4.0)
+  - libwebp (1.1.0):
+    - libwebp/demux (= 1.1.0)
+    - libwebp/mux (= 1.1.0)
+    - libwebp/webp (= 1.1.0)
+  - libwebp/demux (1.1.0):
+    - libwebp/webp
+  - libwebp/mux (1.1.0):
+    - libwebp/demux
+  - libwebp/webp (1.1.0)
   - nanopb (1.30905.0):
     - nanopb/decode (= 1.30905.0)
     - nanopb/encode (= 1.30905.0)
@@ -180,7 +189,7 @@ PODS:
     - React
   - react-native-fetch-blob (0.10.6):
     - React-Core
-  - react-native-image-picker (1.1.0):
+  - react-native-image-picker (2.3.3):
     - React
   - react-native-mov-to-mp4 (0.2.2):
     - React
@@ -223,6 +232,10 @@ PODS:
     - React
   - RNCAsyncStorage (1.11.0):
     - React
+  - RNFastImage (8.3.2):
+    - React
+    - SDWebImage (~> 5.8)
+    - SDWebImageWebPCoder (~> 0.6.1)
   - RNGestureHandler (1.5.3):
     - React
   - RNGoogleSignin (4.0.3):
@@ -240,6 +253,12 @@ PODS:
     - React
   - RNVectorIcons (6.6.0):
     - React
+  - SDWebImage (5.8.3):
+    - SDWebImage/Core (= 5.8.3)
+  - SDWebImage/Core (5.8.3)
+  - SDWebImageWebPCoder (0.6.1):
+    - libwebp (~> 1.0)
+    - SDWebImage/Core (~> 5.7)
   - Toast (4.0.0)
   - yoga (0.60.5.React)
 
@@ -282,6 +301,7 @@ DEPENDENCIES:
   - React-RCTWebSocket (from `../node_modules/react-native/Libraries/WebSocket`)
   - RNAudioRecord (from `../node_modules/react-native-audio-record`)
   - "RNCAsyncStorage (from `../node_modules/@react-native-community/async-storage`)"
+  - RNFastImage (from `../node_modules/react-native-fast-image`)
   - RNGestureHandler (from `../node_modules/react-native-gesture-handler`)
   - "RNGoogleSignin (from `../node_modules/@react-native-community/google-signin`)"
   - RNPermissions (from `../node_modules/react-native-permissions`)
@@ -309,8 +329,11 @@ SPEC REPOS:
     - GoogleUtilities
     - GTMAppAuth
     - GTMSessionFetcher
+    - libwebp
     - nanopb
     - PromisesObjC
+    - SDWebImage
+    - SDWebImageWebPCoder
   https://github.com/cocoapods/specs.git:
     - Google-Maps-iOS-Utils
     - GoogleMaps
@@ -385,6 +408,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native-audio-record"
   RNCAsyncStorage:
     :path: "../node_modules/@react-native-community/async-storage"
+  RNFastImage:
+    :path: "../node_modules/react-native-fast-image"
   RNGestureHandler:
     :path: "../node_modules/react-native-gesture-handler"
   RNGoogleSignin:
@@ -425,6 +450,7 @@ SPEC CHECKSUMS:
   GoogleUtilities: 39530bc0ad980530298e9c4af8549e991fd033b1
   GTMAppAuth: 4deac854479704f348309e7b66189e604cf5e01e
   GTMSessionFetcher: 6f5c8abbab8a9bce4bb3f057e317728ec6182b10
+  libwebp: 946cb3063cea9236285f7e9a8505d806d30e07f3
   nanopb: c43f40fadfe79e8b8db116583945847910cbabc9
   Permission-Camera: 53d46bd722aea28d796e20f05fb3cbe6cde6ccb6
   Permission-Microphone: af45e35013788b52eecf3cd8f13185c4b6f7bff7
@@ -440,7 +466,7 @@ SPEC CHECKSUMS:
   react-native-cookies: 6fe6a70d3b2fd8e81ddcd94d60a87727010d9b2e
   react-native-document-picker: b1b4a52c0051e10642c54cfc10933759e8ccdda4
   react-native-fetch-blob: 0cbdf9764c75d9438c162427395f4bc35a857d5a
-  react-native-image-picker: 3637d63fef7e32a230141ab4660d3ceb773c824f
+  react-native-image-picker: a6c3d644751a388b0fc8b56822ff7cbd398a3008
   react-native-mov-to-mp4: b63917cb6f96d4c264d8f5213db7961442dd4298
   react-native-simple-toast: a3a8e9033a549c11741debe875e54698cc4c0dd7
   react-native-splash-screen: 200d11d188e2e78cea3ad319964f6142b6384865
@@ -458,6 +484,7 @@ SPEC CHECKSUMS:
   React-RCTWebSocket: cd932a16b7214898b6b7f788c8bddb3637246ac4
   RNAudioRecord: f38c2caac4bbbc34f24563869745110970f1dfe3
   RNCAsyncStorage: db711e29e5e0500d9bd21aa0c2e397efa45302b1
+  RNFastImage: e19ba191922e7dab9d932a4d59d62d76660aa222
   RNGestureHandler: 02905abe54e1f6e59c081a10b4bd689721e17aa6
   RNGoogleSignin: ccf71ee4b6cfd324fd788a41e457e2043838c0d9
   RNPermissions: 1888705aebcc81714efa5dbff94351e4388ae012
@@ -466,6 +493,8 @@ SPEC CHECKSUMS:
   RNSoundRecorder: 92947251b236a463a6aa60b0676c3690c453d4ef
   RNSVG: 8ba35cbeb385a52fd960fd28db9d7d18b4c2974f
   RNVectorIcons: 0bb4def82230be1333ddaeee9fcba45f0b288ed4
+  SDWebImage: 112503ec94a5a2a41869503844a15e8d8f1ead5c
+  SDWebImageWebPCoder: d0dac55073088d24b2ac1b191a71a8f8d0adac21
   Toast: 91b396c56ee72a5790816f40d3a94dd357abc196
   yoga: 312528f5bbbba37b4dcea5ef00e8b4033fdd9411
 

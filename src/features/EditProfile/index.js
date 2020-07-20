@@ -28,6 +28,7 @@ import CookieManager from '@react-native-community/cookies';
 import FacebookLogin from './react-native-fb-login';
 import {GoogleSignin, statusCodes} from '@react-native-community/google-signin';
 import {appConfig} from '../../config/app';
+import FastImage from 'react-native-fast-image';
 
 class EditProfile extends Component {
   constructor(props) {
@@ -61,6 +62,8 @@ class EditProfile extends Component {
       profilePic: '',
       profileSource: {},
       isEditLoading: false,
+      counter: 30,
+      timer: null,
     };
   }
 
@@ -169,6 +172,71 @@ class EditProfile extends Component {
         });
       }
     }
+
+    if (this.props.profile !== prevProps.profile) {
+      const {profile: allProfiles, user} = this.props;
+      const userId = this.props.user && this.props.user.pk;
+      const profile = allProfiles && allProfiles[`${userId}`];
+      let isArtistChecked = false;
+      let isSingerChecked = false;
+      let isRapperChecked = false;
+      let isDancerChecked = false;
+      let isProducerChecked = false;
+      let isOtherChecked = false;
+
+      if (profile && profile.user_types && profile.user_types.length > 0) {
+        if (profile.user_types.includes('Artist')) {
+          isArtistChecked = true;
+        }
+        if (profile.user_types.includes('DJ')) {
+          isSingerChecked = true;
+        }
+        if (profile.user_types.includes('Videographer')) {
+          isRapperChecked = true;
+        }
+        if (profile.user_types.includes('Dancer')) {
+          isDancerChecked = true;
+        }
+        if (profile.user_types.includes('Producer')) {
+          isProducerChecked = true;
+        }
+        if (profile.user_types.includes('Engineer')) {
+          isOtherChecked = true;
+        }
+      }
+
+      this.setState({
+        firstName: profile && profile.user && profile.user.first_name,
+        lastName: profile && profile.user && profile.user.last_name,
+        address:
+          profile &&
+          profile.user_details &&
+          profile.user_details.location_address,
+        lat:
+          profile && profile.user_details && profile.user_details.location_lat,
+        lng:
+          profile && profile.user_details && profile.user_details.location_long,
+        bio: profile && profile.user_details && profile.user_details.bio,
+        isMale:
+          profile &&
+          profile.user_details &&
+          profile.user_details.gender === 'Female'
+            ? false
+            : true,
+        profilePic:
+          profile && profile.user_details && profile.user_details.profile_pic,
+        isArtistChecked,
+        isSingerChecked,
+        isRapperChecked,
+        isDancerChecked,
+        isProducerChecked,
+        isOtherChecked,
+      });
+    }
+  }
+
+  componentWillUnmount() {
+    clearInterval(this.state.timer);
   }
 
   // renderErrors() {
@@ -198,7 +266,10 @@ class EditProfile extends Component {
       }
     } else {
       const userId = this.props.user && this.props.user.pk;
-      this.props.navigation.navigate('ProfilePage', {userId});
+      this.props.navigation.navigate('ProfilePage', {
+        userId,
+        origin: 'editPage',
+      });
       Toast.show('Your profile has been updated successfully');
     }
   }
@@ -306,8 +377,30 @@ class EditProfile extends Component {
     } = this.props;
 
     const userId = user && user.pk;
-
+    let timer = setInterval(this.tick, 1000);
+    this.setState({
+      timer,
+    });
     setTimeout(async () => {
+      clearInterval(this.state.timer);
+      this.setState({
+        counter: 30,
+      });
+    }, 30000);
+  };
+
+  tick = async () => {
+    this.setState({
+      counter: this.state.counter - 1,
+    });
+
+    if (this.props.editProfileSuccess === 'success') {
+      clearInterval(this.state.timer);
+      const userId = this.props.user && this.props.user.pk;
+      const {
+        actions: {userDetails},
+        accessToken,
+      } = this.props;
       if (userId && accessToken) {
         await userDetails(userId, accessToken);
         this.showToastOnErrors();
@@ -317,16 +410,7 @@ class EditProfile extends Component {
           isEditLoading: false,
         });
       }
-      // if (this.state.updateForm) {
-      //   console.log('-------------00000');
-      //   this.setState({
-      //     currentPassword: '',
-      //     newPassword: '',
-      //     confirmNewPassword: '',
-      //     showSuccessModal: true,
-      //   });
-      // }
-    }, 1000);
+    }
   };
 
   onClose = () => {
@@ -339,34 +423,38 @@ class EditProfile extends Component {
       noData: true,
     };
     RNImagePicker.launchImageLibrary(options, response => {
-      if (response && response.fileSize / 1000000 > 7) {
-        Toast.show('The minimum size is 1Kb \n The maximum size is 7 Mb');
-      }
-
+      // if (response && response.fileSize / 1000000 > 7) {
+      //   Toast.show('The minimum size is 1Kb \n The maximum size is 7 Mb');
+      // }
       let updatedResponse = cloneDeep(response);
-      if (
-        !updatedResponse.fileName ||
-        updatedResponse.fileName === '' ||
-        updatedResponse.fileName === undefined ||
-        updatedResponse.fileName === null
-      ) {
-        updatedResponse.fileName = 'profile.jpg';
+      if (updatedResponse) {
+        if (
+          !updatedResponse.fileName ||
+          updatedResponse.fileName === '' ||
+          updatedResponse.fileName === undefined ||
+          updatedResponse.fileName === null
+        ) {
+          updatedResponse.fileName = 'profile.jpg';
+        }
+
+        const source = {
+          uri:
+            Platform.OS === 'android'
+              ? updatedResponse.uri
+              : updatedResponse.uri &&
+                updatedResponse.uri.replace('file://', ''),
+          name: updatedResponse.fileName,
+        };
+
+        // You can also display the image using data:
+        // const source = { uri: 'data:image/jpeg;base64,' + response.data };
+        source &&
+          source.uri &&
+          this.setState({
+            profileSource: source,
+            profilePic: source && source.uri,
+          });
       }
-
-      const source = {
-        uri:
-          Platform.OS === 'android'
-            ? updatedResponse.uri
-            : updatedResponse.uri.replace('file://', ''),
-        name: updatedResponse.fileName,
-      };
-
-      // You can also display the image using data:
-      // const source = { uri: 'data:image/jpeg;base64,' + response.data };
-      this.setState({
-        profileSource: source,
-        profilePic: source && source.uri,
-      });
     });
   };
 
@@ -497,7 +585,10 @@ class EditProfile extends Component {
         </SafeAreaView>
         <View style={styles.imageContainer}>
           <View style={[styles.profileImageContainer]}>
-            <Image style={[styles.profileImage]} source={{uri: profilePic}} />
+            <FastImage
+              style={[styles.profileImage]}
+              source={{uri: profilePic}}
+            />
           </View>
           <View style={[styles.tncContainer]}>
             <TouchableOpacity
@@ -810,6 +901,7 @@ const mapStateToProps = state => ({
   user: state.EmailAuth.user,
   accessToken: state.EmailAuth.accessToken,
   editProfileErrors: state.Profile.errors.ChangePassword,
+  editProfileSuccess: state.Profile.editProfileSuccess,
 });
 
 const mapDispatchToProps = dispatch => ({

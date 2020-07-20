@@ -272,15 +272,16 @@ export const styles = StyleSheet.create({
   },
 
   profileSingleImage: {
-    width: scaleModerate(137),
-    height: scaleModerate(137),
+    width: screenSize.width / 3,
+    height: screenSize.width / 3,
   },
 
   profileSingleImageConatiner: {
-    width: scaleModerate(137),
-    height: scaleModerate(137 * 0.66),
-    borderWidth: scaleModerate(1),
+    width: screenSize.width / 3 - 1,
+    height: (screenSize.width / 3 + 6) * 0.66,
+    borderWidth: 1,
     borderColor: '#111111',
+    zIndex: 9999999,
   },
 
   leftArrowContainer: {
