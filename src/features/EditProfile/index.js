@@ -552,7 +552,8 @@ class EditProfile extends Component {
             </View>
           </TouchableOpacity>
           <View style={styles.headerTextContainer}>
-            {profile.user &&
+            {profile &&
+            profile.user &&
             (profile.user.first_name || profile.user.last_name) ? (
               <Text style={styles.headerText}>
                 {profile.user && profile.user.first_name}{' '}
@@ -560,7 +561,7 @@ class EditProfile extends Component {
               </Text>
             ) : (
               <Text style={styles.headerText}>
-                {profile.user && profile.user.username}
+                {profile && profile.user && profile.user.username}
               </Text>
             )}
           </View>

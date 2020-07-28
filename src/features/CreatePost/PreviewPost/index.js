@@ -172,6 +172,7 @@ class PreviewPost extends Component {
             disableVolume="false"
             disableBack="false"
             paused={this.state.paused}
+            shouldToggleControls={true}
             onVideoProgress={time => {
               this.setVideoCurrentTime(time, 'preview-post');
             }}

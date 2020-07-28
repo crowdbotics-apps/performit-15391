@@ -402,6 +402,7 @@ class Profile extends Component {
                         disableVolume="false"
                         disableBack="false"
                         paused={true}
+                        shouldToggleControls={false}
                         onVideoProgress={time => {
                           this.setVideoCurrentTime(
                             time,

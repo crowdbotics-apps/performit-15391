@@ -291,6 +291,7 @@ class MyPosts extends Component {
                       disableVolume="false"
                       disableBack="false"
                       paused={this.state[`paused${postData && postData.id}`]}
+                      shouldToggleControls={true}
                       onVideoProgress={time => {
                         this.setVideoCurrentTime(time, postData && postData.id);
                       }}
@@ -332,7 +333,7 @@ class MyPosts extends Component {
                   <View style={styles.postStatsParentContainer}>
                     <View style={styles.postStatsContainer}>
                       <View style={styles.postStatsLeftContainer}>
-                        {/*<TouchableOpacity
+                        <TouchableOpacity
                           onPress={() =>
                             this.ratePost(postData && postData.id, 1)
                           }
@@ -431,7 +432,7 @@ class MyPosts extends Component {
                               source={require('../../assets/images/empty_star.png')}
                             />
                           )}
-                        </TouchableOpacity>*/}
+                        </TouchableOpacity>
                         <View style={styles.postStatsLeftTextContainer}>
                           <Text style={styles.postStatsLeftText}>
                             {(postData &&
@@ -440,15 +441,21 @@ class MyPosts extends Component {
                               0}{' '}
                             /5{' '}
                           </Text>
-                          {/*<Text style={styles.postStatsLeftText}>
+                          <Text style={styles.postStatsLeftText}>
                             {' '}
                             (
                             {postData &&
                               postData.meta_data &&
                               postData.meta_data.ratings &&
                               postData.meta_data.ratings.votes}{' '}
-                            Votes)
-                          </Text>*/}
+                            Vote
+                            {postData &&
+                              postData.meta_data &&
+                              postData.meta_data.ratings &&
+                              postData.meta_data.ratings.votes > 1 &&
+                              's'}
+                            )
+                          </Text>
                         </View>
                       </View>
                       <View style={styles.postStatsRightContainer}>
@@ -459,8 +466,7 @@ class MyPosts extends Component {
                           view
                           {postData &&
                             postData.meta_data &&
-                            postData.meta_data.counts &&
-                            postData.meta_data.counts.views_count > 1 &&
+                            postData.meta_data.post_views > 1 &&
                             's'}
                         </Text>
                       </View>

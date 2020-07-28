@@ -37,6 +37,7 @@ export default class VideoPlayer extends Component {
     seekerWidth: scaleModerate(0),
     subtitleText: [],
     navigation: '',
+    shouldToggleControls: true,
   };
 
   constructor(props) {
@@ -312,7 +313,7 @@ export default class VideoPlayer extends Component {
    */
   setControlTimeout() {
     this.player.controlTimeout = setTimeout(() => {
-      this._hideControls();
+      this.props.shouldToggleControls && this._hideControls();
     }, this.player.controlTimeoutDelay);
   }
 
@@ -388,13 +389,15 @@ export default class VideoPlayer extends Component {
    * state then calls the animation.
    */
   _hideControls() {
-    if (this.mounted) {
+    if (this.mounted && this.props.shouldToggleControls) {
       const state = this.state;
       state.showControls = false;
       this.props.showControls(state.showControls);
       this.hideControlAnimation();
 
       this.setState(state);
+    } else {
+      this.props.showControls(this.state.showControls);
     }
   }
 
@@ -403,18 +406,22 @@ export default class VideoPlayer extends Component {
    * current state.
    */
   _toggleControls() {
-    this.clearControlTimeout();
-    const state = this.state;
-    state.showControls = !state.showControls;
-    this.props.showControls(state.showControls);
-    if (state.showControls) {
-      this.showControlAnimation();
-      this.setControlTimeout();
-    } else {
-      this.hideControlAnimation();
-    }
+    if (this.props.shouldToggleControls) {
+      this.clearControlTimeout();
+      const state = this.state;
+      state.showControls = !state.showControls;
+      this.props.showControls(state.showControls);
+      if (state.showControls) {
+        this.showControlAnimation();
+        this.setControlTimeout();
+      } else {
+        this.hideControlAnimation();
+      }
 
-    this.setState(state);
+      this.setState(state);
+    } else {
+      this.props.showControls(this.state.showControls);
+    }
   }
 
   /**

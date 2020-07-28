@@ -121,6 +121,7 @@ class HashTagHomePage extends Component {
                 disableVolume="false"
                 disableBack="false"
                 paused={this.state[`paused${hahstag && hahstag.id}`]}
+                shouldToggleControls={true}
                 onVideoProgress={time => {
                   this.setVideoCurrentTime(time, hahstag && hahstag.id);
                 }}

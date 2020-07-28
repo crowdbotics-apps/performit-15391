@@ -457,6 +457,7 @@ class Home extends Component {
                       navigation={this.props.navigation}
                       disableVolume="false"
                       disableBack="false"
+                      shouldToggleControls={true}
                       paused={this.state[`paused${postData && postData.id}`]}
                       onVideoProgress={time => {
                         this.setVideoCurrentTime(time, postData && postData.id);
@@ -615,7 +616,13 @@ class Home extends Component {
                               postData.meta_data &&
                               postData.meta_data.ratings &&
                               postData.meta_data.ratings.votes}{' '}
-                            Votes)
+                            Vote
+                            {postData &&
+                              postData.meta_data &&
+                              postData.meta_data.ratings &&
+                              postData.meta_data.ratings.votes > 1 &&
+                              's'}
+                            )
                           </Text>
                         </View>
                       </View>
