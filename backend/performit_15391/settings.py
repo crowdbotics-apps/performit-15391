@@ -53,6 +53,7 @@ LOCAL_APPS = [
     'connections',
     'groups',
     'dashboards',
+    'chats',
 ]
 THIRD_PARTY_APPS = [
     'rest_framework',
