@@ -35,6 +35,7 @@ urlpatterns = [
     path("dashboards/", include("dashboards.urls")),
     path("posts/", include("posts.urls")),
     path("searches/", include("searches.urls")),
+    path("chats/", include("chats.urls")),
     path("sign-up/", view=SignUp.as_view(), name="sign-up"),
     path("confirm-code/", view=ConfirmCode.as_view(), name="confirm-code"),
     path("send-forgot-password-code/", view=SendForgotPasswordCode.as_view(), name="send-forgot-password-code"),
