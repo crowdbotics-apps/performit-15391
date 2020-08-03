@@ -41,19 +41,32 @@ export default class Facebook extends Component {
     return decodeURIComponent(results[2].replace(/\+/g, ' '));
   }
 
+  getUserLink = async token => {
+    const query = qs.stringify({
+      access_token: token,
+      fields: 'link'
+    });
+    const res = await fetch(`https://graph.facebook.com/me?${query}`)
+    const { link } = await res.json()
+    if (link) {
+      this.props.onLoginSuccess({token});
+      
+    }
+    this.hide();
+  }
+
   _onNavigationStateChange(webViewState) {
     const {redirectURI} = this.props;
     const {url} = webViewState;
     // console.log(url)
     if (url && url.startsWith(redirectURI) && this.state.modalVisible) {
-      console.log(url);
+      // console.log(url);
       const token =
         this._getParameterByName('access_token', url) ||
         this._getParameterByName('#access_token', url);
       // console.log(token)
       if (token) {
-        this.props.onLoginSuccess({token});
-        this.hide();
+        this.getUserLink(token)
       }
     }
   }
@@ -71,7 +84,7 @@ export default class Facebook extends Component {
       scope: scope.join(','),
     });
     const uri = `https://www.facebook.com/v2.9/dialog/oauth?${query}`;
-    // console.log(uri)
+    console.log(uri)
     return (
       <Modal
         style={styles.modelContainer}
