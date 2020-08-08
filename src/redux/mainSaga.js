@@ -4,6 +4,7 @@ import {all, takeEvery, take} from 'redux-saga/effects';
 import EmailAuthSaga from '../features/EmailAuth/redux/sagas';
 import ProfilePageSaga from '../features/ProfilePage/redux/sagas';
 import HomePageSaga from '../features/HomePage/redux/sagas';
+import MessagePageSaga from '../features/Message/redux/sagas';
 
 function* helloSaga() {
   console.log('Hello from saga!');
@@ -18,5 +19,6 @@ export function* mainSaga() {
     EmailAuthSaga,
     ProfilePageSaga,
     HomePageSaga,
+    MessagePageSaga,
   ]);
 }

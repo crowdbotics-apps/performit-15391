@@ -18,6 +18,8 @@ import {scaleModerate} from '../../utils/scale';
 import * as profileActions from '../ProfilePage/redux/actions';
 import {cloneDeep, get} from 'lodash';
 import VideoPlayer from '../components/VideoPlayer';
+import Chat from '../Message/Inbox';
+import {login} from "../../utils/firebase";
 
 class Home extends Component {
   constructor(props) {
@@ -61,6 +63,9 @@ class Home extends Component {
       await followersConnectionsList(userId, accessToken);
       await userPosts('following', accessToken, userId);
     }
+
+    const {pk, email} = this.props.user;
+    const user = await login(email, pk + 'password' + pk);
 
     this.setState({
       isLoading: false,
@@ -305,7 +310,7 @@ class Home extends Component {
                   </TouchableOpacity>
                   <TouchableOpacity
                     style={[styles.messageIconContainer]}
-                    onPress={() => console.log('-------------message')}>
+                    onPress={() => this.props.navigation.navigate('Inbox')}>
                     <View style={[styles.messageIcon]}>
                       <Image
                         style={[styles.messageIcon]}

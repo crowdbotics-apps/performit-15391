@@ -137,7 +137,7 @@ function* handleGetUserDetails(action) {
   const {userId, token} = action;
   try {
     const {status, data} = yield call(sendUserDetails, userId, token);
-
+    console.log('-----------------data 0000-----0000000', data)
     if (status === 200) {
       yield put({
         type: PROFILE_USER_DETAIL_SUCCESS,

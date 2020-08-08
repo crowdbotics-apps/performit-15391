@@ -15,7 +15,6 @@ import SoundRecorder from 'react-native-sound-recorder';
 import DocumentPicker from 'react-native-document-picker';
 import RNImagePicker from 'react-native-image-picker';
 import {check, request, PERMISSIONS, RESULTS} from 'react-native-permissions';
-import RNFetchBlob from 'react-native-fetch-blob';
 import {cloneDeep} from 'lodash';
 import {RNCamera} from 'react-native-camera';
 import {Text, Button} from 'react-native-ui-kitten';

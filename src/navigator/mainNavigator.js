@@ -42,6 +42,9 @@ import CreatePostStep2 from '../features/CreatePost/CreatePostStep2';
 import CreatePostStep3 from '../features/CreatePost/CreatePostStep3';
 import PreviewPost from '../features/CreatePost/PreviewPost';
 import MyPosts from '../features/MyPosts';
+import Chat from '../features/Message/Chat';
+import Inbox from '../features/Message/Inbox';
+import PreviewVideoMessage from '../features/Message/PreviewVideoMessage';
 
 /**
  * new navigators can be imported here
@@ -113,6 +116,24 @@ const HomeAuthStackNavigator = createStackNavigator(
     SearchPage: {screen: SearchPage},
     HashTagHomePage: {screen: HashTagHomePage},
     CommentsPage: {screen: CommentsPage},
+    Chat: {
+      screen: Chat,
+      navigationOptions: {
+        drawerLabel: () => null,
+      },
+    },
+    Inbox: {
+      screen: Inbox,
+      navigationOptions: {
+        drawerLabel: () => null,
+      },
+    },
+    PreviewVideoMessage: {
+      screen: PreviewVideoMessage,
+      navigationOptions: {
+        drawerLabel: () => null,
+      },
+    },
   },
   {
     initialRouteName: 'EmailAuth',
