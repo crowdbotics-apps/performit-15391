@@ -333,54 +333,63 @@ class Inbox extends Component {
                       });
                   }}>
                   <View style={styles.profileRowImageParentContainer}>
-                    {chatItem.users.map(
-                      user =>
-                        user.user &&
-                        user.user.pk !== loggedInUserId && (
-                          <TouchableOpacity
-                            onPress={async () => {
-                              chatItem.messages[chatItem.messages.length - 1] &&
-                                chatItem.messages[chatItem.messages.length - 1]
-                                  .user &&
-                                chatItem.messages[chatItem.messages.length - 1]
-                                  .user.user &&
-                                chatItem.messages[chatItem.messages.length - 1]
-                                  .user.user.pk !== this.props.user.pk &&
-                                (await updateReadStatus(chatItem.id));
-                              shouldNavigateToChat &&
-                                this.props.navigation.navigate('Chat', {
-                                  id: chatItem.id,
-                                });
-                            }}
-                            style={[styles.profileRowImageContainer]}>
-                            <Image
-                              style={[styles.profileRowImage]}
-                              source={{
-                                uri: user.user_details.profile_pic,
+                    {chatItem.users &&
+                      chatItem.users.length > 0 &&
+                      chatItem.users.map(
+                        user =>
+                          user.user &&
+                          user.user.pk !== loggedInUserId && (
+                            <TouchableOpacity
+                              onPress={async () => {
+                                chatItem.messages[
+                                  chatItem.messages.length - 1
+                                ] &&
+                                  chatItem.messages[
+                                    chatItem.messages.length - 1
+                                  ].user &&
+                                  chatItem.messages[
+                                    chatItem.messages.length - 1
+                                  ].user.user &&
+                                  chatItem.messages[
+                                    chatItem.messages.length - 1
+                                  ].user.user.pk !== this.props.user.pk &&
+                                  (await updateReadStatus(chatItem.id));
+                                shouldNavigateToChat &&
+                                  this.props.navigation.navigate('Chat', {
+                                    id: chatItem.id,
+                                  });
                               }}
-                            />
-                          </TouchableOpacity>
-                        ),
-                    )}
+                              style={[styles.profileRowImageContainer]}>
+                              <Image
+                                style={[styles.profileRowImage]}
+                                source={{
+                                  uri: user.user_details.profile_pic,
+                                }}
+                              />
+                            </TouchableOpacity>
+                          ),
+                      )}
                   </View>
 
                   <View style={styles.followProfileRowTextContainer}>
                     <View style={styles.followProfileRowNameContainer}>
-                      {chatItem.users.map(
-                        user =>
-                          user.user &&
-                          user.user.pk !== loggedInUserId &&
-                          (user.user.first_name || user.user.last_name ? (
-                            <Text style={styles.followProfileText}>
-                              {user.user && user.user.first_name}{' '}
-                              {user.user && user.user.last_name}
-                            </Text>
-                          ) : (
-                            <Text style={styles.followProfileText}>
-                              {user.user && user.user.username}
-                            </Text>
-                          )),
-                      )}
+                      {chatItem.users &&
+                        chatItem.users.length > 0 &&
+                        chatItem.users.map(
+                          user =>
+                            user.user &&
+                            user.user.pk !== loggedInUserId &&
+                            (user.user.first_name || user.user.last_name ? (
+                              <Text style={styles.followProfileText}>
+                                {user.user && user.user.first_name}{' '}
+                                {user.user && user.user.last_name}
+                              </Text>
+                            ) : (
+                              <Text style={styles.followProfileText}>
+                                {user.user && user.user.username}
+                              </Text>
+                            )),
+                        )}
                     </View>
 
                     {chatItem.messages && chatItem.messages.length > 0 && (

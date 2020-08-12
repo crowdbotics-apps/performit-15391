@@ -251,7 +251,13 @@ class Chat extends Component {
 
     const {pk} = this.props.user;
     const {chat} = this.state;
-    const receiver = this.state.chat.users.find(user => user.pk !== pk);
+    console.log(
+      '---------------------this.state.chat.users',
+      this.state.chat.users,
+    );
+    const receiver = this.state.chat.users.find(
+      user => user && user.user.pk !== pk,
+    );
 
     return (
       <View
@@ -264,61 +270,66 @@ class Chat extends Component {
           alignItems: 'center',
         }}>
         <KeyboardAvoidingView
-          behavior={'position'}
+          behavior="padding"
+          enabled
+          keyboardVerticalOffset={10}
           style={{
             width: '100%',
             flexDirection: 'column',
             justifyContent: 'center',
             alignItems: 'center',
           }}>
-          <SafeAreaView style={styles.headerContainer}>
-            <TouchableOpacity
-              style={[styles.inputDrawerContainer]}
-              onPress={() => navigation.goBack()}>
-              <View style={[styles.inputDrawer]}>
-                <Image
-                  style={[styles.inputDrawer]}
-                  source={require('../../../assets/images/left-arrow.png')}
-                />
-              </View>
-            </TouchableOpacity>
-            <View style={styles.profileRowImageParentContainer}>
+          <SafeAreaView style={styles.headerParentContainer}>
+            <View style={styles.headerContainer}>
               <TouchableOpacity
-                onPress={() =>
-                  navigation.navigate('ProfilePage', {
-                    userId: receiver && receiver.user && receiver.user.pk,
-                  })
-                }
-                style={[styles.profileRowImageContainer]}>
-                <Image
-                  style={[styles.profileRowImage]}
-                  source={{
-                    uri:
-                      receiver &&
-                      receiver.user_details &&
-                      receiver.user_details.profile_pic,
-                  }}
-                />
+                style={[styles.inputDrawerContainer]}
+                onPress={() => navigation.goBack()}>
+                <View style={[styles.inputDrawer]}>
+                  <Image
+                    style={[styles.inputDrawer]}
+                    source={require('../../../assets/images/left-arrow.png')}
+                  />
+                </View>
               </TouchableOpacity>
-              {/*<View style={styles.greenDot} />*/}
-            </View>
-            <View style={styles.headerTextContainer}>
-              {receiver &&
-              receiver.user &&
-              (receiver.user.first_name || receiver.user.last_name) ? (
-                <Text style={styles.headerText}>
-                  {receiver.user.first_name} {receiver.user.last_name}
-                </Text>
-              ) : (
-                <Text style={styles.headerText}>
-                  {receiver && receiver.user && receiver.user.username}
-                </Text>
-              )}
+              <View style={styles.profileRowImageParentContainer}>
+                <TouchableOpacity
+                  onPress={() =>
+                    navigation.navigate('ProfilePage', {
+                      userId: receiver && receiver.user && receiver.user.pk,
+                    })
+                  }
+                  style={[styles.profileRowImageContainer]}>
+                  <Image
+                    style={[styles.profileRowImage]}
+                    source={{
+                      uri:
+                        receiver &&
+                        receiver.user_details &&
+                        receiver.user_details.profile_pic,
+                    }}
+                  />
+                </TouchableOpacity>
+                {/*<View style={styles.greenDot} />*/}
+              </View>
+              <View style={styles.headerTextContainer}>
+                {receiver &&
+                receiver.user &&
+                (receiver.user.first_name || receiver.user.last_name) ? (
+                  <Text style={styles.headerText}>
+                    {receiver.user.first_name} {receiver.user.last_name}
+                  </Text>
+                ) : (
+                  <Text style={styles.headerText}>
+                    {receiver && receiver.user && receiver.user.username}
+                  </Text>
+                )}
+              </View>
             </View>
           </SafeAreaView>
           <View
             style={{
               width: '100%',
+              height: '80%',
               flexDirection: 'column',
               justifyContent: 'flex-start',
               alignItems: 'center',
@@ -326,7 +337,7 @@ class Chat extends Component {
             }}>
             <View
               style={{
-                height: '89%',
+                height: '100%',
                 width: '92%',
                 flexDirection: 'column',
                 justifyContent: 'flex-start',
@@ -581,7 +592,7 @@ class Chat extends Component {
                     </>
                   ))}
 
-                <View style={{height: scaleModerate(50)}} />
+                <View style={{height: scaleModerate(20)}} />
               </ScrollView>
             </View>
           </View>
@@ -591,7 +602,10 @@ class Chat extends Component {
               <TextInput
                 value={this.state.newComment}
                 onChangeText={text => this.handleCommentChange(text)}
-                onFocus={() => console.log('------')}
+                onFocus={() =>
+                  this.scrollView &&
+                  this.scrollView.scrollToEnd({animated: true})
+                }
                 onBlur={() => console.log('------')}
                 placeholder="Message..."
                 style={styles.commentInput}

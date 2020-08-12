@@ -6,7 +6,6 @@ const screenSize = Dimensions.get('window');
 export const styles = StyleSheet.create({
   screen: {
     flex: 0,
-    minHeight: '90%',
     flexDirection: 'column',
     justifyContent: 'flex-start',
     alignItems: 'center',
@@ -14,10 +13,18 @@ export const styles = StyleSheet.create({
     marginTop: scaleModerate(20),
   },
 
-  headerContainer: {
+  headerParentContainer: {
     backgroundColor: '#111111',
     width: '100%',
-    height: scaleModerate(100, 1),
+    height: '12%',
+    minHeight: scaleModerate(100),
+    flexDirection: 'column',
+    justifyContent: 'flex-end',
+    alignItems: 'center',
+  },
+
+  headerContainer: {
+    width: '100%',
     flexDirection: 'row',
     justifyContent: 'flex-start',
     alignItems: 'center',
@@ -427,9 +434,6 @@ export const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    overflow: 'hidden',
-    position: 'absolute',
-    bottom: scaleModerate(-10),
     marginBottom: scaleModerate(15),
     marginLeft: scaleModerate(16),
   },
