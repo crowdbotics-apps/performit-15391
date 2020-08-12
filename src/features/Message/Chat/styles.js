@@ -435,7 +435,6 @@ export const styles = StyleSheet.create({
     justifyContent: 'space-between',
     alignItems: 'center',
     marginBottom: scaleModerate(15),
-    marginLeft: scaleModerate(16),
   },
 
   commentInputContainer: {

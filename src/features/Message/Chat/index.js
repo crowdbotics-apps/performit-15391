@@ -219,30 +219,51 @@ class Chat extends Component {
     };
 
     RNImagePicker.launchImageLibrary(options, async response => {
-      let updatedResponse = cloneDeep(response);
-      const filename = Date.now().toString();
-
-      const videoData = {
-        uri: updatedResponse && updatedResponse.uri,
-        name: filename + '.mp4',
-        type: 'video',
-      };
-
-      const postObject = {
-        media: videoData,
-      };
-      const accessToken = this.props.accessToken;
-
-      const {
-        actions: {storeMedia},
-      } = this.props;
-      const res = await storeMedia(this.props.user.pk, accessToken, postObject);
-
-      setTimeout(() => {
+      if (response.didCancel) {
+        console.log('User cancelled image picker');
         this.setState({
           isSendingMessage: false,
         });
-      }, 60000);
+      } else if (response.error) {
+        console.log('ImagePicker Error: ', response.error);
+        this.setState({
+          isSendingMessage: false,
+        });
+      } else if (response.customButton) {
+        console.log('User tapped custom button: ', response.customButton);
+        this.setState({
+          isSendingMessage: false,
+        });
+      } else {
+        let updatedResponse = cloneDeep(response);
+        const filename = Date.now().toString();
+
+        const videoData = {
+          uri: updatedResponse && updatedResponse.uri,
+          name: filename + '.mp4',
+          type: 'video',
+        };
+
+        const postObject = {
+          media: videoData,
+        };
+        const accessToken = this.props.accessToken;
+
+        const {
+          actions: {storeMedia},
+        } = this.props;
+        const res = await storeMedia(
+          this.props.user.pk,
+          accessToken,
+          postObject,
+        );
+
+        setTimeout(() => {
+          this.setState({
+            isSendingMessage: false,
+          });
+        }, 60000);
+      }
     });
   };
 
@@ -251,10 +272,6 @@ class Chat extends Component {
 
     const {pk} = this.props.user;
     const {chat} = this.state;
-    console.log(
-      '---------------------this.state.chat.users',
-      this.state.chat.users,
-    );
     const receiver = this.state.chat.users.find(
       user => user && user.user.pk !== pk,
     );
@@ -333,7 +350,6 @@ class Chat extends Component {
               flexDirection: 'column',
               justifyContent: 'flex-start',
               alignItems: 'center',
-              marginLeft: scaleModerate(16),
             }}>
             <View
               style={{
@@ -424,7 +440,7 @@ class Chat extends Component {
                               message.media && (
                                 <View
                                   style={
-                                    styles.user1FileMessageParentContainer
+                                    styles.user2FileMessageParentContainer
                                   }>
                                   <TouchableOpacity
                                     onPress={() => {
