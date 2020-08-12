@@ -338,7 +338,20 @@ class Inbox extends Component {
                         user.user &&
                         user.user.pk !== loggedInUserId && (
                           <TouchableOpacity
-                            onPress={() => console.log('-------------')}
+                            onPress={async () => {
+                              chatItem.messages[chatItem.messages.length - 1] &&
+                                chatItem.messages[chatItem.messages.length - 1]
+                                  .user &&
+                                chatItem.messages[chatItem.messages.length - 1]
+                                  .user.user &&
+                                chatItem.messages[chatItem.messages.length - 1]
+                                  .user.user.pk !== this.props.user.pk &&
+                                (await updateReadStatus(chatItem.id));
+                              shouldNavigateToChat &&
+                                this.props.navigation.navigate('Chat', {
+                                  id: chatItem.id,
+                                });
+                            }}
                             style={[styles.profileRowImageContainer]}>
                             <Image
                               style={[styles.profileRowImage]}

@@ -191,6 +191,12 @@ const commonNavigator = {
       drawerIcon: () => <IconFA5 name="file-alt" size={25} color={'#111111'} />,
     },
   },
+  ChatProfile: {
+    screen: Chat,
+    navigationOptions: {
+      drawerLabel: () => null,
+    },
+  },
 };
 
 const DrawerAppNavigator = createDrawerNavigator(

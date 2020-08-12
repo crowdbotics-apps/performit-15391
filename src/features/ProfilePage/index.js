@@ -19,6 +19,12 @@ import {get} from 'lodash';
 import getPath from '../../utils/getPath';
 import {userTypesConfig} from '../../config/userTypes';
 import VideoPlayer from '../components/VideoPlayer';
+import {
+  createThread,
+  subscribeToInbox,
+  updateReadStatus,
+} from '../../utils/firebase';
+import {chatUpdate} from '../Message/redux/actions';
 
 const screenSize = Dimensions.get('window');
 
@@ -28,6 +34,8 @@ class Profile extends Component {
     this.state = {
       isLoading: false,
       userId: '',
+      chatId: '',
+      shouldNavigateToChat: false,
     };
   }
 
@@ -61,6 +69,15 @@ class Profile extends Component {
       isLoading: false,
       userId,
     });
+
+    const {pk, email} = this.props.user;
+    // const user = await login(email, pk + 'password' + pk);
+    if (userId !== pk) {
+      subscribeToInbox(pk, chat => {
+        this.props.actions.chatUpdate(chat);
+        this.populateChatId(userId);
+      });
+    }
   }
 
   async componentDidUpdate(prevProps) {
@@ -87,7 +104,34 @@ class Profile extends Component {
         isLoading: false,
         userId,
       });
+      const {pk} = this.props.user;
+      // const user = await login(email, pk + 'password' + pk);
+      if (userId !== pk) {
+        subscribeToInbox(pk, chat => {
+          this.props.actions.chatUpdate(chat);
+          this.populateChatId(userId);
+        });
+      }
     }
+  }
+
+  async populateChatId(otherUserId = '') {
+    const {
+      accessToken,
+      actions: {userDetails},
+    } = this.props;
+    const chatId = await createThread([otherUserId, this.props.user.pk], 'individual');
+    const userProfile =
+      this.props.profile && this.props.profile[`${otherUserId}`];
+    if (!userProfile) {
+      await userDetails(otherUserId, accessToken);
+    }
+    console.log('----------------------chatId  000009000', chatId);
+    chatId &&
+      this.setState({
+        chatId,
+        shouldNavigateToChat: true,
+      });
   }
 
   showAccountNotConnected = platform => {
@@ -341,8 +385,12 @@ class Profile extends Component {
                   </TouchableOpacity>
                   <TouchableOpacity
                     style={styles.messageProfileButtonContainer}
-                    onPress={() => {
-                      console.log('-------------message');
+                    onPress={async () => {
+                      await updateReadStatus(this.state.chatId);
+                      this.state.shouldNavigateToChat &&
+                        this.props.navigation.navigate('ChatProfile', {
+                          id: this.state.chatId,
+                        });
                     }}>
                     <Text style={styles.followProfileButtonText}>MESSAGE</Text>
                   </TouchableOpacity>
@@ -498,6 +546,7 @@ const mapDispatchToProps = dispatch => ({
         profileActions.unFollowUser(userId, token, loggedInUser, origin),
       );
     },
+    chatUpdate: chat => dispatch(chatUpdate(chat)),
   },
 });
 

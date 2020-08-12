@@ -284,7 +284,11 @@ class Chat extends Component {
             </TouchableOpacity>
             <View style={styles.profileRowImageParentContainer}>
               <TouchableOpacity
-                onPress={() => console.log('-------------')}
+                onPress={() =>
+                  navigation.navigate('ProfilePage', {
+                    userId: receiver && receiver.user && receiver.user.pk,
+                  })
+                }
                 style={[styles.profileRowImageContainer]}>
                 <Image
                   style={[styles.profileRowImage]}
@@ -374,7 +378,15 @@ class Chat extends Component {
                                       chat.messages,
                                       index,
                                     ) && (
-                                      <View
+                                      <TouchableOpacity
+                                        onPress={() =>
+                                          navigation.navigate('ProfilePage', {
+                                            userId:
+                                              message.user &&
+                                              message.user.user &&
+                                              message.user.user.pk,
+                                          })
+                                        }
                                         style={[
                                           styles.messageUser2ImageContainer,
                                         ]}>
@@ -388,7 +400,7 @@ class Chat extends Component {
                                                 .profile_pic,
                                           }}
                                         />
-                                      </View>
+                                      </TouchableOpacity>
                                     )}
                                     <Text style={styles.messageText}>
                                       {message.text}
@@ -470,7 +482,15 @@ class Chat extends Component {
                                       chat.messages,
                                       index,
                                     ) && (
-                                      <View
+                                      <TouchableOpacity
+                                        onPress={() =>
+                                          navigation.navigate('ProfilePage', {
+                                            userId:
+                                              message.user &&
+                                              message.user.user &&
+                                              message.user.user.pk,
+                                          })
+                                        }
                                         style={[
                                           styles.messageUser1ImageContainer,
                                         ]}>
@@ -484,7 +504,7 @@ class Chat extends Component {
                                                 .profile_pic,
                                           }}
                                         />
-                                      </View>
+                                      </TouchableOpacity>
                                     )}
                                     <Text style={styles.messageText}>
                                       {message.text}
