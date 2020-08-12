@@ -7,6 +7,7 @@ const initialState = {
   searchAccountsList: [],
   searchGroupsList: [],
   searchHashTagsList: [],
+  searchDashBoardSuccess: false,
   errors: {
     UserPosts: null,
     UserPostsCommentList: null,
@@ -80,21 +81,25 @@ export default (HomePageReducer = (state = initialState, action) => {
       if (action.tab === 'top') {
         return {
           ...state,
+          searchDashBoardSuccess: true,
           searchTopAccountsList: action.data,
         };
       } else if (action.tab === 'accounts') {
         return {
           ...state,
+          searchDashBoardSuccess: true,
           searchAccountsList: action.data,
         };
       } else if (action.tab === 'groups') {
         return {
           ...state,
+          searchDashBoardSuccess: true,
           searchGroupsList: action.data,
         };
       } else if (action.tab === 'hashtags') {
         return {
           ...state,
+          searchDashBoardSuccess: true,
           searchHashTagsList: action.data,
         };
       } else {
@@ -103,7 +108,11 @@ export default (HomePageReducer = (state = initialState, action) => {
         };
       }
     case actions.USER_SEARCH_PERFORMIT_ERROR:
-      return {...state, errors: {serchDashBoardError: action.error}};
+      return {
+        ...state,
+        searchDashBoardSuccess: false,
+        errors: {serchDashBoardError: action.error},
+      };
     case actions.CREATE_POST_ERROR:
       return {...state, errors: {CreatePost: action.error}};
     default:

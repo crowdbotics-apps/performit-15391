@@ -8,6 +8,7 @@ import {
   ActivityIndicator,
   SafeAreaView,
   TextInput,
+  Dimensions,
 } from 'react-native';
 import {Text, Button} from 'react-native-ui-kitten';
 import {styles} from './styles';
@@ -18,6 +19,8 @@ import * as profileActions from '../ProfilePage/redux/actions';
 import {cloneDeep, get} from 'lodash';
 import {userTypesConfig} from '../../config/userTypes';
 import VideoPlayer from '../components/VideoPlayer';
+
+const screenSize = Dimensions.get('window');
 
 class HashTagHomePage extends Component {
   constructor(props) {
@@ -53,7 +56,6 @@ class HashTagHomePage extends Component {
     }
 
     this.setState({
-      isLoading: false,
       hashtag,
     });
   }
@@ -70,6 +72,13 @@ class HashTagHomePage extends Component {
     //     await searchDashboard('hashtags', 1, accessToken, this.state.hashtag);
     //   }
     // }
+    if (
+      this.props.searchDashBoardSuccess !== prevProps.searchDashBoardSuccess
+    ) {
+      this.setState({
+        isLoading: false,
+      });
+    }
   }
 
   // setting current time of video to a timestamp
@@ -108,58 +117,70 @@ class HashTagHomePage extends Component {
             <Text style={styles.headerText}>{this.state.hashtag}</Text>
           </View>
         </SafeAreaView>
-        {!this.state.isLoading && (
-          <View style={styles.profileImagesContainer}>
-            {searchHashTagsList &&
-              searchHashTagsList.data &&
-              searchHashTagsList.data.map(hahstag => (
-                <View style={styles.profileSingleImageConatiner}>
-                  <VideoPlayer
-                    showBottomcontrol={false}
-                    videoHeight={137 * 0.66}
-                    postId={hahstag && hahstag.id}
-                    source={hahstag && hahstag.content}
-                    navigation={this.props.navigation}
-                    disableVolume="false"
-                    disableBack="false"
-                    paused={this.state[`paused${hahstag && hahstag.id}`]}
-                    shouldToggleControls={true}
-                    onVideoProgress={time => {
-                      this.setVideoCurrentTime(time, hahstag && hahstag.id);
-                    }}
-                    initializeSeek={() => {
-                      this.initializeSeekTime(hahstag && hahstag.id);
-                    }}
-                    onEnd={() => {
-                      this.setState({
-                        [`paused${hahstag && hahstag.id}`]: true,
+        {!this.state.isLoading &&
+          (searchHashTagsList &&
+            searchHashTagsList.data &&
+            searchHashTagsList.data.length > 0 && (
+              <View style={styles.profileImagesContainer}>
+                {searchHashTagsList.data.map(hahstag => (
+                  <TouchableOpacity
+                    onPress={() => {
+                      navigation.navigate('PreviewVideoMessage', {
+                        videoData: {
+                          uri: hahstag && hahstag.content,
+                        },
                       });
                     }}
-                    onPause={() => {
-                      this.setState({
-                        [`paused${hahstag && hahstag.id}`]: true,
-                      });
-                    }}
-                    onPlay={() => {
-                      this.setState({
-                        [`paused${hahstag && hahstag.id}`]: false,
-                      });
-                    }}
-                    onLoad={fields => {
-                      this.setState({
-                        [`duration${hahstag && hahstag.id}`]: fields.duration,
-                      });
-                    }}
-                    showControls={value => {
-                      this.setState({
-                        [`showControls${hahstag && hahstag.id}`]: value,
-                      });
-                    }}
-                  />
-                </View>
-              ))}
-          </View>
-        )}
+                    style={styles.profileSingleImageConatiner}>
+                    <VideoPlayer
+                      showBottomcontrol={false}
+                      videoHeight={(screenSize.width / 3 - 1) * 0.66}
+                      postId={hahstag && hahstag.id}
+                      source={hahstag && hahstag.content}
+                      poster={hahstag && hahstag.thumbnail}
+                      navigation={this.props.navigation}
+                      disableVolume="false"
+                      disableBack="false"
+                      paused={true}
+                      shouldToggleControls={false}
+                      onVideoProgress={time => {
+                        this.setVideoCurrentTime(time, hahstag && hahstag.id);
+                      }}
+                      initializeSeek={() => {
+                        this.initializeSeekTime(hahstag && hahstag.id);
+                      }}
+                      onEnd={() => {
+                        this.setState({
+                          [`paused${hahstag && hahstag.id}`]: true,
+                        });
+                      }}
+                      onPause={() => {
+                        console.log('------pause');
+                      }}
+                      onPlay={() => {
+                        navigation.navigate('PreviewVideoMessage', {
+                          videoData: {
+                            uri: hahstag && hahstag.content,
+                          },
+                        });
+                      }}
+                      onLoad={fields => {
+                        this.setState({
+                          [`duration${hahstag && hahstag.id}`]: fields.duration,
+                        });
+                      }}
+                      showControls={value => {
+                        navigation.navigate('PreviewVideoMessage', {
+                          videoData: {
+                            uri: hahstag && hahstag.content,
+                          },
+                        });
+                      }}
+                    />
+                  </TouchableOpacity>
+                ))}
+              </View>
+            ))}
         {this.state.isLoading && (
           <View
             style={{
@@ -183,6 +204,7 @@ const mapStateToProps = state => ({
   profile: state.Profile.profile,
   user: state.EmailAuth.user,
   searchHashTagsList: state.Posts.searchHashTagsList,
+  searchDashBoardSuccess: state.Posts.searchDashBoardSuccess,
   accessToken: state.EmailAuth.accessToken,
 });
 

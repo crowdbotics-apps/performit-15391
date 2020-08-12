@@ -64,9 +64,10 @@ export const styles = StyleSheet.create({
   },
 
   profileSingleImageConatiner: {
-    width: scaleModerate(137),
-    height: scaleModerate(137),
-    borderWidth: scaleModerate(1),
-    borderColor: 'black',
+    width: screenSize.width / 3 - 1,
+    height: (screenSize.width / 3 + 6) * 0.66,
+    borderWidth: 1,
+    borderColor: '#B88746',
+    zIndex: 9999999,
   },
 });
