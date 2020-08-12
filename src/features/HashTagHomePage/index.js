@@ -44,7 +44,6 @@ class HashTagHomePage extends Component {
       isLoading: true,
     });
     const hashtag = this.props.navigation.getParam('hashtag', '');
-    console.log('-------------------------hashtag', hashtag);
     if (hashtag) {
       const {
         accessToken,
@@ -109,54 +108,70 @@ class HashTagHomePage extends Component {
             <Text style={styles.headerText}>{this.state.hashtag}</Text>
           </View>
         </SafeAreaView>
-        <View style={styles.profileImagesContainer}>
-          {searchHashTagsList.data.map(hahstag => (
-            <View style={styles.profileSingleImageConatiner}>
-              <VideoPlayer
-                showBottomcontrol={false}
-                videoHeight={137 * 0.66}
-                postId={hahstag && hahstag.id}
-                source={hahstag && hahstag.content}
-                navigation={this.props.navigation}
-                disableVolume="false"
-                disableBack="false"
-                paused={this.state[`paused${hahstag && hahstag.id}`]}
-                shouldToggleControls={true}
-                onVideoProgress={time => {
-                  this.setVideoCurrentTime(time, hahstag && hahstag.id);
-                }}
-                initializeSeek={() => {
-                  this.initializeSeekTime(hahstag && hahstag.id);
-                }}
-                onEnd={() => {
-                  this.setState({
-                    [`paused${hahstag && hahstag.id}`]: true,
-                  });
-                }}
-                onPause={() => {
-                  this.setState({
-                    [`paused${hahstag && hahstag.id}`]: true,
-                  });
-                }}
-                onPlay={() => {
-                  this.setState({
-                    [`paused${hahstag && hahstag.id}`]: false,
-                  });
-                }}
-                onLoad={fields => {
-                  this.setState({
-                    [`duration${hahstag && hahstag.id}`]: fields.duration,
-                  });
-                }}
-                showControls={value => {
-                  this.setState({
-                    [`showControls${hahstag && hahstag.id}`]: value,
-                  });
-                }}
-              />
-            </View>
-          ))}
-        </View>
+        {!this.state.isLoading && (
+          <View style={styles.profileImagesContainer}>
+            {searchHashTagsList &&
+              searchHashTagsList.data &&
+              searchHashTagsList.data.map(hahstag => (
+                <View style={styles.profileSingleImageConatiner}>
+                  <VideoPlayer
+                    showBottomcontrol={false}
+                    videoHeight={137 * 0.66}
+                    postId={hahstag && hahstag.id}
+                    source={hahstag && hahstag.content}
+                    navigation={this.props.navigation}
+                    disableVolume="false"
+                    disableBack="false"
+                    paused={this.state[`paused${hahstag && hahstag.id}`]}
+                    shouldToggleControls={true}
+                    onVideoProgress={time => {
+                      this.setVideoCurrentTime(time, hahstag && hahstag.id);
+                    }}
+                    initializeSeek={() => {
+                      this.initializeSeekTime(hahstag && hahstag.id);
+                    }}
+                    onEnd={() => {
+                      this.setState({
+                        [`paused${hahstag && hahstag.id}`]: true,
+                      });
+                    }}
+                    onPause={() => {
+                      this.setState({
+                        [`paused${hahstag && hahstag.id}`]: true,
+                      });
+                    }}
+                    onPlay={() => {
+                      this.setState({
+                        [`paused${hahstag && hahstag.id}`]: false,
+                      });
+                    }}
+                    onLoad={fields => {
+                      this.setState({
+                        [`duration${hahstag && hahstag.id}`]: fields.duration,
+                      });
+                    }}
+                    showControls={value => {
+                      this.setState({
+                        [`showControls${hahstag && hahstag.id}`]: value,
+                      });
+                    }}
+                  />
+                </View>
+              ))}
+          </View>
+        )}
+        {this.state.isLoading && (
+          <View
+            style={{
+              flexDirection: 'row',
+              width: '100%',
+              height: '100%',
+              alignItems: 'center',
+              justifyContent: 'center',
+            }}>
+            <ActivityIndicator animating />
+          </View>
+        )}
       </ScrollView>
     );
   }

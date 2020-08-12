@@ -19,7 +19,7 @@ import * as profileActions from '../ProfilePage/redux/actions';
 import {cloneDeep, get} from 'lodash';
 import VideoPlayer from '../components/VideoPlayer';
 import Chat from '../Message/Inbox';
-import {login} from "../../utils/firebase";
+import {login} from '../../utils/firebase';
 
 class Home extends Component {
   constructor(props) {
@@ -674,12 +674,28 @@ class Home extends Component {
                   postData.caption.length > 0 ? (
                     <View style={styles.captionParentContainer}>
                       <View style={styles.captionContainer}>
-                        <Text style={styles.captionText}>
+                        <View
+                          style={{
+                            flexDirection: 'row',
+                            justifyContent: 'flex-start',
+                            alignItems: 'center',
+                            width: '100%',
+                          }}>
                           {postData.caption &&
-                            postData.caption
-                              .split(' ')
-                              .map(elem =>
-                                elem.includes('#') || elem.includes('@') ? (
+                            postData.caption.split(' ').map(elem =>
+                              elem.includes('#') || elem.includes('@') ? (
+                                <TouchableOpacity
+                                  style={{
+                                    flexDirection: 'row',
+                                    justifyContent: 'flex-start',
+                                    alignItems: 'center',
+                                    width: '100%',
+                                  }}
+                                  onPress={() =>
+                                    navigation.navigate('HashTagHomePage', {
+                                      hashtag: elem.replace('#', ''),
+                                    })
+                                  }>
                                   <Text
                                     style={[
                                       styles.captionText,
@@ -687,13 +703,14 @@ class Home extends Component {
                                     ]}>
                                     {elem}
                                   </Text>
-                                ) : (
-                                  <Text style={[styles.captionText]}>
-                                    {elem}{' '}
-                                  </Text>
-                                ),
-                              )}
-                        </Text>
+                                </TouchableOpacity>
+                              ) : (
+                                <Text style={[styles.captionText]}>
+                                  {elem}{' '}
+                                </Text>
+                              ),
+                            )}
+                        </View>
                       </View>
                     </View>
                   ) : (
