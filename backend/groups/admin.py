@@ -1,5 +1,5 @@
 from django.contrib import admin
-from groups.models import Group, GroupMembers
+from groups.models import Group, GroupMembers, GroupPost, JoiningRequest
 
 
 # Register your models here.
@@ -13,3 +13,13 @@ class GroupAdmin(admin.ModelAdmin):
 @admin.register(GroupMembers)
 class GroupMemberAdmin(admin.ModelAdmin):
     list_display = ['member', 'group', 'created_at', 'updated_at']
+
+
+@admin.register(GroupPost)
+class GroupPostAdmin(admin.ModelAdmin):
+    list_display = ['post', 'group', 'created_at', 'updated_at']
+
+
+@admin.register(JoiningRequest)
+class JoiningRequestAdmin(admin.ModelAdmin):
+    list_display = ['user', 'group','accepted','created_at', 'updated_at']

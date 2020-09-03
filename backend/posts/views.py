@@ -14,7 +14,8 @@ import filetype
 import mutagen
 import re
 import math
-
+from notifications.functions import NotificationFunctions
+from notifications.models import Notification
 
 @permission_classes([IsAuthenticated])
 class AddComment(APIView):
@@ -31,6 +32,9 @@ class AddComment(APIView):
         if comment.is_valid():
             instance = comment.save()
             serializer = CommentSerializer(instance, many=False)
+            msg = "{} added a new comment".format(request.user.username)
+            if int(post.user.id) != int(request.user.id):
+                NotificationFunctions.create_notification(post=post.id,user=post.user.id, auther=request.user.id, message=msg, notification_type=Notification.POST_COMMENT)
             return Response({"success": True, "message": "Comment Saved.", "data": serializer.data})
         return Response({"success": False, "message": comment.errors}, status=400)
 
@@ -72,11 +76,16 @@ class AddEditPostRank(APIView):
         already_ranked = PostRank.objects.filter(ranker=request.user.id, post=post.id)
         if already_ranked.exists():
             already_ranked.delete()
+        if int(request.user.id) == int(post.user.id):
+            return Response({"success": False, "message": "User can not rank his post"}, status=400)
         data = {"ranker": request.user.id, "post": post.id, "rank": request.data.get("rank")}
         post_rank = PostRankSerializer(data=data)
         if post_rank.is_valid():
             instance = post_rank.save()
             serializer = PostRankSerializer(instance, many=False)
+            rank = str(request.data.get("rank")) + '/5'
+            msg = "{} voted {} for your video".format(request.user.username, rank)
+            NotificationFunctions.create_notification(post=post.id,user=post.user.id, auther=request.user.id, message=msg, notification_type=Notification.POST_RANK)
             return Response({"success": True, "message": "Post Ranked By the user", "data": serializer.data})
         return Response({"success": False, "message": post_rank.errors})
 
