@@ -68,3 +68,17 @@ class JoiningRequest(models.Model):
         verbose_name_plural = 'Group Joining Management'
 
 
+class InviteUser(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="invite_user_user_set")
+    group = models.ForeignKey(Group, on_delete=models.CASCADE, related_name="invite_user_group")
+    accepted = models.BooleanField(default=False)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    def __set__(self):
+        return "{} - {}".format(self.user, self.group, self.accepted,
+                                self.created_at, self.updated_at)
+
+    class Meta:
+        verbose_name = 'Group Invite Management'
+        verbose_name_plural = 'Group Invite Management'
