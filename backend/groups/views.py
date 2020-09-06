@@ -175,6 +175,8 @@ class AcceptJoiningRequest(APIView):
             return Response({"success": False, "message": "Invalid request_id param provided"})
         if existing_request.accepted:
             return Response({"success": False, "message": "Request already accepted"}, status=400)
+        if int(existing_request.group.created_by.id) != request.user.id:
+            return Response({"success": False, "message": "User cannot accept request"})
         data = {"member": existing_request.user.id, "group": existing_request.group.id}
         group_member = GroupMemberSerializer(data=data)
         if group_member.is_valid():
