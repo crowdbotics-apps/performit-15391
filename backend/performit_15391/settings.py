@@ -56,6 +56,7 @@ LOCAL_APPS = [
     'chats',
     'logs',
     'notifications',
+    'nearby',
 ]
 THIRD_PARTY_APPS = [
     'rest_framework',
