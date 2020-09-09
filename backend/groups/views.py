@@ -38,8 +38,9 @@ class Feed(APIView):
         except (EmptyPage, InvalidPage):
             return Response({"success": False, "message": "Empty Page"}, status=400)
         feed_serializer = FeedSerializer(paginated_data.page(page), many=True, context={'request': request})
+        group_serializer = GroupSerializer(existing_group, many=False)
         return Response({"data": feed_serializer.data, "total": paginated_data.count,
-                         "pages": paginated_data.num_pages, "current_page": int(page)})
+                         "pages": paginated_data.num_pages, "current_page": int(page), "group": group_serializer.data})
 
 
 @permission_classes([IsAuthenticated])
