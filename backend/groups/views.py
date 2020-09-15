@@ -14,6 +14,8 @@ from django.contrib.auth import get_user_model
 from django.core.paginator import Paginator, EmptyPage, InvalidPage
 from posts.models import Post
 from dashboards.serializers import FeedSerializer
+from notifications.functions import NotificationFunctions
+from notifications.models import Notification
 User = get_user_model()
 # Create your views here.
 @permission_classes([IsAuthenticated])
@@ -160,6 +162,8 @@ class JoiningRequestView(APIView):
         if joining_request.is_valid():
             instance = joining_request.save()
             serializer = JoiningRequestSerializer(instance, many=False)
+            msg = "{} Requested to join your group".format(request.user.username)
+            NotificationFunctions.create_notification(user=existing_group.created_by.id, auther=request.user.id, message=msg,post=None, notification_type=Notification.GROUP_JOINING_REQUEST)
             return Response({"success": True, "message": "Requested", "data": serializer.data})
         return Response({"success": False, "message": serializer.errors}, status=400)
 
@@ -221,6 +225,8 @@ class Invite(APIView):
         if invite.is_valid():
             instance = invite.save()
             serializer = InviteUserSerializer(instance, many=False)
+            msg = "{} Invited you to join group".format(existing_group.created_by.username)
+            NotificationFunctions.create_notification(user=user.id, auther=request.user.id, message=msg,post=None, notification_type=Notification.GROUP_JOINING_REQUEST)
             return Response({"success": True, "message": "Invited", "data": serializer.data})
         return Response({"success": False, "message": invite.errors}, status=400)
 
