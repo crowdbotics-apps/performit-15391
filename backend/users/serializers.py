@@ -7,6 +7,7 @@ from django.utils.translation import ugettext_lazy as _
 from rest_framework import serializers, exceptions
 from django.conf import settings
 from users.models import UserDetail, UserType
+from nearby.models import LiveLocation
 
 User = get_user_model()
 
@@ -35,9 +36,18 @@ class CustomUserSerializer(serializers.ModelSerializer):
         user_type_qs = UserType.objects.filter(user=obj.id)
         user_type_serializer = UserTypeSerializer(user_type_qs, many=True)
         user_types = []
+        live_location_lat = None
+        live_location_long = None
+        try:
+            live_location = LiveLocation.objects.get(user=obj.id)
+        except LiveLocation.DoesNotExist:
+            live_location = None
+        if live_location is not None:
+            live_location_lat = live_location.location_lat
+            live_location_long = live_location.location_long
         for type in user_type_serializer.data:
             user_types.append(type['user_type'])
-        return {"user_details": user_detail_serializer.data, "user_types": user_types}
+        return {"user_details": user_detail_serializer.data, "user_types": user_types, 'live_location_lat': live_location_lat, 'live_location_long': live_location_long}
 
 
 class CustomTokenSerializer(serializers.ModelSerializer):
