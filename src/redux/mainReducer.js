@@ -9,6 +9,7 @@ import EmailAuthReducer from '../features/EmailAuth/redux/reducers';
 import ProfilePageReducer from '../features/ProfilePage/redux/reducers';
 import HomePageReducer from '../features/HomePage/redux/reducers';
 import ChatReducer from '../features/Message/redux/reducers';
+import GroupReducer from '../features/Groups/redux/reducers';
 
 export const combinedReducers = combineReducers({
   blank: (state, action) => {
@@ -23,4 +24,5 @@ export const combinedReducers = combineReducers({
   Profile: ProfilePageReducer,
   Posts: HomePageReducer,
   Chat: ChatReducer,
+  Group: GroupReducer,
 });

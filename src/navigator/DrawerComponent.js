@@ -66,6 +66,26 @@ class DrawerComponent extends Component {
               <Text style={styles.drawerText}>{user && user.username}</Text>
             </SafeAreaView>
             <TouchableOpacity
+              onPress={() => navigation.navigate('GroupsListPage')}
+              style={{
+                width: '100%',
+                minHeight: scaleModerate(60),
+                flexDirection: 'row',
+                justifyContent: 'flex-start',
+                alignItems: 'center',
+              }}>
+              <View style={[styles.tNcIcon]}>
+                <Image
+                  source={require('../assets/images/groups_icon.png')}
+                  resizeMode="contain"
+                  style={{width: 24, height: 20, tintColor: '#ffffff'}}
+                />
+              </View>
+              <View style={{flex: 5}}>
+                <Text style={styles.footerText}>Groups</Text>
+              </View>
+            </TouchableOpacity>
+            <TouchableOpacity
               onPress={() => navigation.navigate('TermsAndConditionsPage')}
               style={{
                 width: '100%',

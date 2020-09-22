@@ -50,14 +50,19 @@
 	</dict>
 	<key>NSCameraUsageDescription</key>
 	<string>Allow to use camera</string>
+	<key>NSLocationAlwaysAndWhenInUsageDescription</key>
+	<string>Performit needs permission to access location</string>
+	<key>NSLocationAlwaysUsageDescription</key>
+	<string>Performit needs permission to access location</string>
 	<key>NSLocationWhenInUseUsageDescription</key>
-	<string></string>
+	<string>Performit needs permission to access location</string>
+
 	<key>NSMicrophoneUsageDescription</key>
 	<string>Allow to use microphone</string>
 	<key>NSPhotoLibraryAddUsageDescription</key>
-	<string>Your message to user when the photo library is accessed for the first time</string>
+	<string>Performit needs permission to access photo library</string>
 	<key>NSPhotoLibraryUsageDescription</key>
-	<string>Your message to user when the photo library is accessed for the first time</string>
+	<string>Performit needs permission to access photo library</string>
 	<key>UIAppFonts</key>
 	<array>
 		<string>AntDesign.ttf</string>

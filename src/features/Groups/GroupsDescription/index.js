@@ -12,14 +12,14 @@ import {
   KeyboardAvoidingView,
 } from 'react-native';
 import {styles} from './styles';
-import * as homeActions from '../HomePage/redux/actions';
+import * as homeActions from '../../HomePage/redux/actions';
 import {connect} from 'react-redux';
-import {scaleModerate} from '../../utils/scale';
-import * as profileActions from '../ProfilePage/redux/actions';
+import {scaleModerate} from '../../../utils/scale';
+import * as profileActions from '../../ProfilePage/redux/actions';
 import {cloneDeep, get} from 'lodash';
-import VideoPlayer from '../components/VideoPlayer';
+import VideoPlayer from '../../components/VideoPlayer';
 
-class MyPosts extends Component {
+class GroupsDescription extends Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -216,6 +216,8 @@ class MyPosts extends Component {
     }
     const profile = allProfiles && allProfiles[`${userId}`];
 
+    const mytextvar = 'It is a long established fact that a reader will be distracted by the readable content of a page layout. It is a long established fact that a reader will be distracted by the readable content of a page layout.'
+
     return (
       <KeyboardAvoidingView
         behavior={'position'}
@@ -228,13 +230,17 @@ class MyPosts extends Component {
                     <View style={[styles.leftArrow]}>
                       <Image
                         style={[styles.leftArrow]}
-                        source={require('../../assets/images/left-arrow.png')}
+                        source={require('../../../assets/images/left-arrow.png')}
                       />
                     </View>
                   </TouchableOpacity>
-                  <Text style={styles.headerText}>My Posts</Text>
+                  <Text style={styles.headerText}>World Singers</Text>
                 </View>
-                <View style={styles.headerRightContainer} />
+                <TouchableOpacity
+                 onPress={() => console.log('-------------')}
+                 style={styles.headerRightContainer}>
+                  <Text style={styles.headerRightText}>Requested</Text>
+                </TouchableOpacity>
               </SafeAreaView>
         <ScrollView
           contentContainerStyle={styles.screen}
@@ -244,6 +250,101 @@ class MyPosts extends Component {
           >
           {!this.state.isLoading ? (
             <>
+              <View style={styles.groupDescriptionContainer}>
+                <View style={[styles.groupImageContainer]}>
+                  <Image
+                    style={[styles.groupImage]}
+                    source={{
+                      uri:
+                        profile &&
+                        profile.user_details &&
+                        profile.user_details.profile_pic,
+                    }}
+                  />
+                </View>
+                <View style={[styles.groupDescriptionRightContainer]}>
+                  <View style={[styles.groupTitleContainer]}>
+                    <Text style={styles.groupTitleText}>World Singers</Text>
+                  </View>
+                  <View style={styles.groupDescContainer}>
+                   <Text style={styles.groupDescText}>
+                      { ((mytextvar).length > 150) ? 
+                        (((mytextvar).substring(0,150-3)) + '...') : 
+                        mytextvar }
+                    </Text>
+                  </View>
+                </View>
+              </View>
+
+              <View style={styles.groupMemberContainer}>
+                <View style={[styles.groupMemberImageContainer]}>
+                  <TouchableOpacity
+                    onPress={() =>
+                      navigation.navigate('ProfilePage', {
+                        userId: '',
+                      })
+                    }
+                    style={[styles.profileRowImageContainer]}>
+                    <Image
+                      style={[styles.profileRowImage]}
+                      source={{
+                        uri:
+                          profile &&
+                          profile.user_details &&
+                          profile.user_details.profile_pic,
+                      }}
+                    />
+                  </TouchableOpacity>
+                  <TouchableOpacity
+                    onPress={() =>
+                      navigation.navigate('ProfilePage', {
+                        userId: '',
+                      })
+                    }
+                    style={[styles.profileRowImageContainer]}>
+                    <Image
+                      style={[styles.profileRowImage]}
+                      source={{
+                        uri:
+                          profile &&
+                          profile.user_details &&
+                          profile.user_details.profile_pic,
+                      }}
+                    />
+                  </TouchableOpacity>
+                  <TouchableOpacity
+                    onPress={() =>
+                      navigation.navigate('ProfilePage', {
+                        userId: '',
+                      })
+                    }
+                    style={[styles.profileRowImageContainer]}>
+                    <Image
+                      style={[styles.profileRowImage]}
+                      source={{
+                        uri:
+                          profile &&
+                          profile.user_details &&
+                          profile.user_details.profile_pic,
+                      }}
+                    />
+                  </TouchableOpacity>
+                </View>
+                <View style={[styles.groupMemberRightContainer]}>
+                  <Text style={styles.followProfileText}>
+                    <Text
+                      style={[
+                        styles.followProfileText,
+                        {color: '#B88746', fontSize: scaleModerate(12)},
+                      ]}>
+                      {''}
+                      12345{' '}
+                      members{' '}
+                    </Text>
+                    including Antony Marcial and 16 others  
+                  </Text>
+                </View>
+              </View>
               {postsData.map(postData => (
                 <>
                   <View style={styles.postParentContainer}>
@@ -347,12 +448,12 @@ class MyPosts extends Component {
                           postData.meta_data.ratings.rating_by_login >= 1 ? (
                             <Image
                               style={[styles.starImage]}
-                              source={require('../../assets/images/filled_star.png')}
+                              source={require('../../../assets/images/filled_star.png')}
                             />
                           ) : (
                             <Image
                               style={[styles.starImage]}
-                              source={require('../../assets/images/empty_star.png')}
+                              source={require('../../../assets/images/empty_star.png')}
                             />
                           )}
                         </TouchableOpacity>
@@ -367,12 +468,12 @@ class MyPosts extends Component {
                           postData.meta_data.ratings.rating_by_login >= 2 ? (
                             <Image
                               style={[styles.starImage]}
-                              source={require('../../assets/images/filled_star.png')}
+                              source={require('../../../assets/images/filled_star.png')}
                             />
                           ) : (
                             <Image
                               style={[styles.starImage]}
-                              source={require('../../assets/images/empty_star.png')}
+                              source={require('../../../assets/images/empty_star.png')}
                             />
                           )}
                         </TouchableOpacity>
@@ -387,12 +488,12 @@ class MyPosts extends Component {
                           postData.meta_data.ratings.rating_by_login >= 3 ? (
                             <Image
                               style={[styles.starImage]}
-                              source={require('../../assets/images/filled_star.png')}
+                              source={require('../../../assets/images/filled_star.png')}
                             />
                           ) : (
                             <Image
                               style={[styles.starImage]}
-                              source={require('../../assets/images/empty_star.png')}
+                              source={require('../../../assets/images/empty_star.png')}
                             />
                           )}
                         </TouchableOpacity>
@@ -407,12 +508,12 @@ class MyPosts extends Component {
                           postData.meta_data.ratings.rating_by_login >= 4 ? (
                             <Image
                               style={[styles.starImage]}
-                              source={require('../../assets/images/filled_star.png')}
+                              source={require('../../../assets/images/filled_star.png')}
                             />
                           ) : (
                             <Image
                               style={[styles.starImage]}
-                              source={require('../../assets/images/empty_star.png')}
+                              source={require('../../../assets/images/empty_star.png')}
                             />
                           )}
                         </TouchableOpacity>
@@ -427,12 +528,12 @@ class MyPosts extends Component {
                           postData.meta_data.ratings.rating_by_login >= 5 ? (
                             <Image
                               style={[styles.starImage]}
-                              source={require('../../assets/images/filled_star.png')}
+                              source={require('../../../assets/images/filled_star.png')}
                             />
                           ) : (
                             <Image
                               style={[styles.starImage]}
-                              source={require('../../assets/images/empty_star.png')}
+                              source={require('../../../assets/images/empty_star.png')}
                             />
                           )}
                         </TouchableOpacity>
@@ -485,13 +586,13 @@ class MyPosts extends Component {
                         }>
                         <Image
                           style={[styles.commentImage]}
-                          source={require('../../assets/images/comment_icon.png')}
+                          source={require('../../../assets/images/comment_icon.png')}
                         />
                       </TouchableOpacity>
                       <View style={[styles.shareImage]}>
                         <Image
                           style={[styles.shareImage]}
-                          source={require('../../assets/images/share_icon.png')}
+                          source={require('../../../assets/images/share_icon.png')}
                         />
                       </View>
                     </View>
@@ -653,11 +754,11 @@ const mapDispatchToProps = dispatch => ({
   },
 });
 
-MyPosts.navigationOptions = {
+GroupsDescription.navigationOptions = {
   header: null,
 };
 
 export default connect(
   mapStateToProps,
   mapDispatchToProps,
-)(MyPosts);
+)(GroupsDescription);

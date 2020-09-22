@@ -45,6 +45,12 @@ import MyPosts from '../features/MyPosts';
 import Chat from '../features/Message/Chat';
 import Inbox from '../features/Message/Inbox';
 import PreviewVideoMessage from '../features/Message/PreviewVideoMessage';
+import MyNotifications from '../features/MyNotifications';
+import GroupsList from '../features/Groups/GroupsList';
+import CreateGroup from '../features/Groups/CreateGroup';
+import InviteFriends from '../features/Groups/InviteFriends';
+import GroupsDescription from '../features/Groups/GroupsDescription';
+import Location from '../features/Location';
 
 /**
  * new navigators can be imported here
@@ -197,6 +203,30 @@ const commonNavigator = {
       drawerLabel: () => null,
     },
   },
+  GroupsListPage: {
+    screen: GroupsList,
+    navigationOptions: {
+      drawerLabel: () => null,
+    },
+  },
+  CreateGroupPage: {
+    screen: CreateGroup,
+    navigationOptions: {
+      drawerLabel: () => null,
+    },
+  },
+  InviteFriendsPage: {
+    screen: InviteFriends,
+    navigationOptions: {
+      drawerLabel: () => null,
+    },
+  },
+  GroupsDescriptionPage: {
+    screen: GroupsDescription,
+    navigationOptions: {
+      drawerLabel: () => null,
+    },
+  },
 };
 
 const DrawerAppNavigator = createDrawerNavigator(
@@ -261,6 +291,50 @@ const CreatePostNavigator = createStackNavigator(
   },
 );
 
+const NotificationPagesNavigator = {
+  MyNotifications: {
+    screen: MyNotifications,
+  },
+};
+
+const NotificationNavigator = createStackNavigator(
+  {
+    ...NotificationPagesNavigator,
+  },
+  {
+    initialRouteName: 'MyNotifications',
+    defaultNavigationOptions: ({navigation}) => ({
+      tabBarOnPress: ({navigation, defaultHandler}) => {
+        // to navigate to the top of stack whenever tab changes
+        navigation.dispatch(StackActions.popToTop());
+        defaultHandler();
+      },
+    }),
+  },
+);
+
+const LocationPagesNavigator = {
+  LocationPage: {
+    screen: Location,
+  },
+};
+
+const LocationNavigator = createStackNavigator(
+  {
+    ...LocationPagesNavigator,
+  },
+  {
+    initialRouteName: 'LocationPage',
+    defaultNavigationOptions: ({navigation}) => ({
+      tabBarOnPress: ({navigation, defaultHandler}) => {
+        // to navigate to the top of stack whenever tab changes
+        navigation.dispatch(StackActions.popToTop());
+        defaultHandler();
+      },
+    }),
+  },
+);
+
 const LoggedInBottomTabNavigator = createBottomTabNavigator(
   {
     Home: {
@@ -278,9 +352,9 @@ const LoggedInBottomTabNavigator = createBottomTabNavigator(
       },
     },
     Location: {
-      screen: EmailAuthStackNavigator,
+      screen: LocationNavigator,
       navigationOptions: ({navigation}) => ({
-        tabBarVisible: false,
+        tabBarVisible: true,
         title: null,
         tabBarIcon: ({focused}) => (
           <Image
@@ -304,9 +378,9 @@ const LoggedInBottomTabNavigator = createBottomTabNavigator(
       }),
     },
     Notifications: {
-      screen: EmailAuthStackNavigator,
+      screen: NotificationNavigator,
       navigationOptions: ({navigation}) => ({
-        tabBarVisible: false,
+        tabBarVisible: true,
         title: null,
         tabBarIcon: ({focused}) => (
           <Image
