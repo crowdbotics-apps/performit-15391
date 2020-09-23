@@ -1,6 +1,7 @@
-from django.shortcuts import render
-
 # Create your views here.
+import os
+
+from django.utils.datastructures import MultiValueDictKeyError
 from rest_framework.decorators import permission_classes
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.views import APIView, Response
@@ -10,7 +11,11 @@ from posts.PostFunctions import PostFunctions
 from posts.models import Post, PostComment, PostRank, PostView
 from posts.serializers import CommentSerializer, PostRankSerializer, PostViewSerializer,PostSerializer
 import filetype
-
+import mutagen
+import re
+import math
+from notifications.functions import NotificationFunctions
+from notifications.models import Notification
 
 @permission_classes([IsAuthenticated])
 class AddComment(APIView):
@@ -27,6 +32,9 @@ class AddComment(APIView):
         if comment.is_valid():
             instance = comment.save()
             serializer = CommentSerializer(instance, many=False)
+            msg = "{} added a new comment".format(request.user.username)
+            if int(post.user.id) != int(request.user.id):
+                NotificationFunctions.create_notification(post=post.id,user=post.user.id, auther=request.user.id, message=msg, notification_type=Notification.POST_COMMENT)
             return Response({"success": True, "message": "Comment Saved.", "data": serializer.data})
         return Response({"success": False, "message": comment.errors}, status=400)
 
@@ -68,11 +76,16 @@ class AddEditPostRank(APIView):
         already_ranked = PostRank.objects.filter(ranker=request.user.id, post=post.id)
         if already_ranked.exists():
             already_ranked.delete()
+        if int(request.user.id) == int(post.user.id):
+            return Response({"success": False, "message": "User can not rank his post"}, status=400)
         data = {"ranker": request.user.id, "post": post.id, "rank": request.data.get("rank")}
         post_rank = PostRankSerializer(data=data)
         if post_rank.is_valid():
             instance = post_rank.save()
             serializer = PostRankSerializer(instance, many=False)
+            rank = str(request.data.get("rank")) + '/5'
+            msg = "{} voted {} for your video".format(request.user.username, rank)
+            NotificationFunctions.create_notification(post=post.id,user=post.user.id, auther=request.user.id, message=msg, notification_type=Notification.POST_RANK)
             return Response({"success": True, "message": "Post Ranked By the user", "data": serializer.data})
         return Response({"success": False, "message": post_rank.errors})
 
@@ -131,20 +144,35 @@ class Create(APIView):
         except Exception as e:
             print(e)
             return Response({"success": False, "message": "Required param content is missing"}, status=400)
+        try:
+            thumbnail = request.FILES['thumbnail']
+        except MultiValueDictKeyError:
+            thumbnail = None
         kind = filetype.guess(content)
         if kind is None:
             return Response({"success": False, "message": "Can't Determine file type"}, status=400)
         extension = kind.extension
+        print(extension)
         if PostFunctions.valid_extension(extension):
-            data = {"content": request.data.get('content'), "caption": request.data.get("caption"), "user": request.user.id}
+            data = {"content": request.data.get('content'), "thumbnail": thumbnail, "caption": request.data.get("caption"), "user": request.user.id}
             post = PostSerializer(data=data)
             if post.is_valid():
                 instance = post.save()
-                serializer = PostSerializer(instance, many=False)
-                return Response({"success": True, "message": "Post Created", "data": serializer.data})
+                file_info = mutagen.File(instance.content.path).info.pprint()
+                second = str(file_info)
+                info_lst = second.split(",")
+                number_of_seconds = str(info_lst[1])
+                number_of_seconds = re.findall('\d*\.?\d+',number_of_seconds)
+                number_of_seconds = math.floor(float(number_of_seconds[0]))
+                serializer = PostSerializer(instance, many=False, context={'request': request})
+                if 90 > number_of_seconds:
+                    return Response({"success": True, "message": "Post Created", "data": serializer.data})
+                existing = Post.objects.get(pk=serializer.data.get('id'))
+                existing.delete()
+                return Response({"success": False, "message": "content duration is greater than 90 seconds"},
+                                status=400)
             return Response({"success": False, "message": post.errors}, status=400)
         return Response({"success": False, "message": "Invalid post content provided only Audio, video allowed"}, status=400)
-
 
 
 @permission_classes([IsAuthenticated])
@@ -162,6 +190,10 @@ class EditPost(APIView):
         except Exception as e:
             print(e)
             return Response({"success": False, "message": "Required param content is missing"}, status=400)
+        try:
+            thumbnail = request.FILES['thumbnail']
+        except MultiValueDictKeyError:
+            thumbnail = None
         kind = filetype.guess(content)
         if kind is None:
             return Response({"success": False, "message": "Can't Determine file type"}, status=400)
@@ -169,20 +201,30 @@ class EditPost(APIView):
         print(extension)
         if PostFunctions.valid_extension(extension):
             data = {"content": request.data.get('content'), "caption": request.data.get("caption"),
-                    "user": request.user.id}
+                    "user": request.user.id, "thumbnail": thumbnail}
             validated_data = PostSerializer(data=data)
             if validated_data.is_valid():
-                post.content = content
-                post.caption = data.get('caption')
-                post.save()
-                serializer = PostSerializer(post,many=False)
-                return Response({"success": True, "message": "Post Edited", "data": serializer.data})
+                file_info = mutagen.File(post.content.path).info.pprint()
+                second = str(file_info)
+                info_lst = second.split(",")
+                number_of_seconds = str(info_lst[1])
+                number_of_seconds = re.findall('\d*\.?\d+', number_of_seconds)
+                number_of_seconds = math.floor(float(number_of_seconds[0]))
+                if 90 > number_of_seconds:
+                    if content is not None:
+                        os.remove(post.content.path)
+                    post.content = content
+                    post.caption = data.get('caption')
+                    post.thumbnail = thumbnail
+                    post.save()
+                    serializer = PostSerializer(post,many=False, context={'request': request})
+                    return Response({"success": True, "message": "Post Edited", "data": serializer.data})
+                return Response({"success": False, "message": "content duration is greater than 90 seconds"},
+                                status=400)
             return Response({"success": False, "message": validated_data.errors},status=400)
         return Response({"success": False, "message": "Invalid Post Content provided only Audio,Video allowedd"})
 
-# find post by id
-# No need for validation
-# Post Deleted
+
 @permission_classes([IsAuthenticated])
 class DeletePost(APIView):
     def post(self, request):

@@ -3,7 +3,7 @@ from rest_framework import serializers
 from connections.models import UserRelationship
 from users.models import UserType, UserDetail
 from users.serializers import CustomUserSerializer, UserTypeSerializer, UserDetailSerializer
-
+from groups.models import InviteUser
 
 class UserRelationshipSerializer(serializers.ModelSerializer):
 
@@ -36,6 +36,12 @@ class FollowingListSerializer(serializers.ModelSerializer):
             user_profile_data = None
         for type in user_types_serializer.data:
             user_types.append(type['user_type'])
+        if self.context.get("request").data.get("group_id") is not None:
+            is_invited = False
+            invite = InviteUser.objects.filter(user=obj.follower.id,group=self.context.get("request").data.get("group_id"))
+            if invite.exists():
+                is_invited = True
+            return {"is_following": is_following, "user_types": user_types, "user_profile": user_profile_data, "is_invited": is_invited }
         return {"is_following": is_following, "user_types": user_types, "user_profile": user_profile_data }
 
 

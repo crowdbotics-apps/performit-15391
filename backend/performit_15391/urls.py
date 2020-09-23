@@ -22,7 +22,7 @@ from drf_yasg import openapi
 from django.conf.urls.static import static
 from performit_15391 import settings
 from users.views import SignUp, ConfirmCode, SendForgotPasswordCode, ResendCode, ResetPassword, GetUserDetail, \
-    ChangePassword, EditProfile, ConnectSocialMedia, DisconnectSocialMedia
+    ChangePassword, EditProfile, ConnectSocialMedia, DisconnectSocialMedia, RegisterFcmDevice
 
 urlpatterns = [
     path("", include("home.urls")),
@@ -35,6 +35,10 @@ urlpatterns = [
     path("dashboards/", include("dashboards.urls")),
     path("posts/", include("posts.urls")),
     path("searches/", include("searches.urls")),
+    path("chats/", include("chats.urls")),
+    path("notifications/", include("notifications.urls")),
+    path("groups/", include("groups.urls")),
+    path("nearby/", include("nearby.urls")),
     path("sign-up/", view=SignUp.as_view(), name="sign-up"),
     path("confirm-code/", view=ConfirmCode.as_view(), name="confirm-code"),
     path("send-forgot-password-code/", view=SendForgotPasswordCode.as_view(), name="send-forgot-password-code"),
@@ -45,6 +49,7 @@ urlpatterns = [
     path("edit-profile/", view=EditProfile.as_view(), name="edit-profile"),
     path("connect-social-media/", view=ConnectSocialMedia.as_view(), name="connect-social-media"),
     path("disconnect-social-media/", view=DisconnectSocialMedia.as_view(), name="disconnect-social-media"),
+    path("register-fcm-device/", view=RegisterFcmDevice.as_view(), name="register-fcm-device"),
     # Override email confirm to use allauth's HTML view instead of rest_auth's API view
     path("rest-auth/registration/account-confirm-email/<str:key>/", confirm_email),
     path("rest-auth/registration/", include("rest_auth.registration.urls")),

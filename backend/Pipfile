@@ -4,6 +4,7 @@ url = "https://pypi.org/simple"
 name = "pypi"
 
 [dev-packages]
+pylint = "*"
 
 [requires]
 python_version = "3.7"
@@ -30,3 +31,5 @@ django-storages = "*"
 boto3 = "*"
 filetype = "*"
 mutagen = "*"
+pylint = "*"
+googlemaps = "*"

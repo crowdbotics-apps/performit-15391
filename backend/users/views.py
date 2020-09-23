@@ -21,6 +21,8 @@ from users.send_verification_code import SendVerificationCode
 from users.serializers import SignupWithEmailSerializer, SignUpWithPhoneSerializer, CustomTokenSerializer, \
     UserDetailSerializer, CustomUserSerializer, UserTypeSerializer, UserDetailEditSerializer
 from users.verification_code_generator import VerificationCodeGenerator
+from fcm_django.api.rest_framework import FCMDeviceSerializer
+from fcm_django.models import FCMDevice
 
 User = get_user_model()
 
@@ -310,7 +312,7 @@ class GetUserDetail(APIView):
             paginated_data = Paginator(posts, size)
         except (EmptyPage, InvalidPage):
             return Response({"success": False, "message": "Empty Page"}, status=400)
-        post_serializer = PostSerializer(paginated_data.page(page), many=True)
+        post_serializer = PostSerializer(paginated_data.page(page), many=True, context={'request': request})
         user_details_serializer = UserDetailSerializer(user_details, many=False)
         user_serializer = CustomUserSerializer(user,many=False)
         user_follower_qs = UserRelationship.objects.filter(following=user)
@@ -448,3 +450,18 @@ class DisconnectSocialMedia(APIView):
         user_details.save()
         serializer = UserDetailSerializer(user_details, many=False)
         return Response({"success": True, "messsage": "Social Media Disconnected", "data": serializer.data})
+
+
+@permission_classes([IsAuthenticated])
+class RegisterFcmDevice(APIView):
+    def post(self, request):
+        data = {"registration_id": request.data.get("registration_id"),
+                "type": request.data.get("type"), "device_id": request.data.get("device_id")}
+        fcm_device = FCMDeviceSerializer(data=data, context={"request": request})
+        if fcm_device.is_valid():
+            instance = FCMDevice(user=request.user, registration_id=data.get('registration_id'), device_id=data.get('device_id'),
+                                 type=data.get('type'))
+            instance.save()
+            serializer = FCMDeviceSerializer(instance, many=False)
+            return Response({"success": True, "message": "Device Registered.", "data": serializer.data})
+        return Response({"success": False, "message": fcm_device.errors})

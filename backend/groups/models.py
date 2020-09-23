@@ -1,7 +1,9 @@
 from django.db import models
 from django.conf import settings
-
+from posts.models import Post
+from django.contrib.auth import get_user_model
 # Create your models here.
+User = get_user_model()
 
 
 class Group(models.Model):
@@ -36,3 +38,47 @@ class GroupMembers(models.Model):
         verbose_name_plural = 'Group Member Management'
 
 
+class GroupPost(models.Model):
+    post = models.ForeignKey(Post, on_delete=models.CASCADE, related_name="group_post_set")
+    group = models.ForeignKey(Group, on_delete=models.CASCADE, related_name="group_post_group_set")
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    def __set__(self):
+        return "{} - {}".format(self.post, self.group,
+                                self.created_at, self.updated_at)
+
+    class Meta:
+        verbose_name = 'Group Post Management'
+        verbose_name_plural = 'Group Post Management'
+
+class JoiningRequest(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="joining_request_user")
+    group = models.ForeignKey(Group, on_delete=models.CASCADE, related_name="joining_request_group")
+    accepted = models.BooleanField(default=False)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    def __set__(self):
+        return "{} - {}".format(self.user, self.group, self.accepted,
+                                self.created_at, self.updated_at)
+
+    class Meta:
+        verbose_name = 'Group Joining Request Management'
+        verbose_name_plural = 'Group Joining Management'
+
+
+class InviteUser(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="invite_user_user_set")
+    group = models.ForeignKey(Group, on_delete=models.CASCADE, related_name="invite_user_group")
+    accepted = models.BooleanField(default=False)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    def __set__(self):
+        return "{} - {}".format(self.user, self.group, self.accepted,
+                                self.created_at, self.updated_at)
+
+    class Meta:
+        verbose_name = 'Group Invite Management'
+        verbose_name_plural = 'Group Invite Management'

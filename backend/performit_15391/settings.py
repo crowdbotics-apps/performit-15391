@@ -53,6 +53,10 @@ LOCAL_APPS = [
     'connections',
     'groups',
     'dashboards',
+    'chats',
+    'logs',
+    'notifications',
+    'nearby',
 ]
 THIRD_PARTY_APPS = [
     'rest_framework',
@@ -233,6 +237,7 @@ EMAIL_HOST_PASSWORD = "collaborate2020"
 
 TWILIO_ACCOUNT_SID = "AC05660ce41b8e18423935ba139dc8d97b"
 TWOLIO_ACCOUNT_AUTH_TOKEN = "9edd48958d7a6536a06818e4e287a4f5"
+GOOGLE_MAP_API_KEY = env.str("GOOGLE_MAP_API_KEY","")
 
 
 # start fcm_django push notifications
