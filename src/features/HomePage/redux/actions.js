@@ -47,3 +47,11 @@ export const createPost = (token, content, caption) => ({
   content,
   caption,
 });
+
+export const findNearbyUsers = (token, user_types, distance, term) => ({
+  type: actions.NEARBY_USERS_REQUEST,
+  token,
+  user_types,
+  distance,
+  term
+});

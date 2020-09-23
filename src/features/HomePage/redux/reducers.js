@@ -7,6 +7,7 @@ const initialState = {
   searchAccountsList: [],
   searchGroupsList: [],
   searchHashTagsList: [],
+  nearbyUsers: [],
   searchDashBoardSuccess: false,
   errors: {
     UserPosts: null,
@@ -115,6 +116,11 @@ export default (HomePageReducer = (state = initialState, action) => {
       };
     case actions.CREATE_POST_ERROR:
       return {...state, errors: {CreatePost: action.error}};
+    case actions.NEARBY_USERS_SUCCESS:
+      return {
+        ...state,
+        nearbyUsers: action.data,
+      };
     default:
       return state;
   }

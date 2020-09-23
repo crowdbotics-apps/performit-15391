@@ -422,4 +422,29 @@ export const styles = StyleSheet.create({
  map: {
    ...StyleSheet.absoluteFillObject,
  },
+
+ locationTextContainer: {
+    width: scaleModerate(81),
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
+ },
+ profileRowImageContainer: {
+    width: scaleModerate(50),
+    height: scaleModerate(50),
+    borderRadius: scaleModerate(25),
+    borderWidth: scaleModerate(1),
+    borderColor: '#989BA5',
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginBottom: scaleModerate(10)
+  },
+
+  profileRowImage: {
+    width: scaleModerate(48),
+    height: scaleModerate(48),
+    borderRadius: scaleModerate(24),
+    backgroundColor: '#111111',
+  },
 });

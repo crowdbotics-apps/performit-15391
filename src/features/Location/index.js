@@ -15,6 +15,7 @@ import {
 } from 'react-native';
 import MapView, { PROVIDER_GOOGLE, Marker } from 'react-native-maps';
 import {cloneDeep} from 'lodash';
+import * as homeActions from '../HomePage/redux/actions';
 import Modal from 'react-native-modalbox';
 import {styles} from './styles';
 import * as profileActions from '../ProfilePage/redux/actions';
@@ -225,12 +226,11 @@ class Location extends Component {
       error: '',
       updateForm: false,
       showSuccessModal: false,
-      firstName: '',
-      lastName: '',
-      address: '',
+      user_types: [],
+      distance: 10,
+      term: '',
       lat: '',
       lng: '',
-      bio: '',
       isMale: true,
       isArtistChecked: false,
       isSingerChecked: false,
@@ -253,6 +253,14 @@ class Location extends Component {
 
   async componentDidMount() {
     // write code here
+    const accessToken = this.props.accessToken;
+
+    const {
+      actions: {findNearbyUsers},
+    } = this.props;
+    if (accessToken) {
+      await findNearbyUsers(accessToken, this.state.user_types, this.state.distance, this.state.term);
+    }
   }
 
   async componentDidUpdate(prevProps) {
@@ -274,6 +282,9 @@ class Location extends Component {
   };
 
   render() {
+  const mytextvar = 'Alexis'
+  const profile = ''
+  console.log('------------------------------------------this.props.nearbyUsers', this.props.nearbyUsers)
     return (
       <ScrollView
         contentContainerStyle={styles.screen}
@@ -318,6 +329,76 @@ class Location extends Component {
                 />
               </View>
             </Marker>
+
+            <Marker
+              coordinate = {{latitude: 37.78825,longitude: -122.4324}}
+            >
+              <View style={{
+                width: scaleModerate(81),
+                height: scaleModerate(120),
+                flexDirection: 'column',
+                justifyContent: 'flex-start',
+                alignItems: 'center',
+              }}>
+                <View style={{
+                  width: scaleModerate(81),
+                  height: scaleModerate(105),
+                  flexDirection: 'column',
+                  justifyContent: 'center',
+                  alignItems: 'center',
+                  backgroundColor: '#111111',
+                }}>
+                  <TouchableOpacity
+                    onPress={() =>
+                      navigation.navigate('ProfilePage', {
+                        userId: '',
+                      })
+                    }
+                    style={[styles.profileRowImageContainer]}>
+                    <Image
+                      style={[styles.profileRowImage]}
+                      source={{
+                        uri:
+                          profile &&
+                          profile.user_details &&
+                          profile.user_details.profile_pic,
+                      }}
+                    />
+                  </TouchableOpacity>
+                  <View style={styles.locationTextContainer}>
+                    <Text style={styles.headerText}>
+                        { ((mytextvar).length > 7) ? 
+                        (((mytextvar).substring(0,7-3)) + '...') : 
+                        mytextvar }
+                      </Text>
+                  </View>
+                </View>
+
+                <View style={{
+                  width: scaleModerate(81),
+                  height: scaleModerate(15),
+                  flexDirection: 'row',
+                  justifyContent: 'center',
+                  alignItems: 'center',
+                }}>
+                  <View style={{
+                    width: 0,
+                    height: 0,
+                    backgroundColor: 'transparent',
+                    borderStyle: 'solid',
+                    borderTopWidth: 15,
+                    borderRightWidth: 8,
+                    borderBottomWidth: 0,
+                    borderLeftWidth: 8,
+                    borderTopColor: '#111111',
+                    borderRightColor: 'transparent',
+                    borderBottomColor: 'transparent',
+                    borderLeftColor: 'transparent',
+                  }} />
+                </View>
+              </View>
+            </Marker>
+
           </MapView>
         </View>
 
@@ -458,6 +539,7 @@ const mapStateToProps = state => ({
   accessToken: state.EmailAuth.accessToken,
   editProfileErrors: state.Profile.errors.ChangePassword,
   editProfileSuccess: state.Profile.editProfileSuccess,
+  nearbyUsers: state.Posts.nearbyUsers,
 });
 
 const mapDispatchToProps = dispatch => ({
@@ -468,6 +550,9 @@ const mapDispatchToProps = dispatch => ({
     editProfile: (token, user, userTypes) => {
       dispatch(profileActions.editProfile(token, user, userTypes));
     },
+    findNearbyUsers: (token, user_types, distance, term) => {
+      dispatch(homeActions.findNearbyUsers(token, user_types, distance, term));
+    }
   },
 });
 

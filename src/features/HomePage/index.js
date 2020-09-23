@@ -10,7 +10,11 @@ import {
   TextInput,
   Text,
   KeyboardAvoidingView,
+  PermissionsAndroid,
+  Alert,
+  Platform
 } from 'react-native';
+import Geolocation from '@react-native-community/geolocation';
 import {styles} from './styles';
 import * as homeActions from '../HomePage/redux/actions';
 import {connect} from 'react-redux';
@@ -36,6 +40,7 @@ class Home extends Component {
       seekTime: -1,
       showControls: false,
       postsData: [],
+      location: {}
     };
   }
 
@@ -66,6 +71,15 @@ class Home extends Component {
 
     const {pk, email} = this.props.user;
     const user = await login(email, pk + 'password' + pk);
+
+    Geolocation.getCurrentPosition(
+      position => {
+        const location = JSON.stringify(position);
+        this.setState({location});
+      },
+      error => console.log('Error', JSON.stringify(error)),
+      {enableHighAccuracy: true, timeout: 20000, maximumAge: 1000},
+    );
 
     this.setState({
       isLoading: false,

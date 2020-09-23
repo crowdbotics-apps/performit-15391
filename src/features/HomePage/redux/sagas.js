@@ -22,6 +22,9 @@ import {
   CREATE_POST_REQUEST,
   CREATE_POST_SUCCESS,
   CREATE_POST_ERROR,
+  NEARBY_USERS_REQUEST,
+  NEARBY_USERS_SUCCESS,
+  NEARBY_USERS_ERROR
 } from './constants';
 import {request} from '../../../utils/http';
 import {
@@ -118,6 +121,17 @@ function sendSearchDashBoard(tab, term, token) {
 
 function sendCreatePost(data, token) {
   return request.post('/posts/create/', data, {
+    headers: {
+      Accept: 'application/json',
+      'Content-Type': 'multipart/form-data',
+      Authorization: `Token ${token}`,
+    },
+  });
+}
+
+function sendFindNearbyUsers(token, data) {
+  console.log('------------------data90909', data)
+  return request.post('/nearby/users/', data, {
     headers: {
       Accept: 'application/json',
       'Content-Type': 'multipart/form-data',
@@ -374,6 +388,44 @@ function* handleCreatePost(action) {
   }
 }
 
+function* handleFindNearbyUsers(action) {
+  const {token, user_types, distance, term} = action;
+  try {
+    console.log('----------------------token', token)
+    console.log('----------------------user_types', user_types)
+    console.log('----------------------distance', distance)
+    console.log('----------------------term', term)
+    const inputData = {}
+    if(user_types && user_types.length > 0) inputData.user_types = user_types
+    if(distance) inputData.distance = distance
+    if(term) inputData.term = term
+    console.log('----------------------inputData', inputData)
+    const {status, data} = yield call(sendFindNearbyUsers, token, inputData);
+    console.log('----------------------data nearby 000000', data)
+
+    if (status === 200) {
+      yield put({
+        type: NEARBY_USERS_SUCCESS,
+      });
+      yield put({
+        type: NEARBY_USERS_SUCCESS,
+        data,
+      });
+    } else {
+      yield put({
+        type: NEARBY_USERS_ERROR,
+        error: 'Unknown Error',
+      });
+    }
+  } catch (error) {
+    console.dir(error)
+    yield put({
+      type: NEARBY_USERS_ERROR,
+      error: 'Something went wrong',
+    });
+  }
+}
+
 export default all([
   takeLatest(USER_POSTS_REQUEST, handleGetUserPosts),
   takeLatest(USER_POSTS_COMMENTS_REQUEST, handleGetUserPostComments),
@@ -382,4 +434,5 @@ export default all([
   takeLatest(USER_ADD_COMMENT_POST_REQUEST, handleAddPostComment),
   takeLatest(USER_SEARCH_PERFORMIT_REQUEST, handleSearchPerformit),
   takeLatest(CREATE_POST_REQUEST, handleCreatePost),
+  takeLatest(NEARBY_USERS_REQUEST, handleFindNearbyUsers),
 ]);
