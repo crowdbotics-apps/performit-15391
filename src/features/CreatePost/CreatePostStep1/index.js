@@ -46,6 +46,7 @@ class CreatePostStep1 extends Component {
         flashMode: RNCamera.Constants.FlashMode.auto,
       },
       videoData: {},
+      groupId: '',
     };
   }
 
@@ -59,10 +60,22 @@ class CreatePostStep1 extends Component {
 
   async componentDidMount() {
     // write code here
+    const groupId = this.props.navigation.getParam('groupId', '');
+    this.setState({
+      groupId
+    })
   }
 
   async componentDidUpdate(prevProps) {
     // write code here
+    const groupId = this.props.navigation.getParam('groupId', '');
+    const prevGroupId = prevProps.navigation.getParam('groupId', '');
+
+    if ((groupId !== prevGroupId) || (groupId !== this.state.groupId)) {
+        this.setState({
+          groupId,
+        });
+    }
   }
 
   componentWillUnmount() {
@@ -400,7 +413,7 @@ class CreatePostStep1 extends Component {
         videoData.name = filename + '.mp3';
         videoData.uri = res.uri;
         this.setState({videoData}, () => {
-          this.props.navigation.navigate('CreatePostStep2', {videoData});
+          this.props.navigation.navigate('CreatePostStep2', {videoData, groupId: this.state.groupId});
         });
       } catch (err) {
         //Handling any exception (If any)
@@ -428,7 +441,7 @@ class CreatePostStep1 extends Component {
       () => {
         activeTab === 'Video'
           ? this.props.navigation.navigate('PreviewPost', {videoData})
-          : this.props.navigation.navigate('CreatePostStep2', {videoData});
+          : this.props.navigation.navigate('CreatePostStep2', {videoData, groupId: this.state.groupId});
       },
     );
   };

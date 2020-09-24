@@ -5,6 +5,7 @@ const screenSize = Dimensions.get('window');
 
 export const styles = StyleSheet.create({
   screen: {
+    minHeight: scaleModerate(screenSize.height - 90),
     flexDirection: 'column',
     justifyContent: 'flex-start',
     alignItems: 'center',
@@ -567,4 +568,87 @@ export const styles = StyleSheet.create({
     borderRadius: scaleModerate(15),
     backgroundColor: '#111111',
   },
+
+  addPostButton: {
+    position: 'absolute',
+    width: scaleModerate(80),
+    height: scaleModerate(80),
+    right: scaleModerate(20),
+    bottom: scaleModerate(50),
+  },
+
+  postButtonImage: {
+    width: scaleModerate(80),
+    height: scaleModerate(80), 
+  },
+
+  modal: {
+    backgroundColor: '#111111',
+    justifyContent: 'center',
+    alignItems: 'center',
+    width: scaleModerate(252),
+    height: scaleModerate(140),
+    borderRadius: scaleModerate(10),
+  },
+
+  modalTextContainer: {
+    width: scaleModerate(200),
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginTop: scaleModerate(40),
+  },
+
+  modalText: {
+    color: '#ffffff',
+    fontSize: scaleModerate(16),
+    fontFamily: 'Nunito-SemiBold',
+    letterSpacing: scaleModerate(0.5),
+    fontWeight: '600',
+    textAlign: 'center',
+  },
+
+  okTextContainer: {
+    width: scaleModerate(252),
+    height: scaleModerate(50),
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginTop: scaleModerate(20),
+    borderRadius: scaleModerate(10),
+  },
+
+  okText: {
+    color: '#B88746',
+    fontSize: scaleModerate(16),
+    fontFamily: 'Nunito-SemiBold',
+    letterSpacing: scaleModerate(0.5),
+    textAlign: 'center',
+  },
+
+  btnModal: {
+    position: 'absolute',
+    top: 0,
+    right: 0,
+    width: 50,
+    height: 50,
+    backgroundColor: 'transparent',
+  },
+
+  btn: {
+    backgroundColor: '#111111',
+    color: '#ffffff',
+  },
+
+  noAccessContainer: {
+    width: '100%',
+    height: scaleModerate(132),
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginTop: scaleModerate(80)
+  },
+
+  noAccessImage: {
+    width: scaleModerate(281),
+    height: scaleModerate(132),
+  }
 });

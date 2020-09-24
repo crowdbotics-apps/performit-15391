@@ -29,6 +29,7 @@ class CreatePostStep3 extends Component {
       videoData: {},
       caption: '',
       thumbnail: {},
+      groupId: ''
     };
   }
 
@@ -44,12 +45,14 @@ class CreatePostStep3 extends Component {
     // write code here
     let videoData = this.props.navigation.getParam('videoData', {});
     let thumbnail = this.props.navigation.getParam('thumbnail', {});
+    const groupId = this.props.navigation.getParam('groupId', '');
     if (!videoData.uri) {
-      this.props.navigation.navigate('CreatePostStep1');
+      this.props.navigation.navigate('CreatePostStep1', {groupId});
     }
     this.setState({
       videoData,
       thumbnail,
+      groupId
     });
   }
 
@@ -59,9 +62,12 @@ class CreatePostStep3 extends Component {
     const videoData = this.props.navigation.getParam('videoData', {});
     const prevThumbnail = prevProps.navigation.getParam('thumbnail', {});
     const thumbnail = this.props.navigation.getParam('thumbnail', {});
+    const groupId = this.props.navigation.getParam('groupId', '');
+    const prevGroupId = prevProps.navigation.getParam('groupId', '');
+
     if (prevVideoData !== videoData) {
       if (!videoData.uri) {
-        this.props.navigation.navigate('CreatePostStep1');
+        this.props.navigation.navigate('CreatePostStep1', {groupId});
       }
       videoData &&
         videoData.uri &&
@@ -74,6 +80,12 @@ class CreatePostStep3 extends Component {
       this.setState({
         thumbnail,
       });
+    }
+
+    if ((groupId !== prevGroupId) || (groupId !== this.state.groupId)) {
+        this.setState({
+          groupId,
+        });
     }
   }
 
@@ -104,7 +116,7 @@ class CreatePostStep3 extends Component {
       actions: {userDetails, createPost},
     } = this.props;
 
-    await createPost(accessToken, postObject, this.state.caption);
+    await createPost(accessToken, postObject, this.state.caption, this.state.groupId);
 
     if (userId && accessToken) {
       await userDetails(userId, accessToken);
@@ -129,13 +141,13 @@ class CreatePostStep3 extends Component {
 
   onScreenFocus = () => {
     if (!this.state.videoData.uri) {
-      this.props.navigation.navigate('CreatePostStep1');
+      this.props.navigation.navigate('CreatePostStep1', {groupId: this.state.groupId});
     }
   };
 
   onPreviewContent = () => {
-    const {thumbnail, videoData} = this.state;
-    this.props.navigation.navigate('PreviewPost', {videoData, thumbnail});
+    const {thumbnail, videoData, groupId} = this.state;
+    this.props.navigation.navigate('PreviewPost', {videoData, thumbnail, groupId});
   };
 
   render() {
@@ -293,8 +305,8 @@ const mapDispatchToProps = dispatch => ({
     followersConnectionsList: (userId, token) => {
       dispatch(profileActions.followersConnectionsList(userId, 1, token));
     },
-    createPost: (token, content, caption) => {
-      dispatch(homeActions.createPost(token, content, caption));
+    createPost: (token, content, caption, groupId) => {
+      dispatch(homeActions.createPost(token, content, caption, groupId));
     },
   },
 });

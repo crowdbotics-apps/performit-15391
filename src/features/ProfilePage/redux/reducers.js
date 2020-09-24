@@ -13,6 +13,7 @@ const initialState = {
     SearchFollowingConnectionsList: null,
     ChangePassword: null,
     EditProfile: null,
+    InviteUserToGroup: null,
   },
 };
 
@@ -319,6 +320,10 @@ export default (ProfilePageReducer = (state = initialState, action) => {
       return {...state, errors: {EditProfile: action.error}};
     case actions.EDIT_PROFILE_SUCCESS:
       return {...state, editProfileSuccess: 'success'};
+    case actions.INVITE_USER_TO_GROUP_ERROR:
+      return {...state, errors: {InviteUserToGroup: action.error}};
+    case actions.INVITE_USER_TO_GROUP_SUCCESS:
+      return {...state};
     default:
       return state;
   }

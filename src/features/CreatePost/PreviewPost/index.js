@@ -30,6 +30,7 @@ class PreviewPost extends Component {
       videoData: {},
       thumbnail: {},
       paused: true,
+      groupId: ''
     };
   }
 
@@ -45,12 +46,14 @@ class PreviewPost extends Component {
     // write code here
     let videoData = this.props.navigation.getParam('videoData', {});
     let thumbnail = this.props.navigation.getParam('thumbnail', {});
+    const groupId = this.props.navigation.getParam('groupId', '');
     if (!videoData.uri) {
-      this.props.navigation.navigate('CreatePostStep1');
+      this.props.navigation.navigate('CreatePostStep1', {groupId});
     }
     this.setState({
       videoData,
       thumbnail,
+      groupId
     });
   }
 
@@ -60,10 +63,13 @@ class PreviewPost extends Component {
     const videoData = this.props.navigation.getParam('videoData', {});
     const prevThumbnail = prevProps.navigation.getParam('thumbnail', {});
     const thumbnail = this.props.navigation.getParam('thumbnail', {});
+    const groupId = this.props.navigation.getParam('groupId', '');
+    const prevGroupId = prevProps.navigation.getParam('groupId', '');
+
     if (prevVideoData !== videoData) {
       console.log('--------------------here 111');
       if (!videoData.uri) {
-        this.props.navigation.navigate('CreatePostStep1');
+        this.props.navigation.navigate('CreatePostStep1', {groupId});
       }
       videoData &&
         videoData.uri &&
@@ -78,6 +84,12 @@ class PreviewPost extends Component {
         thumbnail,
       });
     }
+
+    if ((groupId !== prevGroupId) || (groupId !== this.state.groupId)) {
+      this.setState({
+        groupId,
+      });
+    }
   }
 
   onClose = () => {
@@ -88,7 +100,7 @@ class PreviewPost extends Component {
         videoData: {},
         caption: '',
       },
-      () => this.props.navigation.navigate('CreatePostStep1'),
+      () => this.props.navigation.navigate('CreatePostStep1', {groupId: this.state.groupId}),
     );
   };
 
@@ -96,12 +108,13 @@ class PreviewPost extends Component {
     this.props.navigation.navigate('CreatePostStep3', {
       videoData: this.state.videoData,
       thumbnail: this.state.thumbnail,
+      groupId: this.state.groupId
     });
   };
 
   onScreenFocus = () => {
     if (!this.state.videoData.uri) {
-      this.props.navigation.navigate('CreatePostStep1');
+      this.props.navigation.navigate('CreatePostStep1', {groupId: this.state.groupId});
     }
   };
 

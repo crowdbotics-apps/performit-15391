@@ -10,6 +10,7 @@ import {
   SafeAreaView,
 } from 'react-native';
 import {styles} from './styles';
+import * as groupActions from '../../Groups/redux/actions';
 import * as profileActions from '../../ProfilePage/redux/actions';
 import {connect} from 'react-redux';
 import {get, cloneDeep} from 'lodash';
@@ -25,6 +26,7 @@ class InviteFriends extends Component {
       followingCurrentPage: 1,
       userId: '',
       searchTerm: '',
+      groupId: ''
     };
   }
 
@@ -42,93 +44,67 @@ class InviteFriends extends Component {
       isLoading: true,
     });
 
-    const userId = this.props.navigation.getParam('userId', '');
-    const activeTab = this.props.navigation.getParam('tab', 'follower');
+    const groupId = this.props.navigation.getParam('groupId', '');
     const accessToken = this.props.accessToken;
-
+    const userId = this.props.user && this.props.user.pk
     const {
-      actions: {followersConnectionsList, followingConnectionsList},
+      actions: {followersConnectionsList},
     } = this.props;
 
-    const {followersCurrentPage, followingCurrentPage} = this.state;
+    const {followersCurrentPage} = this.state;
     if (userId && accessToken) {
-      await followersConnectionsList(userId, followersCurrentPage, accessToken);
-      await followingConnectionsList(userId, followingCurrentPage, accessToken);
-      this.setState({
+      await followersConnectionsList(userId, followersCurrentPage, accessToken, groupId);
+      /*this.setState({
         followersCurrentPage: followersCurrentPage + 1,
-        followingCurrentPage: followingCurrentPage + 1,
-        activeTab,
       });
-    }
+*/    }
     this.setState({
       isLoading: false,
-      userId,
+      groupId,
+      userId
     });
   }
 
   async componentDidUpdate(prevProps) {
-    const userId = this.props.navigation.getParam('userId', '');
-    const prevUserId = prevProps.navigation.getParam('userId', '');
-    const prevActiveTab = prevProps.navigation.getParam('tab', 'follower');
-    const activeTab = this.props.navigation.getParam('tab', 'follower');
+    const userId = this.props.user && this.props.user.pk
+    const groupId = this.props.navigation.getParam('groupId', '');
+    const prevGroupId = prevProps.navigation.getParam('groupId', '');
 
-    if (prevActiveTab !== activeTab) {
-      this.setState({
-        activeTab,
-      });
-    }
-    if (userId !== prevUserId) {
+    if (groupId !== prevGroupId) {
       const accessToken = this.props.accessToken;
 
       const {
-        actions: {followersConnectionsList, followingConnectionsList},
+        actions: {followersConnectionsList},
       } = this.props;
 
-      const {followersCurrentPage, followingCurrentPage} = this.state;
+      const {followersCurrentPage} = this.state;
 
       if (userId && accessToken) {
         await followersConnectionsList(
           userId,
           followersCurrentPage,
           accessToken,
-        );
-        await followingConnectionsList(
-          userId,
-          followingCurrentPage,
-          accessToken,
+          groupId
         );
         this.setState({
-          followersCurrentPage: followersCurrentPage + 1,
-          followingCurrentPage: followingCurrentPage + 1,
-          activeTab,
-          userId,
+          groupId,
+          userId
         });
       }
     }
   }
 
-  followUser = async (userId, user, metaData, origin) => {
+  inviteUser = async (userId) => {
     const {accessToken, user: loggedInUser} = this.props;
     const {
-      actions: {followUser, followersConnectionsList, followingConnectionsList},
+      actions: {inviteUserToGroup, followersConnectionsList, searchFollowersConnectionsList},
     } = this.props;
-    await followUser(userId, user, metaData, accessToken, loggedInUser, origin);
-    await followersConnectionsList(this.state.userId, 1, accessToken);
-    await followingConnectionsList(this.state.userId, 1, accessToken);
-  };
-
-  unFollowUser = async (userId, origin) => {
-    const {accessToken, user: loggedInUser} = this.props;
-    const {
-      actions: {
-        unFollowUser,
-        followersConnectionsList,
-        followingConnectionsList,
-      },
-    } = this.props;
-    await unFollowUser(userId, accessToken, loggedInUser, origin);
-    await followersConnectionsList(this.state.userId, 1, accessToken);
-    await followingConnectionsList(this.state.userId, 1, accessToken);
+    await inviteUserToGroup(userId, this.state.groupId, accessToken);
+    if(this.state.searchTerm){
+      await searchFollowersConnectionsList(this.state.userId, 1, accessToken, this.state.groupId);
+    } else {
+      await followersConnectionsList(this.state.userId, 1, accessToken, this.state.groupId);
+    }
   };
 
   searchUser = text => {
@@ -137,24 +113,19 @@ class InviteFriends extends Component {
     });
     clearTimeout(this.search.searchTimeOut);
     this.search.searchTimeOut = setTimeout(async () => {
+      const userId = this.props.user && this.props.user.pk
       const {
         accessToken,
         actions: {
           searchFollowersConnectionsList,
-          searchFollowingConnectionsList,
         },
       } = this.props;
       await searchFollowersConnectionsList(
-        this.state.userId,
+        userId,
         1,
         accessToken,
         text,
-      );
-      await searchFollowingConnectionsList(
-        this.state.userId,
-        1,
-        accessToken,
-        text,
+        this.state.groupId
       );
     }, 1000);
   };
@@ -191,34 +162,14 @@ class InviteFriends extends Component {
       });
     }
 
-    if (userTypesConfig && following && following.length > 0) {
-      following.forEach(follower => {
-        userTypes = '';
-        if (
-          follower &&
-          follower.meta_data &&
-          follower.meta_data.user_types &&
-          follower.meta_data.user_types.length > 0
-        ) {
-          follower.meta_data.user_types.forEach(item => {
-            userTypes = userTypes + userTypesConfig[item] + ', ';
-          });
-          userTypes = userTypes.replace(/,\s*$/, '');
-        }
-        follower.userTypes = userTypes;
-      });
-    }
-
     let followersCount = get(profile, 'followersConnectionsList.total', 0);
-    let followingCount = get(profile, 'followingConnectionsList.total', 0);
 
     if (searchTerm) {
       origin = 'search';
       followers = get(profile, 'searchFollowersConnectionsList.data', []);
-      following = get(profile, 'searchFollowingConnectionsList.data', []);
       followersCount = get(profile, 'searchFollowersConnectionsList.total', 0);
-      followingCount = get(profile, 'searchFollowingConnectionsList.total', 0);
     }
+    console.log('---------------------------------followers', followers)
 
     return (
       <ScrollView
@@ -312,70 +263,33 @@ class InviteFriends extends Component {
                     </View>
                   </View>
                 </View>
-                {loggedInUserId === this.state.userId && (
-                  <View style={styles.followProfileRowRightContainer}>
-                    {follower &&
-                    follower.meta_data &&
-                    follower.meta_data.is_following ? (
-                      <View style={styles.followingButtonContainer}>
-                        <Text style={styles.followingButtonText}>
-                          Following
-                        </Text>
-                      </View>
-                    ) : (
-                      <TouchableOpacity
-                        onPress={() =>
-                          this.followUser(
-                            follower &&
-                              follower.follower &&
-                              follower.follower.pk,
-                            follower.follower,
-                            follower.meta_data,
-                            origin,
-                          )
-                        }
-                        style={styles.followButtonContainer}>
-                        <Text style={styles.followButtonText}>Follow</Text>
-                      </TouchableOpacity>
-                    )}
-                  </View>
-                )}
-                {loggedInUserId !== this.state.userId &&
-                  follower &&
+                { follower &&
                   follower.follower &&
                   follower.follower.pk !== loggedInUserId && (
                     <View style={styles.followProfileRowRightContainer}>
                       {follower &&
                       follower.meta_data &&
-                      follower.meta_data.is_following ? (
+                      follower.meta_data.is_invited ? (
                         <TouchableOpacity
                           onPress={() =>
-                            this.unFollowUser(
-                              follower &&
-                                follower.follower &&
-                                follower.follower.pk,
-                              origin,
-                            )
+                            console.log('----------------')
                           }
                           style={styles.followingButtonContainer}>
                           <Text style={styles.followingButtonText}>
-                            Unfollow
+                            Invited
                           </Text>
                         </TouchableOpacity>
                       ) : (
                         <TouchableOpacity
                           onPress={() =>
-                            this.followUser(
+                            this.inviteUser(
                               follower &&
                                 follower.follower &&
-                                follower.follower.pk,
-                              follower.follower,
-                              follower.meta_data,
-                              origin,
+                                follower.follower.pk
                             )
                           }
                           style={styles.followButtonContainer}>
-                          <Text style={styles.followButtonText}>Follow</Text>
+                          <Text style={styles.followButtonText}>Send Invitation</Text>
                         </TouchableOpacity>
                       )}
                     </View>
@@ -396,19 +310,20 @@ const mapStateToProps = state => ({
 
 const mapDispatchToProps = dispatch => ({
   actions: {
-    followersConnectionsList: (userId, page, token) => {
-      dispatch(profileActions.followersConnectionsList(userId, page, token));
+    followersConnectionsList: (userId, page, token, group_id) => {
+      dispatch(profileActions.followersConnectionsList(userId, page, token, group_id));
     },
     followingConnectionsList: (userId, page, token) => {
       dispatch(profileActions.followingConnectionsList(userId, page, token));
     },
-    searchFollowersConnectionsList: (userId, page, token, term) => {
+    searchFollowersConnectionsList: (userId, page, token, term, group_id) => {
       dispatch(
         profileActions.searchFollowersConnectionsList(
           userId,
           page,
           token,
           term,
+          group_id
         ),
       );
     },
@@ -437,6 +352,11 @@ const mapDispatchToProps = dispatch => ({
     unFollowUser: (userId, token, loggedInUser, origin) => {
       dispatch(
         profileActions.unFollowUser(userId, token, loggedInUser, origin),
+      );
+    },
+    inviteUserToGroup: (userId, groupId, token) => {
+      dispatch(
+        profileActions.inviteUserToGroup(userId, groupId, token),
       );
     },
   },

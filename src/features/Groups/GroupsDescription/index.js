@@ -12,6 +12,8 @@ import {
   KeyboardAvoidingView,
 } from 'react-native';
 import {styles} from './styles';
+import Modal from 'react-native-modalbox';
+import * as groupActions from '../../Groups/redux/actions';
 import * as homeActions from '../../HomePage/redux/actions';
 import {connect} from 'react-redux';
 import {scaleModerate} from '../../../utils/scale';
@@ -34,6 +36,11 @@ class GroupsDescription extends Component {
       seekTime: -1,
       showControls: false,
       postsData: [],
+      groupId: '',
+      page: 1,
+      counter: 30,
+      timer: null,
+      showJoinGroupSuccessModal: false
     };
   }
 
@@ -47,59 +54,59 @@ class GroupsDescription extends Component {
       isLoading: true,
     });
 
-    let userId = this.props.navigation.getParam('userId', '');
-    if (!userId) {
-      userId = this.props.user && this.props.user.pk;
-    }
+    const groupId = this.props.navigation.getParam('groupId', '');
     const accessToken = this.props.accessToken;
-
+    const userId = this.props.user && this.props.user.pk
     const {
-      actions: {userDetails},
+      actions: {getGroupDetails},
     } = this.props;
-    if (userId && accessToken) {
-      await userDetails(userId, accessToken);
-    }
 
+    const {page} = this.state;
+    if (userId && accessToken) {
+      await getGroupDetails(groupId, page, accessToken);
+      // this.setState({
+      //   page: page + 1,
+      // });
+    }
     this.setState({
       isLoading: false,
-      userId,
+      groupId,
+      userId
     });
   }
 
   async componentDidUpdate(prevProps) {
     // write code here
-    const prevUserId = prevProps.navigation.getParam('userId', '');
-    const userId = this.props.navigation.getParam('userId', '');
-    const accessToken = this.props.accessToken;
-    const {
-      actions: {userDetails},
-    } = this.props;
-    if (prevUserId !== userId) {
-      this.setState({
-        isLoading: true,
-      });
-      await userDetails(userId, accessToken);
+    const userId = this.props.user && this.props.user.pk
+    const groupId = this.props.navigation.getParam('groupId', '');
+    const prevGroupId = prevProps.navigation.getParam('groupId', '');
 
-      this.setState({
-        isLoading: false,
-        userId,
-      });
-    }
+    if ((groupId !== prevGroupId) || (groupId !== this.state.groupId)) {
+      const accessToken = this.props.accessToken;
 
-    if (this.props.profile !== prevProps.profile) {
-      let {userId} = this.state;
-      const {profile: allProfiles} = this.props;
-      if (!userId) {
-        userId = this.props.user && this.props.user.pk;
+      const {
+        actions: {getGroupDetails},
+      } = this.props;
+
+      const {page} = this.state;
+
+      if (userId && accessToken) {
+        await getGroupDetails(
+          groupId,
+          page,
+          accessToken
+        );
+        this.setState({
+          groupId,
+          userId
+        });
       }
-      const profile = allProfiles && allProfiles[`${userId}`];
-      let postsData = [];
-      postsData = cloneDeep(get(profile, 'posts', []));
-
-      this.setState({
-        postsData,
-      });
     }
+  }
+
+  componentWillUnmount() {
+    clearInterval(this.state.timer);
+    console.log('----------------unmount')
   }
 
   handleCommentChange = (postId, text) => {
@@ -206,16 +213,89 @@ class GroupsDescription extends Component {
     this.props.navigation.navigate('ProfilePage', {userId});
   };
 
+  requestOrInviteUser = async (groupData) => {
+    if(groupData && groupData.group && groupData.group.group_owner && groupData.group.group_owner.pk === this.state.userId){
+      this.props.navigation.navigate('InviteFriendsPage', {groupId: this.state.groupId})
+    } else{
+        console.log('------------------------')
+        const accessToken = this.props.accessToken;
+        const {
+          actions: {joinGroup},
+        } = this.props;
+
+        if (accessToken) {
+          await joinGroup(this.state.groupId, accessToken);
+          let timer = setInterval(this.tick, 1000);
+          this.setState({
+            timer,
+          });
+          setTimeout(async () => {
+            clearInterval(this.state.timer);
+            this.setState({
+              counter: 30,
+            });
+          }, 30000);
+        }
+    }
+
+  }
+
+  tick = async () => {
+    this.setState({
+      counter: this.state.counter - 1,
+    });
+
+    if (this.props.joinGroupSuccess === 'success') {
+      clearInterval(this.state.timer);
+      this.setState({
+        showJoinGroupSuccessModal: true,
+      });
+    }
+  };
+
+  onClose = () => {
+    this.setState(
+      {
+        showJoinGroupSuccessModal: false,
+      }
+    );
+  };
+
+  requestOrInviteUserText = (groupData) => {
+    let text  = 'Request Join'
+    console.log('------group pk', groupData && groupData.group && groupData.group.group_owner && groupData.group.group_owner.pk)
+    console.log('------------------------this.state.userId', this.state.userId)
+    if(groupData && groupData.group && groupData.group.group_owner && groupData.group.group_owner.pk === this.state.userId){
+      text = 'Invite'
+    } else {
+      console.log('------------------------')
+    }
+
+    return text;
+
+  }
+
+  isAccessGranted = (groupData) => {
+    if(groupData && groupData.group && groupData.group.group_owner && groupData.group.group_owner.pk === this.state.userId){
+      return true
+    } else {
+      console.log('------------------------')
+      return false
+    }
+
+  }
+
   // 30+ 10 +350+ 30 + 10 +25 + 10 + 50 + 30 + 10 + 70 +24
 
   render() {
-    const {profile: allProfiles, posts, navigation, commentsList} = this.props;
-    let {postsData, userId} = this.state;
+    const {profile: allProfiles, posts, navigation, commentsList, groupsFeed} = this.props;
+    let {postsData, userId, groupId} = this.state;
     if (!userId) {
       userId = this.props.user && this.props.user.pk;
     }
     const profile = allProfiles && allProfiles[`${userId}`];
-
+    const groupData = groupsFeed && groupsFeed[`${groupId}`];
+    
     const mytextvar = 'It is a long established fact that a reader will be distracted by the readable content of a page layout. It is a long established fact that a reader will be distracted by the readable content of a page layout.'
 
     return (
@@ -226,7 +306,7 @@ class GroupsDescription extends Component {
                 <View style={styles.headerLeftContainer}>
                   <TouchableOpacity
                     style={[styles.leftArrowContainer]}
-                    onPress={() => this.onClose()}>
+                    onPress={() => this.props.navigation.goBack()}>
                     <View style={[styles.leftArrow]}>
                       <Image
                         style={[styles.leftArrow]}
@@ -234,12 +314,12 @@ class GroupsDescription extends Component {
                       />
                     </View>
                   </TouchableOpacity>
-                  <Text style={styles.headerText}>World Singers</Text>
+                  <Text style={styles.headerText}>{groupData && groupData.group && groupData.group.group_name}</Text>
                 </View>
                 <TouchableOpacity
-                 onPress={() => console.log('-------------')}
+                 onPress={() => this.requestOrInviteUser(groupData)}
                  style={styles.headerRightContainer}>
-                  <Text style={styles.headerRightText}>Requested</Text>
+                  <Text style={styles.headerRightText}>{this.requestOrInviteUserText(groupData)}</Text>
                 </TouchableOpacity>
               </SafeAreaView>
         <ScrollView
@@ -255,22 +335,20 @@ class GroupsDescription extends Component {
                   <Image
                     style={[styles.groupImage]}
                     source={{
-                      uri:
-                        profile &&
-                        profile.user_details &&
-                        profile.user_details.profile_pic,
+                      uri: groupData && groupData.group && groupData.group.group_icon
                     }}
                   />
                 </View>
                 <View style={[styles.groupDescriptionRightContainer]}>
                   <View style={[styles.groupTitleContainer]}>
-                    <Text style={styles.groupTitleText}>World Singers</Text>
+                    <Text style={styles.groupTitleText}>{groupData && groupData.group && groupData.group.group_name}</Text>
                   </View>
                   <View style={styles.groupDescContainer}>
                    <Text style={styles.groupDescText}>
-                      { ((mytextvar).length > 150) ? 
-                        (((mytextvar).substring(0,150-3)) + '...') : 
-                        mytextvar }
+                      { (groupData && groupData.group && groupData.group.group_description && 
+                        (groupData && groupData.group && groupData.group.group_description).length > 150) ? 
+                        (((groupData && groupData.group && groupData.group.group_description).substring(0,150-3)) + '...') : 
+                        groupData && groupData.group && groupData.group.group_description }
                     </Text>
                   </View>
                 </View>
@@ -278,7 +356,7 @@ class GroupsDescription extends Component {
 
               <View style={styles.groupMemberContainer}>
                 <View style={[styles.groupMemberImageContainer]}>
-                  <TouchableOpacity
+                  {groupData && groupData.group && groupData.group.meta_data && groupData.group.meta_data.members &&  groupData.group.meta_data.members.length > 0 && <TouchableOpacity
                     onPress={() =>
                       navigation.navigate('ProfilePage', {
                         userId: '',
@@ -289,13 +367,15 @@ class GroupsDescription extends Component {
                       style={[styles.profileRowImage]}
                       source={{
                         uri:
-                          profile &&
-                          profile.user_details &&
-                          profile.user_details.profile_pic,
+                          groupData.group.meta_data.members[0].member_user &&
+                          groupData.group.meta_data.members[0].member_user.meta_data &&
+                          groupData.group.meta_data.members[0].member_user.meta_data.user_details &&
+                          groupData.group.meta_data.members[0].member_user.meta_data.user_details.profile_pic
                       }}
                     />
-                  </TouchableOpacity>
-                  <TouchableOpacity
+                  </TouchableOpacity>}
+
+                  {groupData && groupData.group && groupData.group.meta_data && groupData.group.meta_data.members && groupData.group.meta_data.members.length > 1 && <TouchableOpacity
                     onPress={() =>
                       navigation.navigate('ProfilePage', {
                         userId: '',
@@ -306,13 +386,15 @@ class GroupsDescription extends Component {
                       style={[styles.profileRowImage]}
                       source={{
                         uri:
-                          profile &&
-                          profile.user_details &&
-                          profile.user_details.profile_pic,
+                          groupData.group.meta_data.members[1].member_user &&
+                          groupData.group.meta_data.members[1].member_user.meta_data &&
+                          groupData.group.meta_data.members[1].member_user.meta_data.user_details &&
+                          groupData.group.meta_data.members[1].member_user.meta_data.user_details.profile_pic
                       }}
                     />
-                  </TouchableOpacity>
-                  <TouchableOpacity
+                  </TouchableOpacity>}
+
+                  {groupData && groupData.group && groupData.group.meta_data && groupData.group.meta_data.members && groupData.group.meta_data.members.length > 2 && <TouchableOpacity
                     onPress={() =>
                       navigation.navigate('ProfilePage', {
                         userId: '',
@@ -323,12 +405,14 @@ class GroupsDescription extends Component {
                       style={[styles.profileRowImage]}
                       source={{
                         uri:
-                          profile &&
-                          profile.user_details &&
-                          profile.user_details.profile_pic,
+                          groupData.group.meta_data.members[2].member_user &&
+                          groupData.group.meta_data.members[2].member_user.meta_data &&
+                          groupData.group.meta_data.members[2].member_user.meta_data.user_details &&
+                          groupData.group.meta_data.members[2].member_user.meta_data.user_details.profile_pic
                       }}
                     />
-                  </TouchableOpacity>
+                  </TouchableOpacity>}
+
                 </View>
                 <View style={[styles.groupMemberRightContainer]}>
                   <Text style={styles.followProfileText}>
@@ -338,14 +422,25 @@ class GroupsDescription extends Component {
                         {color: '#B88746', fontSize: scaleModerate(12)},
                       ]}>
                       {''}
-                      12345{' '}
+                      {groupData && groupData.group && groupData.group.meta_data && groupData.group.meta_data.group_member_count}{' '}
                       members{' '}
                     </Text>
-                    including Antony Marcial and 16 others  
+                    {groupData && groupData.group && groupData.group.meta_data && groupData.group.meta_data.members &&  groupData.group.meta_data.members.length > 0 &&
+                        'including '
+                    }
+                    {groupData && groupData.group && groupData.group.meta_data && groupData.group.meta_data.members &&  groupData.group.meta_data.members.length > 0 &&
+                        groupData.group.meta_data.members[0].member_user && groupData.group.meta_data.members[0].member_user.first_name ?
+                        `${groupData.group.meta_data.members[0].member_user.first_name} ${groupData.group.meta_data.members[0].member_user.last_name}` :
+                        groupData && groupData.group && groupData.group.meta_data && groupData.group.meta_data.members &&  groupData.group.meta_data.members.length > 0 &&
+                        groupData.group.meta_data.members[0].member_user && groupData.group.meta_data.members[0].member_user.username && `${groupData.group.meta_data.members[0].member_user.username}`
+                    }
+                    {groupData && groupData.group && groupData.group.meta_data && groupData.group.meta_data.members &&  groupData.group.meta_data.members.length > 1 &&
+                        ` and ${groupData.group.meta_data.members.length - 1} others`
+                    }
                   </Text>
                 </View>
               </View>
-              {postsData.map(postData => (
+              {this.isAccessGranted(groupData) && groupData && groupData.data && groupData.data.length > 0  && groupData.data.map(postData => (
                 <>
                   <View style={styles.postParentContainer}>
                     <View style={styles.postProfileContainer}>
@@ -699,6 +794,13 @@ class GroupsDescription extends Component {
                   )}
                 </>
               ))}
+              {!this.isAccessGranted(groupData) && <View style={styles.noAccessContainer}>
+                    <Image
+                      style={[styles.noAccessImage]}
+                      source={require('../../../assets/images/group-locked.png')}
+                    />
+                </View>
+              }
             </>
           ) : (
             <View
@@ -712,6 +814,31 @@ class GroupsDescription extends Component {
               <ActivityIndicator animating />
             </View>
           )}
+          {groupData && groupData.group && groupData.group.group_owner && groupData.group.group_owner.pk === this.state.userId && 
+            <TouchableOpacity style={styles.addPostButton}
+              onPress={() => this.props.navigation.navigate('CreatePostStep1', {groupId: this.state.groupId})}
+            >
+              <Image
+                style={[styles.postButtonImage]}
+                source={require('../../../assets/images/create-group-post.png')}
+              />
+          </TouchableOpacity>}
+
+          <Modal
+            isOpen={this.state.showJoinGroupSuccessModal}
+            onClosed={() => this.setState({showJoinGroupSuccessModal: false})}
+            style={[styles.modal]}
+            position={'center'}
+            backdropPressToClose={false}>
+            <View style={styles.modalTextContainer}>
+              <Text style={styles.modalText}>Your Request was sent to Group admin</Text>
+            </View>
+            <TouchableOpacity
+              style={styles.okTextContainer}
+              onPress={() => this.onClose()}>
+              <Text style={styles.okText}>OK</Text>
+            </TouchableOpacity>
+          </Modal>
         </ScrollView>
       </KeyboardAvoidingView>
     );
@@ -726,6 +853,8 @@ const mapStateToProps = state => ({
   commentsList: state.Posts.userPostsCommentList,
   user: state.EmailAuth.user,
   accessToken: state.EmailAuth.accessToken,
+  groupsFeed: state.Group.groupsFeed,
+  joinGroupSuccess: state.Group.joinGroupSuccess
 });
 
 const mapDispatchToProps = dispatch => ({
@@ -750,6 +879,12 @@ const mapDispatchToProps = dispatch => ({
     },
     addCommentToPost: (postId, comment, accessToken) => {
       dispatch(homeActions.addCommentToPost(postId, comment, accessToken));
+    },
+    getGroupDetails: (group_id, page, token) => {
+      dispatch(groupActions.getGroupDetails(group_id, page, token));
+    },
+    joinGroup: (group_id, token) => {
+      dispatch(groupActions.joinGroup(group_id, token));
     },
   },
 });

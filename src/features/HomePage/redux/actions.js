@@ -41,11 +41,12 @@ export const searchDashboard = (tab, page, token, term) => ({
   term,
 });
 
-export const createPost = (token, content, caption) => ({
+export const createPost = (token, content, caption, groupId) => ({
   type: actions.CREATE_POST_REQUEST,
   token,
   content,
   caption,
+  groupId,
 });
 
 export const findNearbyUsers = (token, user_types, distance, term) => ({

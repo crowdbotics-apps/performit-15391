@@ -33,6 +33,7 @@ class CreatePostStep2 extends Component {
         orientation: RNCamera.Constants.Orientation.auto,
         flashMode: RNCamera.Constants.FlashMode.auto,
       },
+      groupId: ''
     };
   }
 
@@ -48,11 +49,13 @@ class CreatePostStep2 extends Component {
   async componentDidMount() {
     // write code here
     let videoData = this.props.navigation.getParam('videoData', {});
+    const groupId = this.props.navigation.getParam('groupId', '');
     if (!videoData.uri) {
-      this.props.navigation.navigate('CreatePostStep1');
+      this.props.navigation.navigate('CreatePostStep1', {groupId});
     }
     this.setState({
       videoData,
+      groupId
     });
   }
 
@@ -60,12 +63,21 @@ class CreatePostStep2 extends Component {
     // write code here
     const prevVideoData = prevProps.navigation.getParam('videoData', {});
     const videoData = this.props.navigation.getParam('videoData', {});
+    const groupId = this.props.navigation.getParam('groupId', '');
+    const prevGroupId = prevProps.navigation.getParam('groupId', '');
+
     if (prevVideoData !== videoData) {
       if (!videoData.uri) {
-        this.props.navigation.navigate('CreatePostStep1');
+        this.props.navigation.navigate('CreatePostStep1', {groupId});
       }
       this.setState({
         videoData,
+      });
+    }
+
+    if ((groupId !== prevGroupId) || (groupId !== this.state.groupId)) {
+      this.setState({
+        groupId,
       });
     }
   }
@@ -136,6 +148,7 @@ class CreatePostStep2 extends Component {
     this.props.navigation.navigate('CreatePostStep3', {
       videoData: this.state.videoData,
       thumbnail: this.state.thumbnail,
+      groupId: this.state.groupId
     });
   };
 

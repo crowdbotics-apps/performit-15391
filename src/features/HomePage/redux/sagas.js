@@ -122,18 +122,27 @@ function sendSearchDashBoard(tab, term, token) {
   );
 }
 
-function sendCreatePost(data, token) {
-  return request.post('/posts/create/', data, {
-    headers: {
-      Accept: 'application/json',
-      'Content-Type': 'multipart/form-data',
-      Authorization: `Token ${token}`,
-    },
-  });
+function sendCreatePost(data, token, groupId) {
+  if(groupId){
+    return request.post('/groups/create-post/', data, {
+      headers: {
+        Accept: 'application/json',
+        'Content-Type': 'multipart/form-data',
+        Authorization: `Token ${token}`,
+      },
+    });
+  } else {
+    return request.post('/posts/create/', data, {
+      headers: {
+        Accept: 'application/json',
+        'Content-Type': 'multipart/form-data',
+        Authorization: `Token ${token}`,
+      },
+    });
+  }
 }
 
 function sendFindNearbyUsers(token, data) {
-  console.log('------------------data90909', data)
   return request.post('/nearby/users/', data, {
     headers: {
       Accept: 'application/json',
@@ -144,7 +153,6 @@ function sendFindNearbyUsers(token, data) {
 }
 
 function sendUpdateUserCurrentLocation(token, data) {
-  console.log('------------------87787', data)
   return request.post('/nearby/update-current-location/', data, {
     headers: {
       Accept: 'application/json',
@@ -358,7 +366,7 @@ function* handleSearchPerformit(action) {
 }
 
 function* handleCreatePost(action) {
-  const {token, content, caption} = action;
+  const {token, content, caption, groupId} = action;
 
   try {
     const formData = new FormData();
@@ -367,7 +375,8 @@ function* handleCreatePost(action) {
     });
 
     formData.append('caption', caption);
-    const {status, data, success} = yield call(sendCreatePost, formData, token);
+    if(groupId) formData.append('group_id', groupId);
+    const {status, data, success} = yield call(sendCreatePost, formData, token, groupId);
 
     if (status === 200) {
       yield put({
@@ -405,10 +414,6 @@ function* handleCreatePost(action) {
 function* handleFindNearbyUsers(action) {
   const {token, user_types, distance, term} = action;
   try {
-    console.log('----------------------token', token)
-    console.log('----------------------user_types', user_types)
-    console.log('----------------------distance', distance)
-    console.log('----------------------term', term)
     const formData = new FormData();
 
     if(user_types && user_types.length > 0) {
@@ -418,9 +423,7 @@ function* handleFindNearbyUsers(action) {
     }
     if(distance) formData.append('distance', distance);
     if(term) formData.append('term', term);
-    console.log('----------------------formData', formData)
     const {status, data} = yield call(sendFindNearbyUsers, token, formData);
-    console.log('----------------------data nearby 000000', data)
 
     if (status === 200) {
       yield put({
@@ -437,7 +440,6 @@ function* handleFindNearbyUsers(action) {
       });
     }
   } catch (error) {
-    console.dir(error)
     yield put({
       type: NEARBY_USERS_ERROR,
       error: 'Something went wrong',
@@ -448,15 +450,11 @@ function* handleFindNearbyUsers(action) {
 function* handleUpdateUserLocation(action) {
   const {token, location_lat, location_long} = action;
   try {
-    console.log('----------------------location_lat', location_lat)
-    console.log('----------------------location_long', location_long)
     const formData = new FormData();
 
     if(location_lat) formData.append('location_lat', location_lat);
     if(location_long) formData.append('location_long', location_long);
-    console.log('----------------------formData', formData)
     const {status, data} = yield call(sendUpdateUserCurrentLocation, token, formData);
-    console.log('----------------------data nearby 000000', data)
 
     if (status === 200) {
       yield put({
@@ -473,7 +471,6 @@ function* handleUpdateUserLocation(action) {
       });
     }
   } catch (error) {
-    console.dir(error)
     yield put({
       type: UPDATE_LOCATION_ERROR,
       error: 'Something went wrong',

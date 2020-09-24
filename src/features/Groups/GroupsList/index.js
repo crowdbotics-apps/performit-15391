@@ -189,7 +189,7 @@ class GroupsList extends Component {
               searchGroupsList.data.length > 0 ? (
                 searchGroupsList.data.map(group => (
             <TouchableOpacity 
-              onPress={() => navigation.navigate('GroupsDescriptionPage')}
+              onPress={() => navigation.navigate('GroupsDescriptionPage', {groupId: group && group.id})}
               style={styles.followProfileRowContainer}>
               <View style={styles.followProfileRowLeftContainer}>
                 <View style={styles.followProfileRowContainer}>

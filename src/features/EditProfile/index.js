@@ -840,7 +840,7 @@ class EditProfile extends Component {
           </View>
         </TouchableOpacity>
 
-        <TouchableOpacity
+        /*<TouchableOpacity
           onPress={() => this.youtubeSignIn()}
           style={styles.socialConnectEditProfileContainer}>
           <View style={styles.socialConnectEditProfileLeftContainer}>
@@ -861,7 +861,7 @@ class EditProfile extends Component {
               />
             </View>
           </View>
-        </TouchableOpacity>
+        </TouchableOpacity>*/
 
         <View style={{height: scaleModerate(40)}} />
 

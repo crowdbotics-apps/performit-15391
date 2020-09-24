@@ -110,15 +110,22 @@ class CreateGroup extends Component {
   // }
 
   showToastOnErrors() {
-    const {createGroupErrors} = this.props;
+    const {createGroupErrors, editGroupErrors} = this.props;
     const {error} = this.state;
+    const {newGroup} = this.props
     if (this.state.showError) {
       if (error) {
         Toast.show(error);
       } else if (createGroupErrors) {
         Toast.show(editProfileErrors);
+      } else if (editGroupErrors) { 
+        Toast.show(editGroupErrors);
       } else {
-        Toast.show('Group is created successfully');
+        if(newGroup && newGroup.data && newGroup.data.id) {
+          Toast.show('Group is updated successfully');
+        } else {
+          Toast.show('Group is created successfully');
+        }
       }
     } else {
       /*const userId = this.props.user && this.props.user.pk;
@@ -126,7 +133,11 @@ class CreateGroup extends Component {
         userId,
         origin: 'editPage',
       });*/
-      Toast.show('Group is created successfully');
+      if(newGroup && newGroup.data && newGroup.data.id) {
+        Toast.show('Group is updated successfully');
+      } else {
+        Toast.show('Group is created successfully');
+      }
     }
   }
 
@@ -144,10 +155,11 @@ class CreateGroup extends Component {
     this.setState({
       isEditLoading: true,
     });
+    const {newGroup} = this.props
     let validation = true;
     this.setState({error: ''});
     const {
-      actions: {createGroup},
+      actions: {createGroup, editGroup},
       accessToken,
     } = this.props;
 
@@ -166,19 +178,33 @@ class CreateGroup extends Component {
       groupObject.group_icon = groupSource;
     }
 
-    // todo add disable buttons on submit
-    await createGroup(accessToken, groupObject.group_name, groupObject.group_description, groupObject.group_icon );
-
-    let timer = setInterval(this.tick, 1000);
-    this.setState({
-      timer,
-    });
-    setTimeout(async () => {
-      clearInterval(this.state.timer);
+    if (!groupName) {
+      validation = false;
+      Toast.show('Please enter a group name');
       this.setState({
-        counter: 30,
+        isEditLoading: false,
       });
-    }, 30000);
+    }
+
+    if (validation) {
+      // todo add disable buttons on submit
+      if(newGroup && newGroup.data && newGroup.data.id) {
+        await editGroup(accessToken, newGroup.data.id, groupObject.group_name, groupObject.group_description, groupObject.group_icon );
+      } else {
+        await createGroup(accessToken, groupObject.group_name, groupObject.group_description, groupObject.group_icon );
+      }
+
+      let timer = setInterval(this.tick, 1000);
+      this.setState({
+        timer,
+      });
+      setTimeout(async () => {
+        clearInterval(this.state.timer);
+        this.setState({
+          counter: 30,
+        });
+      }, 30000);
+    }
   };
 
   tick = async () => {
@@ -248,7 +274,7 @@ class CreateGroup extends Component {
       groupPic,
       isEditLoading,
     } = this.state;
-    const {newGroup} = this.props
+    const {newGroup, navigation} = this.props
     console.log('--------------------------newGroup', newGroup)
 
     return (
@@ -333,7 +359,7 @@ class CreateGroup extends Component {
         {newGroup && newGroup.data && newGroup.data.id && 
           <TouchableOpacity
             onPress={() => {
-              navigation.navigate('InviteFriendsPage')
+              navigation.navigate('InviteFriendsPage', {groupId: newGroup.data.id})
               console.log('------');
             }}>
             <View style={styles.socialConnectEditProfileContainer}>
@@ -370,6 +396,8 @@ const mapStateToProps = state => ({
   createGroupErrors: state.Group.errors.CreateGroup,
   createGroupSuccess: state.Group.createGroupSuccess,
   newGroup: state.Group.newGroup,
+  editGroupSuccess: state.Group.editGroupSuccess,
+  editGroupErrors: state.Group.errors.EditGroup,
 });
 
 const mapDispatchToProps = dispatch => ({
@@ -379,6 +407,12 @@ const mapDispatchToProps = dispatch => ({
     },
     setSuccessToDefault: (token) => {
       dispatch(groupActions.setSuccessToDefault(token));
+    },
+    editGroup: (token, group_id, group_name, group_description, group_icon) => {
+      dispatch(groupActions.editGroup(token, group_id, group_name, group_description, group_icon));
+    },
+    setEditGroupSuccessToDefault: (token) => {
+      dispatch(groupActions.setEditGroupSuccessToDefault(token));
     },
   },
 });

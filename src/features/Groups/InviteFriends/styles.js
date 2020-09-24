@@ -60,6 +60,7 @@ export const styles = StyleSheet.create({
     alignItems: 'center',
     backgroundColor: '#111111',
     marginTop: scaleVertical(20),
+    marginBottom: scaleVertical(20),
   },
 
   searchIconContainer: {
@@ -68,7 +69,7 @@ export const styles = StyleSheet.create({
     height: scaleModerate(22),
     flexDirection: 'row',
     justifyContent: 'flex-start',
-    alignItems: 'center',
+    alignItems: 'center'
   },
 
   searchIcon: {
@@ -240,7 +241,7 @@ export const styles = StyleSheet.create({
   },
 
   followButtonContainer: {
-    width: scaleModerate(57),
+    width: scaleModerate(104),
     height: scaleModerate(24),
     borderRadius: scaleModerate(12),
     backgroundColor: '#b88746',

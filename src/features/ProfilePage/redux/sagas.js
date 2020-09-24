@@ -29,6 +29,9 @@ import {
   EDIT_PROFILE_REQUEST,
   EDIT_PROFILE_SUCCESS,
   EDIT_PROFILE_ERROR,
+  INVITE_USER_TO_GROUP_REQUEST,
+  INVITE_USER_TO_GROUP_SUCCESS,
+  INVITE_USER_TO_GROUP_ERROR
 } from './constants';
 import {request} from '../../../utils/http';
 
@@ -46,37 +49,74 @@ function sendUserDetails(user_id, token) {
   );
 }
 
-function sendGetConnectionsList(user_id, tab_type, page, token) {
-  return request.post(
-    '/connections/list/',
-    {
-      user_id,
-      tab_type,
-      page,
-    },
-    {
-      headers: {
-        Authorization: `Token ${token}`,
+function sendGetConnectionsList(user_id, tab_type, page, token, group_id) {
+  console.log('--------------------group_id 00000000', group_id)
+  if(group_id){
+    return request.post(
+      '/connections/list/',
+      {
+        user_id,
+        tab_type,
+        page,
+        group_id
       },
-    },
-  );
+      {
+        headers: {
+          Authorization: `Token ${token}`,
+        },
+      },
+    );
+  } else {
+    return request.post(
+      '/connections/list/',
+      {
+        user_id,
+        tab_type,
+        page,
+      },
+      {
+        headers: {
+          Authorization: `Token ${token}`,
+        },
+      },
+    );
+  }
 }
 
-function sendGetSearchConnectionsList(user_id, tab_type, page, token, term) {
-  return request.post(
-    '/connections/search-user/',
-    {
-      user_id,
-      tab_type,
-      page,
-      term,
-    },
-    {
-      headers: {
-        Authorization: `Token ${token}`,
+function sendGetSearchConnectionsList(user_id, tab_type, page, token, term, group_id) {
+  console.log('--------------------group_id 111111', group_id)
+  if(group_id){
+    return request.post(
+      '/connections/search-user/',
+      {
+        user_id,
+        tab_type,
+        page,
+        term,
+        group_id
       },
-    },
-  );
+      {
+        headers: {
+          Authorization: `Token ${token}`,
+        },
+      },
+    );
+  } else {
+    return request.post(
+      '/connections/search-user/',
+      {
+        user_id,
+        tab_type,
+        page,
+        term,
+      },
+      {
+        headers: {
+          Authorization: `Token ${token}`,
+        },
+      },
+    );
+  }
 }
 
 function sendFollowUser(user_id, token) {
@@ -84,6 +124,21 @@ function sendFollowUser(user_id, token) {
     '/connections/follow/',
     {
       user_id,
+    },
+    {
+      headers: {
+        Authorization: `Token ${token}`,
+      },
+    },
+  );
+}
+
+function sendInviteUserToGroup(user_id, group_id, token) {
+  return request.post(
+    '/groups/invite/',
+    {
+      user_id,
+      group_id
     },
     {
       headers: {
@@ -172,7 +227,7 @@ function* handleGetUserDetails(action) {
 }
 
 function* handleGetFollowersConnectionsList(action) {
-  const {userId, page, token} = action;
+  const {userId, page, token, group_id} = action;
   try {
     const {status, data} = yield call(
       sendGetConnectionsList,
@@ -180,6 +235,7 @@ function* handleGetFollowersConnectionsList(action) {
       'follower',
       page,
       token,
+      group_id
     );
 
     if (status === 200) {
@@ -337,7 +393,7 @@ function* handleUnfollowUser(action) {
 }
 
 function* handleGetSearchFollowersConnectionsList(action) {
-  const {userId, page, token, term} = action;
+  const {userId, page, token, term, group_id} = action;
   try {
     const {status, data} = yield call(
       sendGetSearchConnectionsList,
@@ -346,6 +402,7 @@ function* handleGetSearchFollowersConnectionsList(action) {
       page,
       token,
       term,
+      group_id
     );
 
     if (status === 200) {
@@ -521,6 +578,40 @@ function* handleEditProfile(action) {
   }
 }
 
+function* handleInviteUserToGroup(action) {
+  const {userId, groupId, token} = action;
+  try {
+    const {status, data} = yield call(sendInviteUserToGroup, userId, groupId, token);
+
+    if (status === 200) {
+      yield put({
+        type: INVITE_USER_TO_GROUP_SUCCESS,
+        userId
+      });
+      yield put({
+        type: INVITE_USER_TO_GROUP_ERROR,
+        error: '',
+      });
+      // if (data.origin === 'signup') {
+      //   // you can change the navigate for navigateAndResetStack to go to a protected route
+      //   NavigationService.navigate('Profile');
+      // } else {
+      //   NavigationService.navigate('ResetPassword', {data});
+      // }
+    } else {
+      yield put({
+        type: INVITE_USER_TO_GROUP_ERROR,
+        error: 'Unknown Error',
+      });
+    }
+  } catch (error) {
+    yield put({
+      type: INVITE_USER_TO_GROUP_ERROR,
+      error: 'Something went wrong',
+    });
+  }
+}
+
 export default all([
   takeLatest(PROFILE_USER_DETAIL_REQUEST, handleGetUserDetails),
   takeLatest(
@@ -543,4 +634,5 @@ export default all([
   ),
   takeLatest(CHANGE_PASSWORD_REQUEST, handleChangePassword),
   takeLatest(EDIT_PROFILE_REQUEST, handleEditProfile),
+  takeLatest(INVITE_USER_TO_GROUP_REQUEST, handleInviteUserToGroup),
 ]);

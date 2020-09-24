@@ -67,12 +67,7 @@ class Home extends Component {
       Geolocation.getCurrentPosition(
         position => {
           const location = JSON.stringify(position);
-          console.log('---------------------------location', position)
-          console.log('---------------------------coords', position && position.coords)
-          console.log('---------------------------latitude', position && position.coords && position.coords.latitude)
-          console.log('---------------------------longitude', position && position.coords && position.coords.longitude)
           if(position && position.coords && position.coords.latitude && position.coords.longitude){
-            console.log('---------------------------location1111', position)
             updateCurrentLocation(accessToken, position.coords.latitude, position.coords.longitude);
           }
           this.setState({location});

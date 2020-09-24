@@ -6,11 +6,12 @@ export const userDetails = (userId, token) => ({
   token,
 });
 
-export const followersConnectionsList = (userId, page, token) => ({
+export const followersConnectionsList = (userId, page, token, group_id) => ({
   type: actions.PROFILE_FOLLOWERS_CONNECTIONS_LIST_REQUEST,
   userId,
   page,
   token,
+  group_id
 });
 
 export const followingConnectionsList = (userId, page, token) => ({
@@ -45,12 +46,13 @@ export const unFollowUser = (userId, token, loggedInUser, origin) => ({
   origin,
 });
 
-export const searchFollowersConnectionsList = (userId, page, token, term) => ({
+export const searchFollowersConnectionsList = (userId, page, token, term, group_id) => ({
   type: actions.PROFILE_SEARCH_FOLLOWERS_CONNECTIONS_LIST_REQUEST,
   userId,
   page,
   token,
   term,
+  group_id
 });
 
 export const searchFollowingConnectionsList = (userId, page, token, term) => ({
@@ -73,4 +75,15 @@ export const editProfile = (token, user, userTypes) => ({
   token,
   user,
   userTypes,
+});
+
+export const inviteUserToGroup = (
+  userId,
+  groupId,
+  token
+) => ({
+  type: actions.INVITE_USER_TO_GROUP_REQUEST,
+  userId,
+  groupId,
+  token,
 });

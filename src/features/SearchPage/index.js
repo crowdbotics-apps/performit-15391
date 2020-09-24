@@ -333,7 +333,7 @@ class SearchPage extends Component {
             <View style={styles.followProfileRowContainer}>
               <View style={styles.followProfileRowLeftContainer}>
                 <TouchableOpacity
-                  onPress={() => console.log('-----------go to Group')}
+                  onPress={() => navigation.navigate('GroupsDescriptionPage', {groupId: group && group.id})}
                   style={[styles.profileRowImageContainer]}>
                   <Image
                     style={[styles.profileRowImage]}
