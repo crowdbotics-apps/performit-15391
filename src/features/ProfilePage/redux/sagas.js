@@ -31,7 +31,19 @@ import {
   EDIT_PROFILE_ERROR,
   INVITE_USER_TO_GROUP_REQUEST,
   INVITE_USER_TO_GROUP_SUCCESS,
-  INVITE_USER_TO_GROUP_ERROR
+  INVITE_USER_TO_GROUP_ERROR,
+  GET_NOTIFICATIONS_REQUEST,
+  GET_NOTIFICATIONS_SUCCESS,
+  GET_NOTIFICATIONS_ERROR,
+  READ_NOTIFICATION_REQUEST,
+  READ_NOTIFICATION_SUCCESS,
+  READ_NOTIFICATION_ERROR,
+  ACCEPT_GROUP_JOIN_REQUEST,
+  ACCEPT_GROUP_JOIN_SUCCESS,
+  ACCEPT_GROUP_JOIN_ERROR,
+  ACCEPT_GROUP_INVITE_REQUEST,
+  ACCEPT_GROUP_INVITE_SUCCESS,
+  ACCEPT_GROUP_INVITE_ERROR
 } from './constants';
 import {request} from '../../../utils/http';
 
@@ -183,6 +195,44 @@ function sendEditProfile(data, token) {
     headers: {
       Accept: 'application/json',
       'Content-Type': 'multipart/form-data',
+      Authorization: `Token ${token}`,
+    },
+  });
+}
+
+function sendGetNotifications(token) {
+  console.log('----------------------data 2222');
+  return request.post('/notifications/', {}, {
+    headers: {
+      Accept: 'application/json',
+      'Content-Type': 'multipart/form-data',
+      Authorization: `Token ${token}`,
+    },
+  });
+}
+
+function sendReadNotification(notification_id, token) {
+  console.log('----------------------data 2222');
+  return request.post('/notifications/read/', {notification_id}, {
+    headers: {
+      Authorization: `Token ${token}`,
+    },
+  });
+}
+
+function sendAcceptGroupJoin(request_id, token) {
+  console.log('----------------------data 2222');
+  return request.post('/groups/accept-joining-request/', {request_id}, {
+    headers: {
+      Authorization: `Token ${token}`,
+    },
+  });
+}
+
+function sendAcceptGroupInvite(invite_id, token) {
+  console.log('----------------------data 2222');
+  return request.post('/groups/accept-invite/', {invite_id}, {
+    headers: {
       Authorization: `Token ${token}`,
     },
   });
@@ -612,6 +662,139 @@ function* handleInviteUserToGroup(action) {
   }
 }
 
+function* handleGetNotifications(action) {
+  const {token} = action;
+  try {
+    const {status, data} = yield call(sendGetNotifications, token);
+    console.log('------------------------data notifs 00000', data)
+    if (status === 200) {
+      yield put({
+        type: GET_NOTIFICATIONS_SUCCESS,
+        data
+      });
+      yield put({
+        type: GET_NOTIFICATIONS_ERROR,
+        error: '',
+      });
+      // if (data.origin === 'signup') {
+      //   // you can change the navigate for navigateAndResetStack to go to a protected route
+      //   NavigationService.navigate('Profile');
+      // } else {
+      //   NavigationService.navigate('ResetPassword', {data});
+      // }
+    } else {
+      yield put({
+        type: GET_NOTIFICATIONS_ERROR,
+        error: 'Unknown Error',
+      });
+    }
+  } catch (error) {
+    yield put({
+      type: GET_NOTIFICATIONS_ERROR,
+      error: 'Something went wrong',
+    });
+  }
+}
+
+function* handlReadNotification(action) {
+  const {notification_id, token} = action;
+  try {
+    const {status, data} = yield call(sendReadNotification, notification_id, token);
+    console.log('------------------------data notifs 00000')
+    if (status === 200) {
+      yield put({
+        type: READ_NOTIFICATION_SUCCESS,
+      });
+      yield put({
+        type: READ_NOTIFICATION_ERROR,
+        error: '',
+      });
+      // if (data.origin === 'signup') {
+      //   // you can change the navigate for navigateAndResetStack to go to a protected route
+      //   NavigationService.navigate('Profile');
+      // } else {
+      //   NavigationService.navigate('ResetPassword', {data});
+      // }
+    } else {
+      yield put({
+        type: READ_NOTIFICATION_ERROR,
+        error: 'Unknown Error',
+      });
+    }
+  } catch (error) {
+    yield put({
+      type: READ_NOTIFICATION_ERROR,
+      error: 'Something went wrong',
+    });
+  }
+}
+
+function* handleAcceptGroupJoin(action) {
+  const {request_id, token} = action;
+  try {
+    const {status, data} = yield call(sendAcceptGroupJoin, request_id, token);
+    console.log('------------------------data notifs 00000')
+    if (status === 200) {
+      yield put({
+        type: ACCEPT_GROUP_JOIN_SUCCESS,
+      });
+      yield put({
+        type: ACCEPT_GROUP_JOIN_ERROR,
+        error: '',
+      });
+      // if (data.origin === 'signup') {
+      //   // you can change the navigate for navigateAndResetStack to go to a protected route
+      //   NavigationService.navigate('Profile');
+      // } else {
+      //   NavigationService.navigate('ResetPassword', {data});
+      // }
+    } else {
+      yield put({
+        type: ACCEPT_GROUP_JOIN_ERROR,
+        error: 'Unknown Error',
+      });
+    }
+  } catch (error) {
+    yield put({
+      type: ACCEPT_GROUP_JOIN_ERROR,
+      error: 'Something went wrong',
+    });
+  }
+}
+
+function* handleAcceptGroupInvite(action) {
+  const {invite_id, token} = action;
+  try {
+    const {status, data} = yield call(sendAcceptGroupInvite, invite_id, token);
+    console.log('------------------------data notifs 00000')
+    if (status === 200) {
+      yield put({
+        type: ACCEPT_GROUP_INVITE_SUCCESS,
+      });
+      yield put({
+        type: ACCEPT_GROUP_INVITE_ERROR,
+        error: '',
+      });
+      // if (data.origin === 'signup') {
+      //   // you can change the navigate for navigateAndResetStack to go to a protected route
+      //   NavigationService.navigate('Profile');
+      // } else {
+      //   NavigationService.navigate('ResetPassword', {data});
+      // }
+    } else {
+      yield put({
+        type: ACCEPT_GROUP_INVITE_ERROR,
+        error: 'Unknown Error',
+      });
+    }
+  } catch (error) {
+    yield put({
+      type: ACCEPT_GROUP_INVITE_ERROR,
+      error: 'Something went wrong',
+    });
+  }
+}
+
 export default all([
   takeLatest(PROFILE_USER_DETAIL_REQUEST, handleGetUserDetails),
   takeLatest(
@@ -635,4 +818,8 @@ export default all([
   takeLatest(CHANGE_PASSWORD_REQUEST, handleChangePassword),
   takeLatest(EDIT_PROFILE_REQUEST, handleEditProfile),
   takeLatest(INVITE_USER_TO_GROUP_REQUEST, handleInviteUserToGroup),
+  takeLatest(GET_NOTIFICATIONS_REQUEST, handleGetNotifications),
+  takeLatest(READ_NOTIFICATION_REQUEST, handlReadNotification),
+  takeLatest(ACCEPT_GROUP_JOIN_REQUEST, handleAcceptGroupJoin),
+  takeLatest(ACCEPT_GROUP_INVITE_REQUEST, handleAcceptGroupInvite),
 ]);

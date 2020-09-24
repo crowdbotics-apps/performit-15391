@@ -11,6 +11,8 @@ import {
   Text,
   KeyboardAvoidingView,
 } from 'react-native';
+import moment from 'moment';
+import Toast from 'react-native-simple-toast';
 import {styles} from './styles';
 import * as homeActions from '../HomePage/redux/actions';
 import {connect} from 'react-redux';
@@ -18,12 +20,13 @@ import {scaleModerate} from '../../utils/scale';
 import * as profileActions from '../ProfilePage/redux/actions';
 import {cloneDeep, get} from 'lodash';
 import VideoPlayer from '../components/VideoPlayer';
+import { withNavigationFocus } from "react-navigation";
 
 class MyNotifications extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      isLoading: true,
+      isLoading: false,
       userId: '',
       activeTab: 'following',
       newComment: '',
@@ -43,71 +46,86 @@ class MyNotifications extends Component {
 
   async componentDidMount() {
     // write code here
-    this.setState({
-      isLoading: true,
-    });
-
-    let userId = this.props.navigation.getParam('userId', '');
-    if (!userId) {
-      userId = this.props.user && this.props.user.pk;
-    }
-    const accessToken = this.props.accessToken;
-
     const {
-      actions: {userDetails},
+      actions: {getNotificationsList},
+      accessToken,
     } = this.props;
-    if (userId && accessToken) {
-      await userDetails(userId, accessToken);
+    if (accessToken) {
+      await getNotificationsList(accessToken);
     }
-
-    this.setState({
-      userId,
-    });
   }
 
   async componentDidUpdate(prevProps) {
     // write code here
-    const prevUserId = prevProps.navigation.getParam('userId', '');
-    const userId = this.props.navigation.getParam('userId', '');
-    const accessToken = this.props.accessToken;
-    const {
-      actions: {userDetails},
-    } = this.props;
-    if (prevUserId !== userId) {
-      this.setState({
-        isLoading: true,
-      });
-      await userDetails(userId, accessToken);
-
-      this.setState({
-        isLoading: false,
-        userId,
-      });
-    }
-
-    if (this.props.profile !== prevProps.profile) {
-      let {userId} = this.state;
-      const {profile: allProfiles} = this.props;
-      if (!userId) {
-        userId = this.props.user && this.props.user.pk;
+    if (prevProps.isFocused !== this.props.isFocused) {
+      console.log("--------------did focus")
+      const {
+        actions: {getNotificationsList},
+        accessToken,
+      } = this.props;
+      if (accessToken) {
+        await getNotificationsList(accessToken);
       }
-      const profile = allProfiles && allProfiles[`${userId}`];
-      let postsData = [];
-      postsData = cloneDeep(get(profile, 'posts', []));
-
-      this.setState({
-        postsData,
-      });
     }
   }
 
+  onNotificationClick = async (notification) => {
+     const {
+        actions: {getNotificationsList, readNotification, acceptGroupJoin, acceptGroupInvite},
+        accessToken,
+      } = this.props;
+
+      if (accessToken) {
+        console.log('-----------------------notification && notification.id', notification && notification.id)
+        console.log('-----------------------notification && notification.notification_type', notification && notification.notification_type)
+        console.log('-----------------------notification && notification.request', notification && notification.request)
+        console.log('-----------------------notification && notification.invite', notification && notification.invite)
+        console.log('---------------true or false', notification.notification_type === "Group Joining Request")
+        if(notification && !notification.is_read)
+        await readNotification(notification && notification.id, accessToken);
+        if(notification && notification.notification_type === "Group Joining Request"){
+            console.log('-------------------- 0000000000', notification)
+            if(notification.request){
+              await acceptGroupJoin(notification && notification.request, accessToken);
+              Toast.show('Joining group request accepted');
+            }
+            if(notification.invite){
+              await acceptGroupInvite(notification && notification.invite, accessToken);
+             Toast.show('Inivitation to group accepted');
+            }
+            
+        }
+        await getNotificationsList(accessToken);
+      }
+  }
+
   render() {
-    const {profile: allProfiles, posts, navigation, commentsList} = this.props;
+    const {profile: allProfiles, posts, navigation, commentsList, notificationsLists} = this.props;
     let {postsData, userId} = this.state;
     if (!userId) {
       userId = this.props.user && this.props.user.pk;
     }
     const profile = allProfiles && allProfiles[`${userId}`];
+    let notifications =  []
+    if(notificationsLists && notificationsLists.data && notificationsLists.data.length > 0 )
+      notifications = notificationsLists && notificationsLists.data
+
+    if(notifications && notifications.length > 0 ){
+      notifications.sort((item1, item2) => {
+          const keyA = new Date(item1.created_at),
+            keyB = new Date(item2.created_at);
+          // Compare the 2 dates
+          if (keyA < keyB) {
+            return -1;
+          }
+          if (keyA > keyB) {
+            return 1;
+          }
+          return 0;
+        });
+        notifications.reverse();
+    }
+    console.log('-------------------this.props.notificationsLists', notifications)
 
     return (
       <ScrollView
@@ -119,15 +137,63 @@ class MyNotifications extends Component {
               <Text style={styles.headerText}>Notifications</Text>
             </View>
           </SafeAreaView>
-          {this.state.isLoading ?
-          (  
-            <View style={[styles.emptyNotificationContainer]}>
-              <Image
-                style={[styles.emptyNotificationIcon]}
-                source={require('../../assets/images/empty_notification.png')}
-              />
-            </View>
-          ) : (
+          {!this.state.isLoading && notifications && notifications.length > 0 &&
+            notifications.map(notification => (
+              <TouchableOpacity 
+              onPress={() => this.onNotificationClick(notification)}
+              style={styles.followProfileRowContainer}>
+              <View style={styles.followProfileRowLeftContainer}>
+                <View style={styles.followProfileRowContainer}>
+
+                  <View style={styles.followProfileRowLeftContainer}>
+                    <TouchableOpacity
+                      onPress={() => this.onNotificationClick(notification)}
+                      style={[styles.profileRowImageContainer]}>
+                      <Image
+                        style={[styles.profileRowImage]}
+                        source={{
+                          uri: notification &&
+                           notification.created_by &&
+                          notification.created_by.meta_data &&
+                            notification.created_by.meta_data.profile_pic
+                        }}
+                      />
+                    </TouchableOpacity>
+
+                    <View style={styles.followProfileRowTextContainer}>
+                      <View style={styles.followProfileRowNameContainer}>
+                        <Text style={[styles.followProfileText, notification && notification.is_read && {color: '#989BA5'}]}>
+                          {notification && notification.message}
+                        </Text>
+                      </View>
+                      <View style={styles.followProfileRowRoleContainer}>
+                        <Text style={styles.followProfileSubText}>
+                            {moment(notification && notification.created_at).fromNow()}
+                        </Text>
+                      </View>
+                    </View>
+                  </View>
+
+                  {notification && !notification.is_read && <View style={styles.followProfileRowRightContainer}>
+                    <View style={styles.yellowDot} />
+                  </View>}
+
+                </View>
+              </View>
+            </TouchableOpacity>
+            ))
+          }
+
+          {!this.state.isLoading && (!notifications || (notifications && notifications.length === 0)) &&
+              <View style={[styles.emptyNotificationContainer]}>
+                <Image
+                  style={[styles.emptyNotificationIcon]}
+                  source={require('../../assets/images/empty_notification.png')}
+                />
+              </View>
+          }
+
+          {this.state.isLoading &&
             <View
               style={{
                 flexDirection: 'row',
@@ -138,7 +204,7 @@ class MyNotifications extends Component {
               }}>
               <ActivityIndicator animating />
             </View>
-          )}
+          }
       </ScrollView>
     );
   }
@@ -152,6 +218,10 @@ const mapStateToProps = state => ({
   commentsList: state.Posts.userPostsCommentList,
   user: state.EmailAuth.user,
   accessToken: state.EmailAuth.accessToken,
+  notificationsLists: state.Profile.notificationsLists,
+  readNotificationSuccess: state.Profile.readNotificationSuccess,
+  acceptGroupJoinSuccess: state.Profile.acceptGroupJoinSuccess,
+  acceptGroupInviteSuccess: state.Profile.acceptGroupInviteSuccess,
 });
 
 const mapDispatchToProps = dispatch => ({
@@ -177,6 +247,18 @@ const mapDispatchToProps = dispatch => ({
     addCommentToPost: (postId, comment, accessToken) => {
       dispatch(homeActions.addCommentToPost(postId, comment, accessToken));
     },
+    getNotificationsList: (token) => {
+      dispatch(profileActions.getNotificationsList(token));
+    },
+    readNotification: (notification_id, token) => {
+      dispatch(profileActions.readNotification(notification_id, token));
+    },
+    acceptGroupJoin: (request_id, token) => {
+      dispatch(profileActions.acceptGroupJoin(request_id, token));
+    },
+    acceptGroupInvite: (invite_id, token) => {
+      dispatch(profileActions.acceptGroupInvite(invite_id, token));
+    },
   },
 });
 
@@ -184,7 +266,7 @@ MyNotifications.navigationOptions = {
   header: null,
 };
 
-export default connect(
+export default withNavigationFocus(connect(
   mapStateToProps,
   mapDispatchToProps,
-)(MyNotifications);
+)(MyNotifications));

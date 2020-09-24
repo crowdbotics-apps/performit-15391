@@ -3,6 +3,10 @@ import {get, cloneDeep} from 'lodash';
 
 const initialState = {
   profile: {},
+  notificationsLists: {},
+  readNotificationSuccess: '',
+  acceptGroupJoinSuccess: '',
+  acceptGroupInviteSuccess: '',
   errors: {
     UserDetail: null,
     FollowersConnectionsList: null,
@@ -14,6 +18,10 @@ const initialState = {
     ChangePassword: null,
     EditProfile: null,
     InviteUserToGroup: null,
+    GetNotifications: null,
+    ReadNotifications: null,
+    AcceptGroupJoin: null,
+    AcceptGroupInvite: null
   },
 };
 
@@ -324,6 +332,34 @@ export default (ProfilePageReducer = (state = initialState, action) => {
       return {...state, errors: {InviteUserToGroup: action.error}};
     case actions.INVITE_USER_TO_GROUP_SUCCESS:
       return {...state};
+    case actions.GET_NOTIFICATIONS_ERROR:
+      return {...state, errors: {GetNotifications: action.error}};
+    case actions.GET_NOTIFICATIONS_SUCCESS:
+      return {
+        ...state,
+        notificationsLists: action.data
+      };
+    case actions.READ_NOTIFICATION_ERROR:
+      return {...state, errors: {ReadNotifications: action.error}};
+    case actions.READ_NOTIFICATION_SUCCESS:
+      return {
+        ...state,
+        readNotificationSuccess: 'success'
+      };
+    case actions.ACCEPT_GROUP_JOIN_ERROR:
+      return {...state, errors: {AcceptGroupJoin: action.error}};
+    case actions.ACCEPT_GROUP_JOIN_SUCCESS:
+      return {
+        ...state,
+        acceptGroupJoinSuccess: 'success'
+      };
+    case actions.ACCEPT_GROUP_INVITE_ERROR:
+      return {...state, errors: {AcceptGroupInvite: action.error}};
+    case actions.ACCEPT_GROUP_INVITE_SUCCESS:
+      return {
+        ...state,
+        acceptGroupInviteSuccess: 'success'
+      };
     default:
       return state;
   }

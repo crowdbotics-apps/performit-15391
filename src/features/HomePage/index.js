@@ -61,7 +61,7 @@ class Home extends Component {
     const accessToken = this.props.accessToken;
 
     const {
-      actions: {userDetails, followersConnectionsList, userPosts, updateCurrentLocation},
+      actions: {userDetails, followersConnectionsList, userPosts, updateCurrentLocation, getNotificationsList},
     } = this.props;
     if (userId && accessToken) {
       Geolocation.getCurrentPosition(
@@ -78,6 +78,7 @@ class Home extends Component {
       await userDetails(userId, accessToken);
       await followersConnectionsList(userId, accessToken);
       await userPosts('following', accessToken, userId);
+      await getNotificationsList(accessToken);
     }
 
     const {pk, email} = this.props.user;
@@ -844,7 +845,10 @@ const mapDispatchToProps = dispatch => ({
     },
     updateCurrentLocation: (token, location_lat, location_long) => {
       dispatch(homeActions.updateCurrentLocation(token, location_lat, location_long));
-    }
+    },
+    getNotificationsList: (token) => {
+      dispatch(profileActions.getNotificationsList(token));
+    },
   },
 });
 

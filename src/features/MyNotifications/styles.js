@@ -456,4 +456,94 @@ export const styles = StyleSheet.create({
     width: scaleModerate(300),
     height: scaleModerate(315),
   },
+
+  followProfileRowContainer: {
+    flex: 0,
+    width: scaleModerate(374),
+    height: scaleVertical(42),
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: scaleModerate(20),
+    marginTop: scaleModerate(20),
+  },
+
+  followProfileRowLeftContainer: {
+    flex: 3,
+    height: scaleVertical(42),
+    flexDirection: 'row',
+    justifyContent: 'flex-start',
+    alignItems: 'center',
+  },
+
+  followProfileRowRightContainer: {
+    flex: 1,
+    height: scaleVertical(42),
+    flexDirection: 'row',
+    justifyContent: 'flex-end',
+    alignItems: 'center',
+  },
+
+  profileRowImageContainer: {
+    width: scaleModerate(44),
+    height: scaleModerate(44),
+    borderRadius: scaleModerate(22),
+    borderWidth: scaleModerate(1),
+    borderColor: '#b88746',
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+
+  profileRowImage: {
+    width: scaleModerate(42),
+    height: scaleModerate(42),
+    borderRadius: scaleModerate(21),
+    backgroundColor: '#111111',
+  },
+
+  followProfileRowTextContainer: {
+    minWidth: scaleModerate(141),
+    height: scaleModerate(42),
+    flexDirection: 'column',
+    justifyContent: 'flex-start',
+    alignItems: 'flex-start',
+    marginLeft: scaleModerate(15),
+  },
+
+  followProfileRowNameContainer: {
+    height: scaleModerate(22),
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+
+  followProfileRowRoleContainer: {
+    height: scaleModerate(16),
+    flexDirection: 'row',
+    justifyContent: 'flex-start',
+    alignItems: 'center',
+  },
+
+  followProfileText: {
+    color: '#ffffff',
+    fontSize: scaleModerate(16),
+    fontFamily: 'Nunito-Bold',
+    fontWeight: 'bold',
+    lineHeight: undefined,
+  },
+
+  followProfileSubText: {
+    color: '#989BA5',
+    fontSize: scaleModerate(12),
+    fontFamily: 'Nunito',
+    fontWeight: 'normal',
+  },
+
+  yellowDot: {
+    width: scaleModerate(10),
+    height: scaleModerate(10),
+    borderRadius: scaleModerate(5),
+    backgroundColor: '#B88746',
+  },
 });

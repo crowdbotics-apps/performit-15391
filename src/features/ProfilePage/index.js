@@ -58,12 +58,14 @@ class Profile extends Component {
         userDetails,
         followersConnectionsList,
         followingConnectionsList,
+        getNotificationsList,
       },
     } = this.props;
     if (userId && accessToken) {
       await userDetails(userId, accessToken);
       await followersConnectionsList(userId, accessToken);
       await followingConnectionsList(userId, accessToken);
+      await getNotificationsList(accessToken);
     }
     this.setState({
       isLoading: false,
@@ -547,6 +549,9 @@ const mapDispatchToProps = dispatch => ({
       );
     },
     chatUpdate: chat => dispatch(chatUpdate(chat)),
+    getNotificationsList: (token) => {
+      dispatch(profileActions.getNotificationsList(token));
+    },
   },
 });
 

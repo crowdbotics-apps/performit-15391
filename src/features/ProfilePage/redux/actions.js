@@ -87,3 +87,27 @@ export const inviteUserToGroup = (
   groupId,
   token,
 });
+
+export const getNotificationsList = (token) => ({
+  type: actions.GET_NOTIFICATIONS_REQUEST,
+  token
+});
+
+
+export const readNotification = (notification_id, token) => ({
+  type: actions.READ_NOTIFICATION_REQUEST,
+  notification_id,
+  token
+});
+
+export const acceptGroupJoin = (request_id, token) => ({
+  type: actions.ACCEPT_GROUP_JOIN_REQUEST,
+  request_id,
+  token
+});
+
+export const acceptGroupInvite = (invite_id, token) => ({
+  type: actions.ACCEPT_GROUP_INVITE_REQUEST,
+  invite_id,
+  token
+});
