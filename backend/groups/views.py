@@ -163,7 +163,7 @@ class JoiningRequestView(APIView):
             instance = joining_request.save()
             serializer = JoiningRequestSerializer(instance, many=False)
             msg = "{} Requested to join your group".format(request.user.username)
-            NotificationFunctions.create_notification(user=existing_group.created_by.id, auther=request.user.id, message=msg,post=None, notification_type=Notification.GROUP_JOINING_REQUEST)
+            NotificationFunctions.create_notification(user=existing_group.created_by.id, auther=request.user.id, message=msg,post=None, notification_type=Notification.GROUP_JOINING_REQUEST, request=instance.id)
             return Response({"success": True, "message": "Requested", "data": serializer.data})
         return Response({"success": False, "message": serializer.errors}, status=400)
 
@@ -226,7 +226,7 @@ class Invite(APIView):
             instance = invite.save()
             serializer = InviteUserSerializer(instance, many=False)
             msg = "{} Invited you to join group".format(existing_group.created_by.username)
-            NotificationFunctions.create_notification(user=user.id, auther=request.user.id, message=msg,post=None, notification_type=Notification.GROUP_JOINING_REQUEST)
+            NotificationFunctions.create_notification(user=user.id, auther=request.user.id, message=msg,post=None, notification_type=Notification.GROUP_JOINING_REQUEST,invite=instance.id)
             return Response({"success": True, "message": "Invited", "data": serializer.data})
         return Response({"success": False, "message": invite.errors}, status=400)
 

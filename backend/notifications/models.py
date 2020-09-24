@@ -1,6 +1,7 @@
 from django.db import models
 from django.contrib.auth import get_user_model
 from posts.models import Post
+from groups.models import InviteUser, JoiningRequest
 
 User = get_user_model()
 # Create your models here.
@@ -21,6 +22,8 @@ class Notification(models.Model):
     auther = models.ForeignKey(User, on_delete=models.CASCADE, related_name="notification_auther_set")
     is_read = models.BooleanField(default=False)
     notification_type = models.CharField("Select Type", max_length=30, choices=NOTIFICATION_TYPE_CHOICES, null=False)
+    request = models.ForeignKey(JoiningRequest, on_delete=models.CASCADE, related_name="notification_request_set", null=True, blank=True)
+    invite = models.ForeignKey(InviteUser, on_delete=models.CASCADE, related_name="notification_invite_set", null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
