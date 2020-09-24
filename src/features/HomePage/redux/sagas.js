@@ -24,7 +24,10 @@ import {
   CREATE_POST_ERROR,
   NEARBY_USERS_REQUEST,
   NEARBY_USERS_SUCCESS,
-  NEARBY_USERS_ERROR
+  NEARBY_USERS_ERROR,
+  UPDATE_LOCATION_REQUEST,
+  UPDATE_LOCATION_SUCCESS,
+  UPDATE_LOCATION_ERROR
 } from './constants';
 import {request} from '../../../utils/http';
 import {
@@ -132,6 +135,17 @@ function sendCreatePost(data, token) {
 function sendFindNearbyUsers(token, data) {
   console.log('------------------data90909', data)
   return request.post('/nearby/users/', data, {
+    headers: {
+      Accept: 'application/json',
+      'Content-Type': 'multipart/form-data',
+      Authorization: `Token ${token}`,
+    },
+  });
+}
+
+function sendUpdateUserCurrentLocation(token, data) {
+  console.log('------------------87787', data)
+  return request.post('/nearby/update-current-location/', data, {
     headers: {
       Accept: 'application/json',
       'Content-Type': 'multipart/form-data',
@@ -395,12 +409,17 @@ function* handleFindNearbyUsers(action) {
     console.log('----------------------user_types', user_types)
     console.log('----------------------distance', distance)
     console.log('----------------------term', term)
-    const inputData = {}
-    if(user_types && user_types.length > 0) inputData.user_types = user_types
-    if(distance) inputData.distance = distance
-    if(term) inputData.term = term
-    console.log('----------------------inputData', inputData)
-    const {status, data} = yield call(sendFindNearbyUsers, token, inputData);
+    const formData = new FormData();
+
+    if(user_types && user_types.length > 0) {
+      user_types.forEach(userType => {
+        formData.append('user_types', userType);
+      });
+    }
+    if(distance) formData.append('distance', distance);
+    if(term) formData.append('term', term);
+    console.log('----------------------formData', formData)
+    const {status, data} = yield call(sendFindNearbyUsers, token, formData);
     console.log('----------------------data nearby 000000', data)
 
     if (status === 200) {
@@ -426,6 +445,42 @@ function* handleFindNearbyUsers(action) {
   }
 }
 
+function* handleUpdateUserLocation(action) {
+  const {token, location_lat, location_long} = action;
+  try {
+    console.log('----------------------location_lat', location_lat)
+    console.log('----------------------location_long', location_long)
+    const formData = new FormData();
+
+    if(location_lat) formData.append('location_lat', location_lat);
+    if(location_long) formData.append('location_long', location_long);
+    console.log('----------------------formData', formData)
+    const {status, data} = yield call(sendUpdateUserCurrentLocation, token, formData);
+    console.log('----------------------data nearby 000000', data)
+
+    if (status === 200) {
+      yield put({
+        type: UPDATE_LOCATION_SUCCESS,
+      });
+      yield put({
+        type: UPDATE_LOCATION_SUCCESS,
+        data,
+      });
+    } else {
+      yield put({
+        type: UPDATE_LOCATION_ERROR,
+        error: 'Unknown Error',
+      });
+    }
+  } catch (error) {
+    console.dir(error)
+    yield put({
+      type: UPDATE_LOCATION_ERROR,
+      error: 'Something went wrong',
+    });
+  }
+}
+
 export default all([
   takeLatest(USER_POSTS_REQUEST, handleGetUserPosts),
   takeLatest(USER_POSTS_COMMENTS_REQUEST, handleGetUserPostComments),
@@ -435,4 +490,5 @@ export default all([
   takeLatest(USER_SEARCH_PERFORMIT_REQUEST, handleSearchPerformit),
   takeLatest(CREATE_POST_REQUEST, handleCreatePost),
   takeLatest(NEARBY_USERS_REQUEST, handleFindNearbyUsers),
+  takeLatest(UPDATE_LOCATION_REQUEST, handleUpdateUserLocation),
 ]);

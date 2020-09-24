@@ -16,6 +16,7 @@ const initialState = {
     UserAddCommentToPost: null,
     serchDashBoardError: null,
     CreatePost: null,
+    UpdateLocation: null,
   },
 };
 
@@ -121,6 +122,8 @@ export default (HomePageReducer = (state = initialState, action) => {
         ...state,
         nearbyUsers: action.data,
       };
+    case actions.UPDATE_LOCATION_ERROR:
+      return {...state, errors: {UpdateLocation: action.error}};
     default:
       return state;
   }

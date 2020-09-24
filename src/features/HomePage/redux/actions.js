@@ -55,3 +55,10 @@ export const findNearbyUsers = (token, user_types, distance, term) => ({
   distance,
   term
 });
+
+export const updateCurrentLocation = (token, location_lat, location_long) => ({
+  type: actions.UPDATE_LOCATION_REQUEST,
+  token,
+  location_lat,
+  location_long
+});

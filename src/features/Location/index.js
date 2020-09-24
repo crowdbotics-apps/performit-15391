@@ -228,7 +228,7 @@ class Location extends Component {
       showSuccessModal: false,
       user_types: [],
       distance: 10,
-      term: '',
+      searchTerm: '',
       lat: '',
       lng: '',
       isMale: true,
@@ -251,6 +251,10 @@ class Location extends Component {
     header: null,
   };
 
+  search = {
+    searchTimeOut: null,
+  };
+
   async componentDidMount() {
     // write code here
     const accessToken = this.props.accessToken;
@@ -263,8 +267,63 @@ class Location extends Component {
     }
   }
 
-  async componentDidUpdate(prevProps) {
+  async componentDidUpdate(prevProps, prevState) {
     // write code here
+    if( this.state.isArtistChecked !== prevState.isArtistChecked ||
+        this.state.isSingerChecked !== prevState.isSingerChecked ||
+        this.state.isRapperChecked !== prevState.isRapperChecked ||
+        this.state.isDancerChecked !== prevState.isDancerChecked ||
+        this.state.isProducerChecked !== prevState.isProducerChecked ||
+        this.state.isOtherChecked !== prevState.isOtherChecked
+      ){
+        const {
+          searchTerm,
+          distance,
+          isArtistChecked,
+          isSingerChecked,
+          isRapperChecked,
+          isDancerChecked,
+          isProducerChecked,
+          isOtherChecked,
+        } = this.state;
+        const user_types = []
+        if (isArtistChecked) {
+          user_types.push('Artist');
+        }
+
+        if (isSingerChecked) {
+          user_types.push('DJ');
+        }
+
+        if (isRapperChecked) {
+          user_types.push('Videographer');
+        }
+
+        if (isDancerChecked) {
+          user_types.push('Dancer');
+        }
+
+        if (isProducerChecked) {
+          user_types.push('Producer');
+        }
+
+        if (isOtherChecked) {
+          user_types.push('Engineer');
+        }
+
+        this.setState({
+          user_types
+        })
+
+        const accessToken = this.props.accessToken;
+        const {
+          actions: {findNearbyUsers},
+        } = this.props;
+        if (accessToken) {
+          await findNearbyUsers(accessToken, user_types, distance, searchTerm);
+        }
+
+    }
   }
 
   searchLocation = text => {
@@ -273,18 +332,26 @@ class Location extends Component {
     });
     clearTimeout(this.search.searchTimeOut);
     this.search.searchTimeOut = setTimeout(async () => {
-      const {
-        accessToken,
-        actions: {searchDashboard},
-      } = this.props;
-      await searchDashboard('groups', 1, accessToken, text);
+    const accessToken = this.props.accessToken;
+    const {
+      actions: {findNearbyUsers},
+    } = this.props;
+    if (accessToken) {
+      await findNearbyUsers(accessToken, this.state.user_types, this.state.distance, text);
+    }
     }, 500);
   };
 
   render() {
-  const mytextvar = 'Alexis'
-  const profile = ''
-  console.log('------------------------------------------this.props.nearbyUsers', this.props.nearbyUsers)
+  const userId = this.props.user && this.props.user.pk;
+  const {profile: allProfiles, navigation, nearbyUsers} = this.props;
+  const profile = allProfiles && allProfiles[`${userId}`];
+  let nearbyUsersData =  []
+  if(nearbyUsers && nearbyUsers.data && nearbyUsers.data.length > 0) {
+    nearbyUsersData = nearbyUsers.data
+  }
+  console.log('------------------------------------------nearbyUsersData', nearbyUsersData)
+  console.log('------------------------------------------profile', profile)
     return (
       <ScrollView
         contentContainerStyle={styles.screen}
@@ -314,88 +381,110 @@ class Location extends Component {
             style={styles.map}
             customMapStyle={mapStyle}
             region={{
-              latitude: 37.78825,
-              longitude: -122.4324,
-              latitudeDelta: 0.015,
-              longitudeDelta: 0.0121,
+              latitude: profile && profile.user && profile.user.meta_data && profile.user.meta_data.live_location_lat,
+              longitude: profile && profile.user && profile.user.meta_data && profile.user.meta_data.live_location_long,
+              latitudeDelta: 0.25,
+              longitudeDelta: 0.221,
             }}
           >
+            {nearbyUsersData.map(nearByUser => (
+              <Marker
+                coordinate = {{
+                  latitude: nearByUser.meta_data && nearByUser.meta_data.live_location_lat,
+                  longitude: nearByUser.meta_data && nearByUser.meta_data.live_location_long}}
+              >
+                <View style={{
+                  width: scaleModerate(81),
+                  height: scaleModerate(120),
+                  flexDirection: 'column',
+                  justifyContent: 'flex-start',
+                  alignItems: 'center',
+                }}>
+                  <View style={{
+                    width: scaleModerate(81),
+                    height: scaleModerate(105),
+                    flexDirection: 'column',
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                    backgroundColor: '#111111',
+                  }}>
+                    <TouchableOpacity
+                      onPress={() =>
+                        navigation.navigate('ProfilePage', {
+                          userId: nearByUser.pk,
+                        })
+                      }
+                      style={[styles.profileRowImageContainer]}>
+                      <Image
+                        style={[styles.profileRowImage]}
+                        source={{
+                          uri:
+                            nearByUser.meta_data &&
+                            nearByUser.meta_data.user_details &&
+                            nearByUser.meta_data.user_details.profile_pic
+
+                        }}
+                      />
+                    </TouchableOpacity>
+                    <View style={styles.locationTextContainer}>
+                    {(nearByUser.first_name ||
+                        nearByUser.last_name) ? (
+                        <Text style={styles.headerText}>
+                          { ((`${nearByUser.first_name} ${
+                              nearByUser.last_name
+                            }`).length > 7) ? 
+                          (((`${nearByUser.first_name} ${
+                              nearByUser.last_name
+                            }`).substring(0,7-3)) + '...') : 
+                          `${nearByUser.first_name} ${
+                              nearByUser.last_name
+                            }` }
+                        </Text>
+                      ) : (
+                        <Text style={styles.headerText}>
+                          { ((nearByUser.username).length > 7) ? 
+                          (((nearByUser.username).substring(0,7-3)) + '...') : 
+                          nearByUser.username }
+                        </Text>
+                      )}
+                    </View>
+                  </View>
+
+                  <View style={{
+                    width: scaleModerate(81),
+                    height: scaleModerate(15),
+                    flexDirection: 'row',
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                  }}>
+                    <View style={{
+                      width: 0,
+                      height: 0,
+                      backgroundColor: 'transparent',
+                      borderStyle: 'solid',
+                      borderTopWidth: 15,
+                      borderRightWidth: 8,
+                      borderBottomWidth: 0,
+                      borderLeftWidth: 8,
+                      borderTopColor: '#111111',
+                      borderRightColor: 'transparent',
+                      borderBottomColor: 'transparent',
+                      borderLeftColor: 'transparent',
+                    }} />
+                  </View>
+                </View>
+              </Marker>
+            ))}
+
             <Marker
-              coordinate = {{latitude: 37.78825,longitude: -122.4324}}
+              coordinate = {{
+                latitude: profile && profile.user && profile.user.meta_data && profile.user.meta_data.live_location_lat,
+                longitude: profile && profile.user && profile.user.meta_data && profile.user.meta_data.live_location_long}}
             >
               <View>
                 <Image source={require('../../assets/images/current-location.png')} 
                   style={{width: scaleModerate(70), height: scaleModerate(70)}} 
                 />
-              </View>
-            </Marker>
-
-            <Marker
-              coordinate = {{latitude: 37.78825,longitude: -122.4324}}
-            >
-              <View style={{
-                width: scaleModerate(81),
-                height: scaleModerate(120),
-                flexDirection: 'column',
-                justifyContent: 'flex-start',
-                alignItems: 'center',
-              }}>
-                <View style={{
-                  width: scaleModerate(81),
-                  height: scaleModerate(105),
-                  flexDirection: 'column',
-                  justifyContent: 'center',
-                  alignItems: 'center',
-                  backgroundColor: '#111111',
-                }}>
-                  <TouchableOpacity
-                    onPress={() =>
-                      navigation.navigate('ProfilePage', {
-                        userId: '',
-                      })
-                    }
-                    style={[styles.profileRowImageContainer]}>
-                    <Image
-                      style={[styles.profileRowImage]}
-                      source={{
-                        uri:
-                          profile &&
-                          profile.user_details &&
-                          profile.user_details.profile_pic,
-                      }}
-                    />
-                  </TouchableOpacity>
-                  <View style={styles.locationTextContainer}>
-                    <Text style={styles.headerText}>
-                        { ((mytextvar).length > 7) ? 
-                        (((mytextvar).substring(0,7-3)) + '...') : 
-                        mytextvar }
-                      </Text>
-                  </View>
-                </View>
-
-                <View style={{
-                  width: scaleModerate(81),
-                  height: scaleModerate(15),
-                  flexDirection: 'row',
-                  justifyContent: 'center',
-                  alignItems: 'center',
-                }}>
-                  <View style={{
-                    width: 0,
-                    height: 0,
-                    backgroundColor: 'transparent',
-                    borderStyle: 'solid',
-                    borderTopWidth: 15,
-                    borderRightWidth: 8,
-                    borderBottomWidth: 0,
-                    borderLeftWidth: 8,
-                    borderTopColor: '#111111',
-                    borderRightColor: 'transparent',
-                    borderBottomColor: 'transparent',
-                    borderLeftColor: 'transparent',
-                  }} />
-                </View>
               </View>
             </Marker>
 

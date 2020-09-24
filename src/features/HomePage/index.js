@@ -61,9 +61,25 @@ class Home extends Component {
     const accessToken = this.props.accessToken;
 
     const {
-      actions: {userDetails, followersConnectionsList, userPosts},
+      actions: {userDetails, followersConnectionsList, userPosts, updateCurrentLocation},
     } = this.props;
     if (userId && accessToken) {
+      Geolocation.getCurrentPosition(
+        position => {
+          const location = JSON.stringify(position);
+          console.log('---------------------------location', position)
+          console.log('---------------------------coords', position && position.coords)
+          console.log('---------------------------latitude', position && position.coords && position.coords.latitude)
+          console.log('---------------------------longitude', position && position.coords && position.coords.longitude)
+          if(position && position.coords && position.coords.latitude && position.coords.longitude){
+            console.log('---------------------------location1111', position)
+            updateCurrentLocation(accessToken, position.coords.latitude, position.coords.longitude);
+          }
+          this.setState({location});
+        },
+        error => console.log('Error', JSON.stringify(error)),
+        {enableHighAccuracy: true, timeout: 20000, maximumAge: 1000},
+      );
       await userDetails(userId, accessToken);
       await followersConnectionsList(userId, accessToken);
       await userPosts('following', accessToken, userId);
@@ -71,15 +87,6 @@ class Home extends Component {
 
     const {pk, email} = this.props.user;
     const user = await login(email, pk + 'password' + pk);
-
-    Geolocation.getCurrentPosition(
-      position => {
-        const location = JSON.stringify(position);
-        this.setState({location});
-      },
-      error => console.log('Error', JSON.stringify(error)),
-      {enableHighAccuracy: true, timeout: 20000, maximumAge: 1000},
-    );
 
     this.setState({
       isLoading: false,
@@ -840,6 +847,9 @@ const mapDispatchToProps = dispatch => ({
     addCommentToPost: (postId, comment, accessToken) => {
       dispatch(homeActions.addCommentToPost(postId, comment, accessToken));
     },
+    updateCurrentLocation: (token, location_lat, location_long) => {
+      dispatch(homeActions.updateCurrentLocation(token, location_lat, location_long));
+    }
   },
 });
 
