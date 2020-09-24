@@ -5,8 +5,8 @@ from notifications.models import Notification
 
 class NotificationFunctions:
     @staticmethod
-    def create_notification(user, auther, message, post, notification_type):
-        data = {"user": user, "auther": auther, "message": message, "post": post, "notification_type": notification_type}
+    def create_notification(user, auther, message, post, notification_type,request=None, invite=None):
+        data = {"user": user, "auther": auther, "message": message, "post": post, "notification_type": notification_type, "request": request, "invite": invite}
         notified = Notification.objects.filter(user=user, auther=auther, post=post, notification_type=notification_type)
         if notified.exists():
             notified.delete()
