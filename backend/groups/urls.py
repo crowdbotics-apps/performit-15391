@@ -1,5 +1,5 @@
 from django.urls import path
-from groups.views import Feed, Create, Edit, Delete, CreatePost, JoiningRequestView, AcceptJoiningRequest, Invite, AcceptInvite
+from groups.views import Feed, Create, Edit, Delete, CreatePost, JoiningRequestView, AcceptJoiningRequest, Invite, AcceptInvite, UserGroups
 
 app_name = "groups"
 urlpatterns = [
@@ -12,4 +12,5 @@ urlpatterns = [
     path("accept-joining-request/",AcceptJoiningRequest.as_view(), name="accept-joining-request"),
     path("invite/",Invite.as_view(), name="invite"),
     path("accept-invite/",AcceptInvite.as_view(), name="accept-invite"),
+    path("user-groups/", view=UserGroups.as_view(), name="user-groups")
 ]

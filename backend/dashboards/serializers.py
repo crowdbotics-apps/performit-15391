@@ -29,13 +29,5 @@ class FeedSerializer(serializers.ModelSerializer):
         comments_count = PostComment.objects.filter(post=obj.id).count()
         views_count = PostView.objects.filter(post=obj.id).count()
         counts = {"comments_count": comments_count, "views_count": views_count}
-        joining_access_requested = False
-        joining_access_accepted = False
-        joining_request = JoiningRequest.objects.filter(group=self.context.get('request').data.get('group_id'), user=self.context.get('request').user.id).values()
-        if joining_request.exists():
-            joining_access_requested = True
-            if joining_request[0]['accepted']:
-                joining_access_accepted = True
-        return {"ratings": ratings, "counts": counts, "joining_access_requested": joining_access_requested, 
-        "joining_access_accepted": joining_access_accepted}
+        return {"ratings": ratings, "counts": counts}
 
