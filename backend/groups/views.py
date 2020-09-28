@@ -57,7 +57,7 @@ class Create(APIView):
         group = GroupSerializer(data=data)
         if group.is_valid():
             instance = group.save()
-            serializer = GroupSerializer(instance, many=False)
+            serializer = GroupSerializer(instance, many=False, context={'request': request})
             return Response({"success": True, "message": "Group Created", "data": serializer.data})
         return Response({"success": False, "message": group.errors})
 
@@ -254,3 +254,13 @@ class AcceptInvite(APIView):
         return Response({"success": False, "message": group_member.errors}, status=400)
 
 
+@permission_classes([IsAuthenticated])
+class UserGroups(APIView):
+    def post(self, request):
+        group_owned_qs = Group.objects.filter(created_by=request.user.id).values_list('pk', flat=True)
+        group_joined_qs = GroupMembers.objects.filter(member=request.user.id).values_list('group', flat=True)
+        groups_by_users = list(group_owned_qs) + list(group_joined_qs)
+        unique_ids = list(dict.fromkeys(groups_by_users))
+        groups = Group.objects.filter(pk__in=unique_ids)
+        serializer = GroupSerializer(groups, many=True, context={'request': request})
+        return Response({"success": True, "data": serializer.data})

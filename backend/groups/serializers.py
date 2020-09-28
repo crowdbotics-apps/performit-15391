@@ -24,7 +24,16 @@ class GroupSerializer(serializers.ModelSerializer):
     def get_meta_data(self, obj):
         group_members = GroupMembers.objects.filter(group=obj.id)
         serializer = GroupMemberSerializer(group_members, many=True)
-        return {"group_member_count": group_members.count(), "members": serializer.data}
+        joining_access_requested = False
+        joining_access_accepted = False
+        if self.context.get('request') is not None:
+            joining_request = JoiningRequest.objects.filter(group=self.context.get('request').data.get('group_id'), user=self.context.get('request').user.id).values()
+            if joining_request.exists():
+                joining_access_requested = True
+                if joining_request[0]['accepted']:
+                    joining_access_accepted = True
+        return {"group_member_count": group_members.count(), "members": serializer.data, "joining_access_requested": joining_access_requested, 
+        "joining_access_accepted": joining_access_accepted}
 
 class GroupPostSerializer(serializers.ModelSerializer):
     post_data = PostSerializer(source="post", read_only=True)
