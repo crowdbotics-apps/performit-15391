@@ -438,4 +438,15 @@ export const styles = StyleSheet.create({
     height: scaleModerate(14),
     marginLeft: scaleModerate(10),
   },
+
+  loaderContainer: {
+    position: 'absolute',
+    height: scaleModerate(20),
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
+    left: '25%',
+    top: '50%',
+    backgroundColor: '#111111'
+  }
 });

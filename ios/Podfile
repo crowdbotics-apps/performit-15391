@@ -48,6 +48,7 @@ target 'Performit' do
 
   pod 'react-native-cameraroll', :path => '../node_modules/@react-native-community/cameraroll'
 
+
   pod 'RNShare', :path => '../node_modules/react-native-share'
 
   target 'PerformitTests' do

@@ -10,6 +10,9 @@ import {
   TextInput,
   Text,
   KeyboardAvoidingView,
+  PermissionsAndroid,
+  Alert,
+  Platform
 } from 'react-native';
 import {styles} from './styles';
 import * as homeActions from '../HomePage/redux/actions';
@@ -18,6 +21,10 @@ import {scaleModerate} from '../../utils/scale';
 import * as profileActions from '../ProfilePage/redux/actions';
 import {cloneDeep, get} from 'lodash';
 import VideoPlayer from '../components/VideoPlayer';
+import Toast from 'react-native-simple-toast';
+import Share from 'react-native-share';
+import RNFetchBlob from 'rn-fetch-blob';
+import CameraRoll from '@react-native-community/cameraroll';
 
 class MyPosts extends Component {
   constructor(props) {
@@ -34,6 +41,7 @@ class MyPosts extends Component {
       seekTime: -1,
       showControls: false,
       postsData: [],
+      uploadingStatus: 0
     };
   }
 
@@ -100,6 +108,48 @@ class MyPosts extends Component {
         postsData,
       });
     }
+  }
+
+  hasAndroidPermission = async () => {
+    const permission = PermissionsAndroid.PERMISSIONS.WRITE_EXTERNAL_STORAGE;
+   
+    const hasPermission = await PermissionsAndroid.check(permission);
+    if (hasPermission) {
+      return true;
+    }
+   
+    const status = await PermissionsAndroid.request(permission);
+    return status === 'granted';
+  }
+
+  sharePost = async (video) => {
+    console.log('------------------sare 00000')
+    if (Platform.OS === "android" && !(await this.hasAndroidPermission())) {
+      console.log('------------------sare 22222 ')
+      Toast.show('User permission not granted');
+      return;
+    }
+    this.setState({ uploadingStatus: 0.01 });
+    console.log('------------------sare 3333 ', video && video.content)
+
+    const cache = await RNFetchBlob.config({
+                fileCache: true,
+                appendExt: 'mp4',
+              }).fetch('GET', video.content, {}).progress((received, total) => {
+                    this.setState({ uploadingStatus: (received / total) * 100 })
+                    console.log('Progress', (received / total) * 100);
+                });
+    console.log('------------------cache', cache);
+    const gallery = await CameraRoll.save(cache.path(), 'video');
+    console.log('------------------gallery', gallery)
+    cache.flush();
+    await Share.shareSingle({
+        title: (video && video.caption) ? video.caption : 'Performit Video',
+        type: 'video/mp4',
+        social: Share.Social.INSTAGRAM,
+        url: gallery,
+    });
+    this.setState({ uploadingStatus: 0 })
   }
 
   handleCommentChange = (postId, text) => {
@@ -488,12 +538,14 @@ class MyPosts extends Component {
                           source={require('../../assets/images/comment_icon.png')}
                         />
                       </TouchableOpacity>
-                      <View style={[styles.shareImage]}>
+                      <TouchableOpacity
+                        onPress={() => this.sharePost(postData)}
+                       style={[styles.shareImage]}>
                         <Image
                           style={[styles.shareImage]}
                           source={require('../../assets/images/share_icon.png')}
                         />
-                      </View>
+                      </TouchableOpacity>
                     </View>
                   </View>
 
@@ -612,6 +664,28 @@ class MyPosts extends Component {
             </View>
           )}
         </ScrollView>
+        {this.state.uploadingStatus > 0 && this.state.uploadingStatus < 100  && 
+            <View style={styles.loaderContainer}>
+              <Text
+                style={{
+                  color: '#ffffff',
+                  fontSize: scaleModerate(14),
+                  fontFamily: 'Nunito',
+                  lineHeight: undefined,
+                }}>
+                Downloading file to share
+              </Text>
+              <Text
+                style={{
+                  color: '#ffffff',
+                  fontSize: scaleModerate(14),
+                  fontFamily: 'Nunito',
+                  lineHeight: undefined,
+                }}>
+                {` ${Math.floor(this.state.uploadingStatus)} %`}
+              </Text>
+            </View>
+          }
       </KeyboardAvoidingView>
     );
   }

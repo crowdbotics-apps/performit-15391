@@ -423,4 +423,15 @@ export const styles = StyleSheet.create({
     borderRadius: scaleModerate(10),
     marginRight: scaleVertical(10),
   },
+
+  loaderContainer: {
+    position: 'absolute',
+    height: scaleModerate(20),
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
+    left: '25%',
+    top: '50%',
+    backgroundColor: '#111111'
+  }
 });

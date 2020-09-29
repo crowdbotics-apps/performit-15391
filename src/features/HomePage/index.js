@@ -44,7 +44,8 @@ class Home extends Component {
       seekTime: -1,
       showControls: false,
       postsData: [],
-      location: {}
+      location: {},
+      uploadingStatus: 0
     };
   }
 
@@ -186,16 +187,25 @@ class Home extends Component {
   }
 
   sharePost = async (video) => {
-    if (Platform.OS === "android" && !(await hasAndroidPermission())) {
+    console.log('------------------sare 00000')
+    if (Platform.OS === "android" && !(await this.hasAndroidPermission())) {
+      console.log('------------------sare 22222 ')
       Toast.show('User permission not granted');
       return;
     }
+    this.setState({ uploadingStatus: 0.01 });
+    console.log('------------------sare 3333 ', video && video.content)
 
     const cache = await RNFetchBlob.config({
                 fileCache: true,
                 appendExt: 'mp4',
-              }).fetch('GET', video && video.content, {});
+              }).fetch('GET', video.content, {}).progress((received, total) => {
+                    this.setState({ uploadingStatus: (received / total) * 100 })
+                    console.log('Progress', (received / total) * 100);
+                });
+    console.log('------------------cache', cache);
     const gallery = await CameraRoll.save(cache.path(), 'video');
+    console.log('------------------gallery', gallery)
     cache.flush();
     await Share.shareSingle({
         title: (video && video.caption) ? video.caption : 'Performit Video',
@@ -203,7 +213,7 @@ class Home extends Component {
         social: Share.Social.INSTAGRAM,
         url: gallery,
     });
-
+    this.setState({ uploadingStatus: 0 })
   }
 
   handleCommentChange = (postId, text) => {
@@ -844,6 +854,28 @@ class Home extends Component {
             </View>
           )}
         </ScrollView>
+        {this.state.uploadingStatus > 0 && this.state.uploadingStatus < 100  && 
+            <View style={styles.loaderContainer}>
+              <Text
+                style={{
+                  color: '#ffffff',
+                  fontSize: scaleModerate(14),
+                  fontFamily: 'Nunito',
+                  lineHeight: undefined,
+                }}>
+                Downloading file to share
+              </Text>
+              <Text
+                style={{
+                  color: '#ffffff',
+                  fontSize: scaleModerate(14),
+                  fontFamily: 'Nunito',
+                  lineHeight: undefined,
+                }}>
+                {` ${Math.floor(this.state.uploadingStatus)} %`}
+              </Text>
+            </View>
+          }
       </KeyboardAvoidingView>
     );
   }
