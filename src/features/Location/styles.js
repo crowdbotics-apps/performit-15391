@@ -417,7 +417,8 @@ export const styles = StyleSheet.create({
    width: '100%',
    justifyContent: 'flex-end',
    alignItems: 'center',
-   marginTop: scaleModerate(80)
+   marginTop: scaleModerate(80),
+   backgroundColor: '#111111'
  },
  map: {
    ...StyleSheet.absoluteFillObject,
@@ -446,5 +447,16 @@ export const styles = StyleSheet.create({
     height: scaleModerate(48),
     borderRadius: scaleModerate(24),
     backgroundColor: '#111111',
+  },
+
+  loaderContainer: {
+    position: 'absolute',
+    width: scaleModerate(20),
+    height: scaleModerate(20),
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
+    left: '50%',
+    top: '50%',
   },
 });

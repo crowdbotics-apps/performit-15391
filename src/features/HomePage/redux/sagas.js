@@ -27,7 +27,9 @@ import {
   NEARBY_USERS_ERROR,
   UPDATE_LOCATION_REQUEST,
   UPDATE_LOCATION_SUCCESS,
-  UPDATE_LOCATION_ERROR
+  UPDATE_LOCATION_ERROR,
+  NEARBY_USERS_LOADING,
+  SEARCH_DAHSBOARD_LOADING,
 } from './constants';
 import {request} from '../../../utils/http';
 import {
@@ -334,6 +336,9 @@ function* handleAddPostComment(action) {
 }
 
 function* handleSearchPerformit(action) {
+  yield put({
+    type: SEARCH_DAHSBOARD_LOADING,
+  });
   const {tab, token, term} = action;
   try {
     const {status, data} = yield call(sendSearchDashBoard, tab, term, token);
@@ -412,6 +417,11 @@ function* handleCreatePost(action) {
 }
 
 function* handleFindNearbyUsers(action) {
+  
+  yield put({
+    type: NEARBY_USERS_LOADING,
+  });
+
   const {token, user_types, distance, term} = action;
   try {
     const formData = new FormData();

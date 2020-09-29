@@ -25,6 +25,7 @@ export const styles = StyleSheet.create({
   headerTextContainer: {
     flex: 7,
     marginLeft: scaleModerate(10),
+    marginTop: scaleModerate(15),
   },
 
   headerText: {
@@ -42,7 +43,7 @@ export const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'flex-start',
     alignItems: 'center',
-  },
+    marginTop: scaleModerate(15)  },
 
   inputDrawer: {
     flex: 1,

@@ -259,4 +259,15 @@ export const styles = StyleSheet.create({
   hashTagImage: {
 
   },
+
+  loaderContainer: {
+    position: 'absolute',
+    width: scaleModerate(20),
+    height: scaleModerate(20),
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
+    left: '50%',
+    top: '50%',
+  },
 });

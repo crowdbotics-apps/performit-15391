@@ -49,6 +49,17 @@ class SearchPage extends Component {
 
   async componentDidUpdate(prevProps) {
     // write code here
+    if(this.props.isSearchDashboardLoading !== prevProps.isSearchDashboardLoading){
+      if(this.props.isSearchDashboardLoading){
+        this.setState({
+          isLoading: true
+        })
+      } else {
+        this.setState({
+          isLoading: false
+        })
+      }
+    }
   }
 
   switchTab = tab => {
@@ -412,6 +423,11 @@ class SearchPage extends Component {
         ) : (
           <></>
         )}
+        {!!this.state.isLoading && 
+          <View style={styles.loaderContainer}>
+            <ActivityIndicator animating />
+          </View>
+        }
       </ScrollView>
     );
   }
@@ -427,6 +443,7 @@ const mapStateToProps = state => ({
   searchGroupsList: state.Posts.searchGroupsList,
   searchHashTagsList: state.Posts.searchHashTagsList,
   accessToken: state.EmailAuth.accessToken,
+  isSearchDashboardLoading: state.Posts.isSearchDashboardLoading,
 });
 
 const mapDispatchToProps = dispatch => ({

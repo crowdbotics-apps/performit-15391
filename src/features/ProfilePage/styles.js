@@ -231,7 +231,7 @@ export const styles = StyleSheet.create({
     height: scaleModerate(22),
     width: scaleModerate(193),
     flexDirection: 'row',
-    justifyContent: 'space-between',
+    justifyContent: 'center',
     alignItems: 'center',
     margin: scaleModerate(25),
   },
@@ -239,6 +239,8 @@ export const styles = StyleSheet.create({
   singleSocialMediaContainer: {
     width: scaleModerate(10),
     height: scaleModerate(22),
+    marginRight: scaleModerate(40),
+    marginLeft: scaleModerate(40),
   },
 
   facebookIcon: {

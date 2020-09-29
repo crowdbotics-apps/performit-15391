@@ -324,6 +324,18 @@ class Location extends Component {
         }
 
     }
+
+    if(this.props.isNearbyUsersLoading !== prevProps.isNearbyUsersLoading){
+      if(this.props.isNearbyUsersLoading){
+        this.setState({
+          isLoading: true
+        })
+      } else {
+        this.setState({
+          isLoading: false
+        })
+      }
+    }
   }
 
   searchLocation = text => {
@@ -350,8 +362,7 @@ class Location extends Component {
   if(nearbyUsers && nearbyUsers.data && nearbyUsers.data.length > 0) {
     nearbyUsersData = nearbyUsers.data
   }
-  console.log('------------------------------------------nearbyUsersData', nearbyUsersData)
-  console.log('------------------------------------------profile', profile)
+
     return (
       <ScrollView
         contentContainerStyle={styles.screen}
@@ -381,17 +392,18 @@ class Location extends Component {
             style={styles.map}
             customMapStyle={mapStyle}
             region={{
-              latitude: profile && profile.user && profile.user.meta_data && profile.user.meta_data.live_location_lat,
-              longitude: profile && profile.user && profile.user.meta_data && profile.user.meta_data.live_location_long,
+              latitude: (profile && profile.user && profile.user.meta_data && profile.user.meta_data.live_location_lat) ? profile.user.meta_data.live_location_lat : 0,
+              longitude: (profile && profile.user && profile.user.meta_data && profile.user.meta_data.live_location_long) ? profile.user.meta_data.live_location_long : 0,
               latitudeDelta: 0.25,
               longitudeDelta: 0.221,
             }}
           >
-            {nearbyUsersData.map(nearByUser => (
+            {nearbyUsersData && nearbyUsersData.length > 0 && nearbyUsersData.map(nearByUser => (
               <Marker
                 coordinate = {{
                   latitude: nearByUser.meta_data && nearByUser.meta_data.live_location_lat,
                   longitude: nearByUser.meta_data && nearByUser.meta_data.live_location_long}}
+                trackViewChanges={ false }
               >
                 <View style={{
                   width: scaleModerate(81),
@@ -477,9 +489,10 @@ class Location extends Component {
             ))}
 
             <Marker
+              trackViewChanges={ false }
               coordinate = {{
-                latitude: profile && profile.user && profile.user.meta_data && profile.user.meta_data.live_location_lat,
-                longitude: profile && profile.user && profile.user.meta_data && profile.user.meta_data.live_location_long}}
+                latitude: (profile && profile.user && profile.user.meta_data && profile.user.meta_data.live_location_lat) ? profile.user.meta_data.live_location_lat : 0,
+                longitude: (profile && profile.user && profile.user.meta_data && profile.user.meta_data.live_location_long) ? profile.user.meta_data.live_location_long : 0}}
             >
               <View>
                 <Image source={require('../../assets/images/current-location.png')} 
@@ -494,7 +507,7 @@ class Location extends Component {
         <View style={styles.searchButtonContainer}>
           <TouchableOpacity
             style={[styles.searchIconContainer]}
-            onPress={() => console.log('-------search')}>
+            onPress={() => this.searchLocation(this.state.searchTerm)}>
             <View style={[styles.searchIcon]}>
               <Image
                 style={[styles.searchIcon]}
@@ -515,6 +528,11 @@ class Location extends Component {
           </View>
         </View>
 
+        {!!this.state.isLoading && 
+          <View style={styles.loaderContainer}>
+            <ActivityIndicator animating />
+          </View>
+        }
         {this.state.showFilters && <View style={styles.userTypeParentBodyContainer}>
           <View
             style={[
@@ -629,6 +647,7 @@ const mapStateToProps = state => ({
   editProfileErrors: state.Profile.errors.ChangePassword,
   editProfileSuccess: state.Profile.editProfileSuccess,
   nearbyUsers: state.Posts.nearbyUsers,
+  isNearbyUsersLoading: state.Posts.isNearbyUsersLoading,
 });
 
 const mapDispatchToProps = dispatch => ({

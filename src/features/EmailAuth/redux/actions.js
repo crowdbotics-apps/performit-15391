@@ -10,8 +10,8 @@ export const login = user => ({
   user,
 });
 
-export const logout = _ => ({
-  type: actions.EMAIL_AUTH_LOGOUT,
+export const logout = () => ({
+  type: actions.EMAIL_AUTH_LOGOUT_REQUEST,
 });
 
 // export const resetPassword = email => ({

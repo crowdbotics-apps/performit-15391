@@ -24,6 +24,9 @@ import {
   EMAIL_AUTH_CONFIRM_CODE_ERROR,
   EMAIL_AUTH_RESEND_CODE_SUCCESS,
   EMAIL_AUTH_RESEND_CODE_ERROR,
+  EMAIL_AUTH_LOGOUT_REQUEST,
+  EMAIL_AUTH_LOGOUT_SUCCESS,
+  EMAIL_AUTH_LOGOUT_ERROR
 } from './constants';
 import {request} from '../../../utils/http';
 
@@ -337,6 +340,16 @@ function* handleResendCode(action) {
   }
 }
 
+function* handleLogout(action) {
+  try {
+    yield put({
+        type: EMAIL_AUTH_LOGOUT_SUCCESS,
+      });
+  } catch (error) {
+    //do nothing
+  }
+}
+
 export default all([
   takeLatest(EMAIL_AUTH_LOGIN_REQUEST, handleLogin),
   takeLatest(EMAIL_AUTH_SIGNUP_REQUEST, handleSignUp),
@@ -345,4 +358,5 @@ export default all([
   takeLatest(EMAIL_AUTH_RESET_PASSWORD_REQUEST, handleResetPassword),
   takeLatest(EMAIL_AUTH_CONFIRM_CODE_REQUEST, handleConfirmCode),
   takeLatest(EMAIL_AUTH_RESEND_CODE_REQUEST, handleResendCode),
+  takeLatest(EMAIL_AUTH_LOGOUT_REQUEST, handleLogout),
 ]);

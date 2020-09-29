@@ -4,8 +4,11 @@ import {
   createAppContainer,
   StackActions,
 } from 'react-navigation';
+import {connect} from 'react-redux';
+import {get} from 'lodash';
 import {createStackNavigator} from 'react-navigation-stack';
 import {createBottomTabNavigator} from 'react-navigation-tabs';
+import * as NavigationService from '../navigator/NavigationService';
 import {
   View,
   Image,
@@ -110,7 +113,9 @@ const EmailAuthStackNavigator = createStackNavigator(
   },
 );
 
-const HomeAuthStackNavigator = createStackNavigator(
+
+const HomeAuthStackNavigator = (isLoggedIn = false) => {
+  return createStackNavigator(
   {
     ...AppNavigator,
     HomePage: {
@@ -142,9 +147,9 @@ const HomeAuthStackNavigator = createStackNavigator(
     },
   },
   {
-    initialRouteName: 'EmailAuth',
+    initialRouteName: isLoggedIn ?  'HomePage' : 'EmailAuth',
   },
-);
+)};
 
 const commonNavigator = {
   ProfilePage: {
@@ -335,13 +340,14 @@ const LocationNavigator = createStackNavigator(
   },
 );
 
-const LoggedInBottomTabNavigator = createBottomTabNavigator(
+const LoggedInBottomTabNavigator = (isLoggedIn = false) => {
+  return createBottomTabNavigator(
   {
     Home: {
-      screen: HomeAuthStackNavigator,
+      screen: HomeAuthStackNavigator(isLoggedIn),
       navigationOptions: ({navigation}) => {
         return {
-          tabBarVisible: navigation.state.index === 1 ? true : false,
+          tabBarVisible: isLoggedIn ? true : false,
           tabBarIcon: ({focused}) => (
             <Image
               source={require('../assets/images/home_small.png')}
@@ -421,8 +427,38 @@ const LoggedInBottomTabNavigator = createBottomTabNavigator(
       showLabel: false,
     },
   },
-);
+)};
 
-const AppContainer = createAppContainer(LoggedInBottomTabNavigator);
+// const AppContainer = createAppContainer(LoggedInBottomTabNavigator);
 
-export default AppContainer;
+class Routes extends React.Component {
+  componentDidMount() {
+    // messaging().onMessage(message => {
+    // // Alert.alert(message);
+    // });
+    NavigationService.setNavigator(this.navigator);
+  }
+
+  shouldComponentUpdate(nextProps) {
+    if (nextProps.token && !this.props.token) {
+      return true;
+    }
+
+    if (!nextProps.token && this.props.token) {
+      return true;
+    }
+    return false;
+  }
+
+  render() {
+    const AppContainer = createAppContainer(LoggedInBottomTabNavigator(!!this.props.token));
+    return (
+        <AppContainer ref={nav => { this.navigator = nav;}}>
+        </AppContainer>
+    );
+  }
+}
+
+export default connect(state => ({
+  token: get(state, 'EmailAuth.accessToken', false),
+}))(Routes);

@@ -31,7 +31,7 @@ export default (EmailAuthReducer = (state = initialState, action) => {
       return {...state, user: action.user};
     case actions.EMAIL_AUTH_SIGNUP_ERROR:
       return {...state, errors: {SignUp: action.error}};
-    case actions.EMAIL_AUTH_LOGOUT:
+    case actions.EMAIL_AUTH_LOGOUT_SUCCESS:
       return initialState;
     default:
       return state;

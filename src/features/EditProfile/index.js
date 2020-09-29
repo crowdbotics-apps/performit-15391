@@ -839,30 +839,6 @@ class EditProfile extends Component {
             </View>
           </View>
         </TouchableOpacity>
-
-        /*<TouchableOpacity
-          onPress={() => this.youtubeSignIn()}
-          style={styles.socialConnectEditProfileContainer}>
-          <View style={styles.socialConnectEditProfileLeftContainer}>
-            <View style={styles.singleSocialMediaContainer}>
-              <Image
-                style={[styles.youtubeIcon]}
-                source={require('../../assets/images/youtube.png')}
-              />
-            </View>
-            <Text style={styles.socialMediaText}>Connect to Youtube</Text>
-          </View>
-
-          <View style={styles.socialConnectEditProfileRightContainer}>
-            <View style={styles.rightIconContainer}>
-              <Image
-                style={[styles.rightIcon]}
-                source={require('../../assets/images/right_arrow.png')}
-              />
-            </View>
-          </View>
-        </TouchableOpacity>*/
-
         <View style={{height: scaleModerate(40)}} />
 
         <InstagramLogin

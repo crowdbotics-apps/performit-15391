@@ -32,7 +32,7 @@ class ConfirmCode extends Component {
       error: '',
       showError: true,
       type: '',
-      origin: '',
+      origin: ''
     };
 
     this.submitVerifyCode = this.submitVerifyCode.bind(this);

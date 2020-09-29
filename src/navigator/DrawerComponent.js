@@ -15,6 +15,9 @@ import {styles} from '../features/ProfilePage/styles';
 import {withNavigation} from 'react-navigation';
 import {scaleModerate} from '../utils/scale';
 import IconFA5 from 'react-native-vector-icons/FontAwesome5';
+import * as emailAuthActions from '../features/EmailAuth/redux/actions';
+
+const screenSize = Dimensions.get('window');
 
 class DrawerComponent extends Component {
   constructor(props) {
@@ -23,13 +26,13 @@ class DrawerComponent extends Component {
   }
 
   render() {
-    const {navigation, user} = this.props;
+    const {navigation, user, actions: {logout}} = this.props;
 
     return (
       <ScrollView
         contentContainerStyle={{
           flex: 0,
-          height: '90%',
+          height: '100%',
           flexDirection: 'column',
           justifyContent: 'flex-start',
           alignItems: 'flex-start',
@@ -39,7 +42,7 @@ class DrawerComponent extends Component {
         <View
           style={{
             width: '100%',
-            height: '100%',
+            height: '90%',
             flexDirection: 'column',
             justifyContent: 'space-between',
             alignItems: 'flex-start',
@@ -125,6 +128,7 @@ class DrawerComponent extends Component {
           <TouchableOpacity
             onPress={() => {
               navigation.toggleDrawer();
+              logout();
               navigation.navigate('SignIn');
             }}
             style={{
@@ -155,7 +159,13 @@ const mapStateToProps = state => ({
   profile: state.Profile.profile,
 });
 
-const mapDispatchToProps = dispatch => ({});
+const mapDispatchToProps = dispatch => ({
+  actions: {
+    logout: () => {
+      dispatch(emailAuthActions.logout());
+    },
+  },
+});
 
 DrawerComponent.navigationOptions = {
   header: null,

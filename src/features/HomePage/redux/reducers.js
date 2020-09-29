@@ -9,6 +9,8 @@ const initialState = {
   searchHashTagsList: [],
   nearbyUsers: [],
   searchDashBoardSuccess: false,
+  isNearbyUsersLoading: false,
+  isSearchDashboardLoading: false,
   errors: {
     UserPosts: null,
     UserPostsCommentList: null,
@@ -83,29 +85,34 @@ export default (HomePageReducer = (state = initialState, action) => {
       if (action.tab === 'top') {
         return {
           ...state,
+          isSearchDashboardLoading: false,
           searchDashBoardSuccess: true,
           searchTopAccountsList: action.data,
         };
       } else if (action.tab === 'accounts') {
         return {
           ...state,
+          isSearchDashboardLoading: false,
           searchDashBoardSuccess: true,
           searchAccountsList: action.data,
         };
       } else if (action.tab === 'groups') {
         return {
           ...state,
+          isSearchDashboardLoading: false,
           searchDashBoardSuccess: true,
           searchGroupsList: action.data,
         };
       } else if (action.tab === 'hashtags') {
         return {
           ...state,
+          isSearchDashboardLoading: false,
           searchDashBoardSuccess: true,
           searchHashTagsList: action.data,
         };
       } else {
         return {
+          isSearchDashboardLoading: false,
           ...state,
         };
       }
@@ -113,6 +120,7 @@ export default (HomePageReducer = (state = initialState, action) => {
       return {
         ...state,
         searchDashBoardSuccess: false,
+        isSearchDashboardLoading: false,
         errors: {serchDashBoardError: action.error},
       };
     case actions.CREATE_POST_ERROR:
@@ -120,10 +128,23 @@ export default (HomePageReducer = (state = initialState, action) => {
     case actions.NEARBY_USERS_SUCCESS:
       return {
         ...state,
+        isNearbyUsersLoading: false,
         nearbyUsers: action.data,
       };
     case actions.UPDATE_LOCATION_ERROR:
-      return {...state, errors: {UpdateLocation: action.error}};
+      return {...state, 
+        isNearbyUsersLoading: false,
+        errors: {UpdateLocation: action.error}};
+    case actions.NEARBY_USERS_LOADING:
+      return {
+        ...state,
+        isNearbyUsersLoading: true,
+      }
+    case actions.SEARCH_DAHSBOARD_LOADING:
+      return {
+        ...state,
+        isSearchDashboardLoading: true,
+      }
     default:
       return state;
   }

@@ -62,7 +62,6 @@ function sendUserDetails(user_id, token) {
 }
 
 function sendGetConnectionsList(user_id, tab_type, page, token, group_id) {
-  console.log('--------------------group_id 00000000', group_id)
   if(group_id){
     return request.post(
       '/connections/list/',
@@ -96,7 +95,6 @@ function sendGetConnectionsList(user_id, tab_type, page, token, group_id) {
 }
 
 function sendGetSearchConnectionsList(user_id, tab_type, page, token, term, group_id) {
-  console.log('--------------------group_id 111111', group_id)
   if(group_id){
     return request.post(
       '/connections/search-user/',
@@ -190,7 +188,6 @@ function sendChangePassword(token, current_password, password) {
 }
 
 function sendEditProfile(data, token) {
-  console.log('----------------------data 2222', data);
   return request.post('/edit-profile/', data, {
     headers: {
       Accept: 'application/json',
@@ -201,7 +198,6 @@ function sendEditProfile(data, token) {
 }
 
 function sendGetNotifications(token) {
-  console.log('----------------------data 2222');
   return request.post('/notifications/', {}, {
     headers: {
       Accept: 'application/json',
@@ -212,7 +208,6 @@ function sendGetNotifications(token) {
 }
 
 function sendReadNotification(notification_id, token) {
-  console.log('----------------------data 2222');
   return request.post('/notifications/read/', {notification_id}, {
     headers: {
       Authorization: `Token ${token}`,
@@ -221,7 +216,6 @@ function sendReadNotification(notification_id, token) {
 }
 
 function sendAcceptGroupJoin(request_id, token) {
-  console.log('----------------------data 2222');
   return request.post('/groups/accept-joining-request/', {request_id}, {
     headers: {
       Authorization: `Token ${token}`,
@@ -230,7 +224,6 @@ function sendAcceptGroupJoin(request_id, token) {
 }
 
 function sendAcceptGroupInvite(invite_id, token) {
-  console.log('----------------------data 2222');
   return request.post('/groups/accept-invite/', {invite_id}, {
     headers: {
       Authorization: `Token ${token}`,
@@ -242,7 +235,6 @@ function* handleGetUserDetails(action) {
   const {userId, token} = action;
   try {
     const {status, data} = yield call(sendUserDetails, userId, token);
-    console.log('-----------------data 0000-----0000000', data)
     if (status === 200) {
       yield put({
         type: PROFILE_USER_DETAIL_SUCCESS,
@@ -589,7 +581,6 @@ function* handleEditProfile(action) {
       userTypes.forEach(userType => {
         formData.append('user_types', userType);
       });
-    console.log('----------------------formData', formData);
     const {status, data, success} = yield call(
       sendEditProfile,
       formData,
@@ -666,7 +657,6 @@ function* handleGetNotifications(action) {
   const {token} = action;
   try {
     const {status, data} = yield call(sendGetNotifications, token);
-    console.log('------------------------data notifs 00000', data)
     if (status === 200) {
       yield put({
         type: GET_NOTIFICATIONS_SUCCESS,
@@ -700,7 +690,6 @@ function* handlReadNotification(action) {
   const {notification_id, token} = action;
   try {
     const {status, data} = yield call(sendReadNotification, notification_id, token);
-    console.log('------------------------data notifs 00000')
     if (status === 200) {
       yield put({
         type: READ_NOTIFICATION_SUCCESS,
@@ -733,7 +722,6 @@ function* handleAcceptGroupJoin(action) {
   const {request_id, token} = action;
   try {
     const {status, data} = yield call(sendAcceptGroupJoin, request_id, token);
-    console.log('------------------------data notifs 00000')
     if (status === 200) {
       yield put({
         type: ACCEPT_GROUP_JOIN_SUCCESS,
@@ -766,7 +754,6 @@ function* handleAcceptGroupInvite(action) {
   const {invite_id, token} = action;
   try {
     const {status, data} = yield call(sendAcceptGroupInvite, invite_id, token);
-    console.log('------------------------data notifs 00000')
     if (status === 200) {
       yield put({
         type: ACCEPT_GROUP_INVITE_SUCCESS,

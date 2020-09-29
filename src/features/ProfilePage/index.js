@@ -424,14 +424,6 @@ class Profile extends Component {
                     source={require('../../assets/images/instagram.png')}
                   />
                 </TouchableOpacity>
-                <TouchableOpacity
-                  style={styles.singleSocialMediaContainer}
-                  onPress={() => this.showAccountNotConnected('Youtube')}>
-                  <Image
-                    style={[styles.youtubeIcon]}
-                    source={require('../../assets/images/youtube.png')}
-                  />
-                </TouchableOpacity>
               </View>
 
               {profile.posts && !!profile.posts.length && (
