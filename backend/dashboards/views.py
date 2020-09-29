@@ -25,7 +25,7 @@ class Feed(APIView):
             # user_ids to whome the logged in user is following.
             users_following = UserRelationship.objects.filter(follower=request.user.id)\
                 .values_list('following', flat=True)
-            posts = Post.objects.filter(user__in=users_following).order_by('created_at')
+            posts = Post.objects.filter(user__in=users_following).order_by('-created_at')
             try:
                 paginated_data = Paginator(posts, size)
             except (EmptyPage, InvalidPage):
@@ -38,7 +38,7 @@ class Feed(APIView):
             # posts with maximum views
             post_ids = PostView.objects.all().values('post').annotate(total=Count('viewer')).order_by('-total')\
                 .values_list('post', flat=True)
-            posts = Post.objects.filter(pk__in=post_ids).order_by('created_at')
+            posts = Post.objects.filter(pk__in=post_ids).order_by('-created_at')
             try:
                 paginated_data = Paginator(posts, size)
             except (EmptyPage, InvalidPage):

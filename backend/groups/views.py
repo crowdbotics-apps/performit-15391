@@ -40,7 +40,7 @@ class Feed(APIView):
         except (EmptyPage, InvalidPage):
             return Response({"success": False, "message": "Empty Page"}, status=400)
         feed_serializer = FeedSerializer(paginated_data.page(page), many=True, context={'request': request})
-        group_serializer = GroupSerializer(existing_group, many=False)
+        group_serializer = GroupSerializer(existing_group, many=False,  context={'request': request})
         return Response({"data": feed_serializer.data, "total": paginated_data.count,
                          "pages": paginated_data.num_pages, "current_page": int(page), "group": group_serializer.data})
 
@@ -261,6 +261,6 @@ class UserGroups(APIView):
         group_joined_qs = GroupMembers.objects.filter(member=request.user.id).values_list('group', flat=True)
         groups_by_users = list(group_owned_qs) + list(group_joined_qs)
         unique_ids = list(dict.fromkeys(groups_by_users))
-        groups = Group.objects.filter(pk__in=unique_ids)
+        groups = Group.objects.filter(pk__in=unique_ids).order_by('-created_at')
         serializer = GroupSerializer(groups, many=True, context={'request': request})
         return Response({"success": True, "data": serializer.data})
