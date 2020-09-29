@@ -431,7 +431,7 @@ class Profile extends Component {
                   {profile.posts.map(videoData => (
                     <TouchableOpacity
                       onPress={() => {
-                        navigation.navigate('MyPosts', {userId: user.pk});
+                        navigation.navigate('MyPosts', {userId: user.pk, postId: videoData.id});
                       }}
                       style={styles.profileSingleImageConatiner}>
                       <VideoPlayer
@@ -463,7 +463,7 @@ class Profile extends Component {
                           console.log('------pause');
                         }}
                         onPlay={() => {
-                          navigation.navigate('MyPosts', {userId: user.pk});
+                          navigation.navigate('MyPosts', {userId: user.pk, postId: videoData.id});
                         }}
                         onLoad={fields => {
                           this.setState({
@@ -472,7 +472,7 @@ class Profile extends Component {
                           });
                         }}
                         showControls={value => {
-                          navigation.navigate('MyPosts', {userId: user.pk});
+                          navigation.navigate('MyPosts', {userId: user.pk, postId: videoData.id});
                         }}
                       />
                     </TouchableOpacity>

@@ -41,7 +41,8 @@ class MyPosts extends Component {
       seekTime: -1,
       showControls: false,
       postsData: [],
-      uploadingStatus: 0
+      uploadingStatus: 0, 
+      postId: ''
     };
   }
 
@@ -56,6 +57,7 @@ class MyPosts extends Component {
     });
 
     let userId = this.props.navigation.getParam('userId', '');
+    let postId = this.props.navigation.getParam('postId', '');
     if (!userId) {
       userId = this.props.user && this.props.user.pk;
     }
@@ -71,6 +73,22 @@ class MyPosts extends Component {
     this.setState({
       isLoading: false,
       userId,
+      postId
+    }, () => {
+      if(this.state.postsData && postId){
+        console.log('-------------------postsData', this.state.postsData)
+        console.log('-------------------postId', postId)
+        let index = 0 
+        this.state.postsData && this.state.postsData.length > 0 && this.state.postsData.forEach((elem,i) => {
+          if(elem.id === postId){
+            index = i
+          }
+        })
+        let yPos = scaleModerate(index * 659);
+        console.log('-------------------yPos', yPos)
+        console.log('-------------------this.scroller', this.scroller)
+        this.scroller && this.scroller.scrollTo({x: 0, y: yPos, animated: true})
+      }
     });
   }
 
@@ -78,6 +96,9 @@ class MyPosts extends Component {
     // write code here
     const prevUserId = prevProps.navigation.getParam('userId', '');
     const userId = this.props.navigation.getParam('userId', '');
+    const prevPostId = prevProps.navigation.getParam('postId', '');
+    const postId = this.props.navigation.getParam('postId', '');
+    
     const accessToken = this.props.accessToken;
     const {
       actions: {userDetails},
@@ -93,6 +114,27 @@ class MyPosts extends Component {
         userId,
       });
     }
+
+    if (prevPostId !== postId) {
+      this.setState({
+        postId,
+      });
+      if(this.state.postsData && postId){
+        console.log('-------------------postsData', this.state.postsData)
+        console.log('-------------------postId', postId)
+        let index = 0 
+        this.state.postsData && this.state.postsData.length > 0 && this.state.postsData.forEach((elem,i) => {
+          if(elem.id === postId){
+            index = i
+          }
+        })
+        let yPos = scaleModerate(index * 659);
+        console.log('-------------------yPos', yPos)
+        console.log('-------------------this.scroller', this.scroller)
+        this.scroller && this.scroller.scrollTo({x: 0, y: yPos, animated: true})
+      }
+    }
+
 
     if (this.props.profile !== prevProps.profile) {
       let {userId} = this.state;
@@ -260,7 +302,7 @@ class MyPosts extends Component {
 
   render() {
     const {profile: allProfiles, posts, navigation, commentsList} = this.props;
-    let {postsData, userId} = this.state;
+    let {postsData, userId, postId} = this.state;
     if (!userId) {
       userId = this.props.user && this.props.user.pk;
     }
