@@ -24,6 +24,10 @@ import {cloneDeep, get} from 'lodash';
 import VideoPlayer from '../components/VideoPlayer';
 import Chat from '../Message/Inbox';
 import {login} from '../../utils/firebase';
+import Toast from 'react-native-simple-toast';
+import Share from 'react-native-share';
+import RNFetchBlob from 'rn-fetch-blob';
+import CameraRoll from '@react-native-community/cameraroll';
 
 class Home extends Component {
   constructor(props) {
@@ -169,10 +173,43 @@ class Home extends Component {
     }
   }
 
+  hasAndroidPermission = async () => {
+    const permission = PermissionsAndroid.PERMISSIONS.WRITE_EXTERNAL_STORAGE;
+   
+    const hasPermission = await PermissionsAndroid.check(permission);
+    if (hasPermission) {
+      return true;
+    }
+   
+    const status = await PermissionsAndroid.request(permission);
+    return status === 'granted';
+  }
+
+  sharePost = async (video) => {
+    if (Platform.OS === "android" && !(await hasAndroidPermission())) {
+      Toast.show('User permission not granted');
+      return;
+    }
+
+    const cache = await RNFetchBlob.config({
+                fileCache: true,
+                appendExt: 'mp4',
+              }).fetch('GET', video && video.content, {});
+    const gallery = await CameraRoll.save(cache.path(), 'video');
+    cache.flush();
+    await Share.shareSingle({
+        title: (video && video.caption) ? video.caption : 'Performit Video',
+        type: 'video/mp4',
+        social: Share.Social.INSTAGRAM,
+        url: gallery,
+    });
+
+  }
+
   handleCommentChange = (postId, text) => {
     // write code here
     this.setState({
-      [`newComment${postId}`]: text,
+      [`newComment${postId}`]: text,sharePost
     });
   };
 
@@ -677,12 +714,14 @@ class Home extends Component {
                           source={require('../../assets/images/comment_icon.png')}
                         />
                       </TouchableOpacity>
-                      <View style={[styles.shareImage]}>
+                      <TouchableOpacity
+                        onPress={() => this.sharePost(postData)}
+                       style={[styles.shareImage]}>
                         <Image
                           style={[styles.shareImage]}
                           source={require('../../assets/images/share_icon.png')}
                         />
-                      </View>
+                      </TouchableOpacity>
                     </View>
                   </View>
 
