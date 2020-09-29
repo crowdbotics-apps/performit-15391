@@ -109,10 +109,14 @@ class CreateGroup extends Component {
   //   }
   // }
 
-  showToastOnErrors() {
+  async showToastOnErrors() {
     const {createGroupErrors, editGroupErrors} = this.props;
     const {error} = this.state;
     const {newGroup} = this.props
+    const {
+      actions: {getUserGroups},
+      accessToken,
+    } = this.props;
     if (this.state.showError) {
       if (error) {
         Toast.show(error);
@@ -121,6 +125,7 @@ class CreateGroup extends Component {
       } else if (editGroupErrors) { 
         Toast.show(editGroupErrors);
       } else {
+        await getUserGroups(accessToken)
         if(newGroup && newGroup.data && newGroup.data.id) {
           Toast.show('Group is updated successfully');
         } else {
@@ -133,6 +138,7 @@ class CreateGroup extends Component {
         userId,
         origin: 'editPage',
       });*/
+      await getUserGroups(accessToken)
       if(newGroup && newGroup.data && newGroup.data.id) {
         Toast.show('Group is updated successfully');
       } else {
@@ -413,6 +419,9 @@ const mapDispatchToProps = dispatch => ({
     },
     setEditGroupSuccessToDefault: (token) => {
       dispatch(groupActions.setEditGroupSuccessToDefault(token));
+    },
+    getUserGroups: (token) => {
+      dispatch(groupActions.getUserGroups(token));
     },
   },
 });

@@ -39,3 +39,8 @@ export const joinGroup = (group_id, token) => ({
   group_id,
   token,
 });
+
+export const getUserGroups = (token) => ({
+  type: actions.USER_GROUP_REQUEST,
+  token,
+});

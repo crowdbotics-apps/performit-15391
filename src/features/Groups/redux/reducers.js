@@ -4,12 +4,16 @@ const initialState = {
   createGroupSuccess: '',
   editGroupSuccess: '',
   groupDetailsSuccess: '',
+  userGroupSuccess: '',
   newGroup: {},
   groupsFeed: {},
+  userGroups: {},
+  userGroupLoading: false,
   errors: {
     CreateGroup: null,
     EditGroup: null,
     GroupDetail: null,
+    UserGroups: null
   },
 };
 
@@ -46,7 +50,7 @@ export default (GroupReducer = (state = initialState, action) => {
           [`${action.groupId}`]: action.data
           ,
         },
-        groupDetailsSuccess: '',
+        groupDetailsSuccess: 'success',
       };
     case actions.GROUP_DETAILS_ERROR:
       return {...state, errors: {GroupDetail: action.error}};
@@ -57,6 +61,22 @@ export default (GroupReducer = (state = initialState, action) => {
           ...state,
           joinGroupSuccess: 'success',
         };
+    case actions.USER_GROUP_LOADING:
+      return {
+        ...state,
+        userGroupLoading: true,
+      }; 
+    case actions.USER_GROUP_SUCCESS:
+      return {
+        ...state,
+        userGroups: action.data,
+        userGroupSuccess: 'success',
+        userGroupLoading: false
+      }; 
+    case actions.USER_GROUP_ERROR:
+      return {...state,
+        userGroupLoading: false,
+        errors: {UserGroups: action.error}};
     default:
       return state;
   }

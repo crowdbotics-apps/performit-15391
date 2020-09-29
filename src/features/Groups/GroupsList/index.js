@@ -13,6 +13,7 @@ import {
 } from 'react-native';
 import {styles} from './styles';
 import * as homeActions from '../../HomePage/redux/actions';
+import * as groupActions from '../../Groups/redux/actions';
 import {connect} from 'react-redux';
 import {scaleModerate} from '../../../utils/scale';
 import * as profileActions from '../../ProfilePage/redux/actions';
@@ -23,7 +24,7 @@ class GroupsList extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      isLoading: true,
+      isLoading: false,
       userId: '',
       activeTab: 'following',
       newComment: '',
@@ -48,10 +49,6 @@ class GroupsList extends Component {
 
   async componentDidMount() {
     // write code here
-    this.setState({
-      isLoading: true,
-    });
-
     let userId = this.props.navigation.getParam('userId', '');
     if (!userId) {
       userId = this.props.user && this.props.user.pk;
@@ -59,14 +56,14 @@ class GroupsList extends Component {
     const accessToken = this.props.accessToken;
 
     const {
-      actions: {userDetails},
+      actions: {getUserGroups},
     } = this.props;
-    if (userId && accessToken) {
-      await userDetails(userId, accessToken);
+    if (accessToken) {
+      await getUserGroups(accessToken);
     }
 
     this.setState({
-      userId,
+      userId
     });
   }
 
@@ -76,34 +73,33 @@ class GroupsList extends Component {
     const userId = this.props.navigation.getParam('userId', '');
     const accessToken = this.props.accessToken;
     const {
-      actions: {userDetails},
+      actions: {getUserGroups},
     } = this.props;
-    if (prevUserId !== userId) {
-      this.setState({
-        isLoading: true,
-      });
-      await userDetails(userId, accessToken);
 
-      this.setState({
-        isLoading: false,
-        userId,
-      });
-    }
-
-    if (this.props.profile !== prevProps.profile) {
-      let {userId} = this.state;
-      const {profile: allProfiles} = this.props;
-      if (!userId) {
-        userId = this.props.user && this.props.user.pk;
+    if(this.props.isSearchDashboardLoading !== prevProps.isSearchDashboardLoading){
+      if(this.props.isSearchDashboardLoading){
+        this.setState({
+          isLoading: true
+        })
+      } else {
+        this.setState({
+          isLoading: false
+        })
       }
-      const profile = allProfiles && allProfiles[`${userId}`];
-      let postsData = [];
-      postsData = cloneDeep(get(profile, 'posts', []));
-
-      this.setState({
-        postsData,
-      });
     }
+
+    if(this.props.userGroupLoading !== prevProps.userGroupLoading){
+      if(this.props.userGroupLoading){
+        this.setState({
+          isLoading: true
+        })
+      } else {
+        this.setState({
+          isLoading: false
+        })
+      }
+    }
+    
   }
 
   searchGroup = text => {
@@ -125,6 +121,7 @@ class GroupsList extends Component {
     const {
       navigation,
       searchGroupsList,
+      userGroups
     } = this.props;
 
     let {activeTab, searchTerm, postsData, userId} = this.state;
@@ -132,7 +129,13 @@ class GroupsList extends Component {
       userId = this.props.user && this.props.user.pk;
     }
     const profile = allProfiles && allProfiles[`${userId}`];
-    const group = ''
+    let groupsData = [];
+
+    if(searchTerm) {
+      groupsData = (searchGroupsList && searchGroupsList.data) || []
+    } else {
+      groupsData = (userGroups && userGroups.data) || []
+    }
 
     return (
       <ScrollView
@@ -183,11 +186,9 @@ class GroupsList extends Component {
           </View>
         </View>
 
-            {searchTerm &&
-              searchGroupsList &&
-              searchGroupsList.data &&
-              searchGroupsList.data.length > 0 ? (
-                searchGroupsList.data.map(group => (
+            {groupsData &&
+              groupsData.length > 0 ? (
+                groupsData.map(group => (
             <TouchableOpacity 
               onPress={() => navigation.navigate('GroupsDescriptionPage', {groupId: group && group.id})}
               style={styles.followProfileRowContainer}>
@@ -236,6 +237,12 @@ class GroupsList extends Component {
                 ) : (
               <></>
             )}
+
+            {!!this.state.isLoading && 
+              <View style={styles.loaderContainer}>
+                <ActivityIndicator animating />
+              </View>
+            }
       </ScrollView>
     );
   }
@@ -249,6 +256,10 @@ const mapStateToProps = state => ({
   commentsList: state.Posts.userPostsCommentList,
   user: state.EmailAuth.user,
   searchGroupsList: state.Posts.searchGroupsList,
+  userGroups: state.Group.userGroups,
+  userGroupLoading: state.Group.userGroupLoading,
+  userGroupSuccess: state.Group.userGroupSuccess,
+  isSearchDashboardLoading: state.Posts.isSearchDashboardLoading,
   accessToken: state.EmailAuth.accessToken,
 });
 
@@ -277,6 +288,9 @@ const mapDispatchToProps = dispatch => ({
     },
     searchDashboard: (tab, page, token, term) => {
       dispatch(homeActions.searchDashboard(tab, page, token, term));
+    },
+    getUserGroups: (token) => {
+      dispatch(groupActions.getUserGroups(token));
     },
   },
 });

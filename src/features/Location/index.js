@@ -22,6 +22,7 @@ import * as profileActions from '../ProfilePage/redux/actions';
 import {connect} from 'react-redux';
 import CheckBox from 'react-native-check-box';
 import {scaleModerate, scaleVertical} from '../../utils/scale';
+import Slider from '@react-native-community/slider';
 
 const mapStyle = [
   {
@@ -354,6 +355,22 @@ class Location extends Component {
     }, 500);
   };
 
+  searchLocationOnDistanceChange = value => {
+    this.setState({
+      distance: value,
+    });
+    clearTimeout(this.search.searchTimeOut);
+    this.search.searchTimeOut = setTimeout(async () => {
+    const accessToken = this.props.accessToken;
+    const {
+      actions: {findNearbyUsers},
+    } = this.props;
+    if (accessToken) {
+      await findNearbyUsers(accessToken, this.state.user_types, value, this.state.searchTerm);
+    }
+    }, 1000);
+  }
+
   render() {
   const userId = this.props.user && this.props.user.pk;
   const {profile: allProfiles, navigation, nearbyUsers} = this.props;
@@ -362,6 +379,7 @@ class Location extends Component {
   if(nearbyUsers && nearbyUsers.data && nearbyUsers.data.length > 0) {
     nearbyUsersData = nearbyUsers.data
   }
+  let i = 1;
 
     return (
       <ScrollView
@@ -400,6 +418,7 @@ class Location extends Component {
           >
             {nearbyUsersData && nearbyUsersData.length > 0 && nearbyUsersData.map(nearByUser => (
               <Marker
+                zIndex={i++}
                 coordinate = {{
                   latitude: nearByUser.meta_data && nearByUser.meta_data.live_location_lat,
                   longitude: nearByUser.meta_data && nearByUser.meta_data.live_location_long}}
@@ -489,6 +508,7 @@ class Location extends Component {
             ))}
 
             <Marker
+              zIndex={9999}
               trackViewChanges={ false }
               coordinate = {{
                 latitude: (profile && profile.user && profile.user.meta_data && profile.user.meta_data.live_location_lat) ? profile.user.meta_data.live_location_lat : 0,
@@ -634,6 +654,33 @@ class Location extends Component {
             </View>
           </View>
         </View>}
+        {this.state.showFilters && 
+          <View style={styles.distanceTextContainer}>
+            <Text style={styles.genderText}>Distance (miles)</Text>
+          </View>
+        }
+        {this.state.showFilters && 
+          <><View style={styles.sliderContainer}>
+            <Slider
+              style={{width: '95%', height: scaleModerate(50)}}
+              minimumValue={1}
+              maximumValue={50}
+              step={1}
+              value={this.state.distance}
+              thumbTintColor="#B88746"
+              minimumTrackTintColor="#B88746"
+              maximumTrackTintColor="#989BA5"
+              onValueChange={ val  => this.searchLocationOnDistanceChange(val) }
+            />
+          </View>
+          <View style={styles.textCon}>
+              <Text style={styles.colorPerformit}>
+                  {this.state.distance + ' miles'}
+              </Text>
+          </View>
+          </>
+        }
+
       </ScrollView>
     );
   }

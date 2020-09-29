@@ -18,7 +18,11 @@ import {
   GROUP_DETAILS_ERROR,
   JOIN_GROUP_REQUEST,
   JOIN_GROUP_SUCCESS,
-  JOIN_GROUP_ERROR
+  JOIN_GROUP_ERROR,
+  USER_GROUP_REQUEST,
+  USER_GROUP_SUCCESS,
+  USER_GROUP_ERROR,
+  USER_GROUP_LOADING
 } from './constants';
 import {request} from '../../../utils/http';
 
@@ -62,6 +66,18 @@ function sendGetGroupDetails(group_id, page, token) {
       group_id,
       page
     },
+    {
+      headers: {
+        Authorization: `Token ${token}`,
+      },
+    },
+  );
+}
+
+function sendGetUserGroups(token) {
+  return request.post(
+    '/groups/user-groups/',
+    {},
     {
       headers: {
         Authorization: `Token ${token}`,
@@ -287,6 +303,47 @@ function* handleJoinGroup(action) {
   }
 }
 
+function* handleGetUserGroups(action) {
+  yield put({
+    type: USER_GROUP_LOADING,
+  });
+
+  const {token} = action;
+  try {
+    const {status, data} = yield call(sendGetUserGroups, token);
+    console.log('-----------------data 0000-----0000000', data)
+    if (status === 200) {
+      yield put({
+        type: USER_GROUP_SUCCESS,
+      });
+      yield put({
+        type: USER_GROUP_SUCCESS,
+        data,
+      });
+      yield put({
+        type: USER_GROUP_ERROR,
+        error: '',
+      });
+      // if (data.origin === 'signup') {
+      //   // you can change the navigate for navigateAndResetStack to go to a protected route
+      //   NavigationService.navigate('Profile');
+      // } else {
+      //   NavigationService.navigate('ResetPassword', {data});
+      // }
+    } else {
+      yield put({
+        type: USER_GROUP_ERROR,
+        error: 'Unknown Error',
+      });
+    }
+  } catch (error) {
+    yield put({
+      type: USER_GROUP_ERROR,
+      error: 'Something went wrong',
+    });
+  }
+}
+
 export default all([
   takeLatest(CREATE_GROUP_REQUEST, handleCreateGroup),
   takeLatest(SET_DEFAULT_SUCCESS_REQUEST, handleSetDefaultSuccess),
@@ -294,4 +351,5 @@ export default all([
   takeLatest(SET_DEFAULT_EDIT_GROUP_REQUEST, handleSetEditGroupDefaultSuccess),
   takeLatest(GROUP_DETAILS_REQUEST, handleGetGroupDetails),
   takeLatest(JOIN_GROUP_REQUEST, handleJoinGroup),
+  takeLatest(USER_GROUP_REQUEST, handleGetUserGroups),
 ]);

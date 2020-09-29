@@ -459,4 +459,35 @@ export const styles = StyleSheet.create({
     left: '50%',
     top: '50%',
   },
+
+  sliderContainer: {
+    width: '100%',
+    height: scaleModerate(40),
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: '#111111'
+  },
+
+  distanceTextContainer:{
+    width: '100%',
+    height: scaleModerate(20),
+    flexDirection: 'row',
+    justifyContent: 'flex-start',
+    alignItems: 'center',
+    backgroundColor: '#111111',
+    marginLeft: scaleModerate(18)
+  },
+
+  textCon: {
+       width: '95%',
+       height: scaleModerate(30),
+      flexDirection: 'row',
+      justifyContent: 'center',
+      backgroundColor: '#111111'
+  },
+
+  colorPerformit: {
+    color: '#B88746'
+  }
 });

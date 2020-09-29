@@ -13,6 +13,7 @@ import {
 } from 'react-native';
 import {styles} from './styles';
 import Modal from 'react-native-modalbox';
+import Toast from 'react-native-simple-toast';
 import * as groupActions from '../../Groups/redux/actions';
 import * as homeActions from '../../HomePage/redux/actions';
 import {connect} from 'react-redux';
@@ -40,7 +41,8 @@ class GroupsDescription extends Component {
       page: 1,
       counter: 30,
       timer: null,
-      showJoinGroupSuccessModal: false
+      showJoinGroupSuccessModal: false,
+      groupId: ''
     };
   }
 
@@ -50,9 +52,6 @@ class GroupsDescription extends Component {
 
   async componentDidMount() {
     // write code here
-    this.setState({
-      isLoading: true,
-    });
 
     const groupId = this.props.navigation.getParam('groupId', '');
     const accessToken = this.props.accessToken;
@@ -62,14 +61,13 @@ class GroupsDescription extends Component {
     } = this.props;
 
     const {page} = this.state;
-    if (userId && accessToken) {
+    if (groupId && accessToken) {
       await getGroupDetails(groupId, page, accessToken);
       // this.setState({
       //   page: page + 1,
       // });
     }
     this.setState({
-      isLoading: false,
       groupId,
       userId
     });
@@ -90,7 +88,7 @@ class GroupsDescription extends Component {
 
       const {page} = this.state;
 
-      if (userId && accessToken) {
+      if (groupId && accessToken) {
         await getGroupDetails(
           groupId,
           page,
@@ -216,7 +214,11 @@ class GroupsDescription extends Component {
   requestOrInviteUser = async (groupData) => {
     if(groupData && groupData.group && groupData.group.group_owner && groupData.group.group_owner.pk === this.state.userId){
       this.props.navigation.navigate('InviteFriendsPage', {groupId: this.state.groupId})
-    } else{
+    } else if (groupData && groupData.group && groupData.group.meta_data && groupData.group.meta_data.joining_access_requested && !groupData.group.meta_data.joining_access_accepted){
+        Toast.show('Group access is already requested');
+    } else if (groupData && groupData.group && groupData.group.meta_data && groupData.group.meta_data.joining_access_requested && !!groupData.group.meta_data.joining_access_accepted){
+        this.props.navigation.navigate('InviteFriendsPage', {groupId: this.state.groupId});
+    }else {
         console.log('------------------------')
         const accessToken = this.props.accessToken;
         const {
@@ -225,6 +227,7 @@ class GroupsDescription extends Component {
 
         if (accessToken) {
           await joinGroup(this.state.groupId, accessToken);
+
           let timer = setInterval(this.tick, 1000);
           this.setState({
             timer,
@@ -246,6 +249,14 @@ class GroupsDescription extends Component {
     });
 
     if (this.props.joinGroupSuccess === 'success') {
+      const {
+        actions: {getGroupDetails},
+      } = this.props;
+
+      const {page, groupId} = this.state;
+      if (groupId && accessToken) {
+        await getGroupDetails(groupId, page, accessToken);
+      }
       clearInterval(this.state.timer);
       this.setState({
         showJoinGroupSuccessModal: true,
@@ -267,8 +278,10 @@ class GroupsDescription extends Component {
     console.log('------------------------this.state.userId', this.state.userId)
     if(groupData && groupData.group && groupData.group.group_owner && groupData.group.group_owner.pk === this.state.userId){
       text = 'Invite'
-    } else {
-      console.log('------------------------')
+    } else if (groupData && groupData.group && groupData.group.meta_data && groupData.group.meta_data.joining_access_requested && !groupData.group.meta_data.joining_access_accepted) {
+      text = 'Requested'
+    } else if (groupData && groupData.group && groupData.group.meta_data && groupData.group.meta_data.joining_access_requested && !!groupData.group.meta_data.joining_access_accepted) {
+      text = 'Invite'
     }
 
     return text;
@@ -279,9 +292,23 @@ class GroupsDescription extends Component {
     if(groupData && groupData.group && groupData.group.group_owner && groupData.group.group_owner.pk === this.state.userId){
       return true
     } else {
-      console.log('------------------------')
       return false
     }
+  }
+
+  canViewPost = (groupData) => {
+    let canViewPost  = false
+    console.log('------group pk', groupData && groupData.group && groupData.group.group_owner && groupData.group.group_owner.pk)
+    console.log('------------------------this.state.userId', this.state.userId)
+    if(groupData && groupData.group && groupData.group.group_owner && groupData.group.group_owner.pk === this.state.userId){
+      canViewPost = true
+    } else if (groupData && groupData.group && groupData.group.meta_data && groupData.group.meta_data.joining_access_requested && !groupData.group.meta_data.joining_access_accepted) {
+      canViewPost = false
+    } else if (groupData && groupData.group && groupData.group.meta_data && groupData.group.meta_data.joining_access_requested && groupData.group.meta_data.joining_access_accepted) {
+      canViewPost = true
+    }
+
+    return canViewPost;
 
   }
 
@@ -440,7 +467,7 @@ class GroupsDescription extends Component {
                   </Text>
                 </View>
               </View>
-              {this.isAccessGranted(groupData) && groupData && groupData.data && groupData.data.length > 0  && groupData.data.map(postData => (
+              {this.canViewPost(groupData) && groupData && groupData.data && groupData.data.length > 0  && groupData.data.map(postData => (
                 <>
                   <View style={styles.postParentContainer}>
                     <View style={styles.postProfileContainer}>
@@ -794,7 +821,7 @@ class GroupsDescription extends Component {
                   )}
                 </>
               ))}
-              {!this.isAccessGranted(groupData) && <View style={styles.noAccessContainer}>
+              {!this.canViewPost(groupData) && <View style={styles.noAccessContainer}>
                     <Image
                       style={[styles.noAccessImage]}
                       source={require('../../../assets/images/group-locked.png')}
