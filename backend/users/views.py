@@ -307,7 +307,7 @@ class GetUserDetail(APIView):
         user_types = []
         for type in user_types_serializer.data:
             user_types.append(type['user_type'])
-        posts = Post.objects.filter(user=user).order_by("created_at")
+        posts = Post.objects.filter(user=user).order_by("-created_at")
         try:
             paginated_data = Paginator(posts, size)
         except (EmptyPage, InvalidPage):
