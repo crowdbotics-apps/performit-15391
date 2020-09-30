@@ -75,20 +75,20 @@ class MyPosts extends Component {
       userId,
       postId
     }, () => {
-      if(this.state.postsData && postId){
-        console.log('-------------------postsData', this.state.postsData)
-        console.log('-------------------postId', postId)
-        let index = 0 
-        this.state.postsData && this.state.postsData.length > 0 && this.state.postsData.forEach((elem,i) => {
-          if(elem.id === postId){
-            index = i
-          }
-        })
-        let yPos = scaleModerate(index * 659);
-        console.log('-------------------yPos', yPos)
-        console.log('-------------------this.scroller', this.scroller)
-        this.scroller && this.scroller.scrollTo({x: 0, y: yPos, animated: true})
-      }
+      // if(this.state.postsData && postId){
+      //   console.log('-------------------postsData', this.state.postsData)
+      //   console.log('-------------------postId', postId)
+      //   let index = 0 
+      //   this.state.postsData && this.state.postsData.length > 0 && this.state.postsData.forEach((elem,i) => {
+      //     if(elem.id === postId){
+      //       index = i
+      //     }
+      //   })
+      //   let yPos = scaleModerate(index * 659);
+      //   console.log('-------------------yPos', yPos)
+      //   console.log('-------------------this.scroller', this.scroller)
+      //   this.scroller && this.scroller.scrollTo({x: 0, y: yPos, animated: true})
+      // }
     });
   }
 
@@ -119,20 +119,20 @@ class MyPosts extends Component {
       this.setState({
         postId,
       });
-      if(this.state.postsData && postId){
-        console.log('-------------------postsData', this.state.postsData)
-        console.log('-------------------postId', postId)
-        let index = 0 
-        this.state.postsData && this.state.postsData.length > 0 && this.state.postsData.forEach((elem,i) => {
-          if(elem.id === postId){
-            index = i
-          }
-        })
-        let yPos = scaleModerate(index * 659);
-        console.log('-------------------yPos', yPos)
-        console.log('-------------------this.scroller', this.scroller)
-        this.scroller && this.scroller.scrollTo({x: 0, y: yPos, animated: true})
-      }
+      // if(this.state.postsData && postId){
+      //   console.log('-------------------postsData', this.state.postsData)
+      //   console.log('-------------------postId', postId)
+      //   let index = 0 
+      //   this.state.postsData && this.state.postsData.length > 0 && this.state.postsData.forEach((elem,i) => {
+      //     if(elem.id === postId){
+      //       index = i
+      //     }
+      //   })
+      //   let yPos = scaleModerate(index * 659);
+      //   console.log('-------------------yPos', yPos)
+      //   console.log('-------------------this.scroller', this.scroller)
+      //   this.scroller && this.scroller.scrollTo({x: 0, y: yPos, animated: true})
+      // }
     }
 
 
@@ -185,13 +185,13 @@ class MyPosts extends Component {
     const gallery = await CameraRoll.save(cache.path(), 'video');
     console.log('------------------gallery', gallery)
     cache.flush();
-    await Share.shareSingle({
-        title: (video && video.caption) ? video.caption : 'Performit Video',
-        type: 'video/mp4',
-        social: Share.Social.INSTAGRAM,
-        url: gallery,
-    });
-    this.setState({ uploadingStatus: 0 })
+    this.setState({ uploadingStatus: 0 }, () => {
+      await Share.shareSingle({
+          title: (video && video.caption) ? video.caption : 'Performit Video',
+          social: Share.Social.INSTAGRAM,
+          url: gallery,
+      });
+    })
   }
 
   handleCommentChange = (postId, text) => {
@@ -581,7 +581,7 @@ class MyPosts extends Component {
                         />
                       </TouchableOpacity>
                       <TouchableOpacity
-                        onPress={() => this.sharePost(postData)}
+                        onPress={() => this.state.uploadingStatus === 0 && this.sharePost(postData)}
                        style={[styles.shareImage]}>
                         <Image
                           style={[styles.shareImage]}

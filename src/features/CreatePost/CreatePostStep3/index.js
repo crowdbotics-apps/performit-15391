@@ -223,39 +223,6 @@ class CreatePostStep3 extends Component {
           </View>
         </View>
 
-        <View style={styles.followProfileRowContainer}>
-          <Text style={styles.followProfileText}>Also Post to</Text>
-        </View>
-
-        <View style={styles.followProfileRowContainer}>
-          <View style={styles.followProfileRowLeftContainer}>
-            <TouchableOpacity
-              onPress={() => console.log('---')}
-              style={[styles.profileRowImageContainer]}>
-              <Image
-                style={[styles.profileRowImage]}
-                source={{
-                  uri: '',
-                }}
-              />
-            </TouchableOpacity>
-
-            <View style={styles.followProfileRowTextContainer}>
-              <View style={styles.followProfileRowNameContainer}>
-                <Text style={styles.followProfileText}>Group 1</Text>
-              </View>
-            </View>
-          </View>
-          <View style={styles.followingButtonContainer}>
-            <Switch
-              style={styles.switchButton}
-              onTintColor={'#B88746'}
-              value={this.state.isGroupSelected}
-              onValueChange={e => this.setState({isGroupSelected: e})}
-            />
-          </View>
-        </View>
-
         <Modal
           isOpen={this.state.showDiscardContentModal}
           onClosed={() => this.setState({showDiscardContentModal: false})}

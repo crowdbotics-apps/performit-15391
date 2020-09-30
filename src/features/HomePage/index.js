@@ -207,13 +207,13 @@ class Home extends Component {
     const gallery = await CameraRoll.save(cache.path(), 'video');
     console.log('------------------gallery', gallery)
     cache.flush();
-    await Share.shareSingle({
-        title: (video && video.caption) ? video.caption : 'Performit Video',
-        type: 'video/mp4',
-        social: Share.Social.INSTAGRAM,
-        url: gallery,
-    });
-    this.setState({ uploadingStatus: 0 })
+    this.setState({ uploadingStatus: 0 }, () => {
+      await Share.shareSingle({
+          title: (video && video.caption) ? video.caption : 'Performit Video',
+          social: Share.Social.INSTAGRAM,
+          url: gallery,
+      });
+    })
   }
 
   handleCommentChange = (postId, text) => {
@@ -725,7 +725,7 @@ class Home extends Component {
                         />
                       </TouchableOpacity>
                       <TouchableOpacity
-                        onPress={() => this.sharePost(postData)}
+                        onPress={() => this.state.uploadingStatus === 0 && this.sharePost(postData)}
                        style={[styles.shareImage]}>
                         <Image
                           style={[styles.shareImage]}
