@@ -207,7 +207,7 @@ class Home extends Component {
     const gallery = await CameraRoll.save(cache.path(), 'video');
     console.log('------------------gallery', gallery)
     cache.flush();
-    this.setState({ uploadingStatus: 0 }, () => {
+    this.setState({ uploadingStatus: 0 }, async () => {
       await Share.shareSingle({
           title: (video && video.caption) ? video.caption : 'Performit Video',
           social: Share.Social.INSTAGRAM,
