@@ -26,14 +26,21 @@ class GroupSerializer(serializers.ModelSerializer):
         serializer = GroupMemberSerializer(group_members, many=True)
         joining_access_requested = False
         joining_access_accepted = False
+        is_invite_sent = False
+        is_invite_accepted = False
         if self.context.get('request') is not None:
             joining_request = JoiningRequest.objects.filter(group=self.context.get('request').data.get('group_id'), user=self.context.get('request').user.id).values()
             if joining_request.exists():
                 joining_access_requested = True
                 if joining_request[0]['accepted']:
                     joining_access_accepted = True
+            invite_user = InviteUser.objects.filter(group=self.context.get('request').data.get('group_id'),user=self.context.get('request').user.id).values()
+            if invite_user.exists():
+                is_invite_sent = True
+                if invite_user[0]['accepted']:
+                    is_invite_accepted = True
         return {"group_member_count": group_members.count(), "members": serializer.data, "joining_access_requested": joining_access_requested, 
-        "joining_access_accepted": joining_access_accepted}
+        "joining_access_accepted": joining_access_accepted, "is_invite_sent": is_invite_sent, "is_invite_accepted": is_invite_accepted}
 
 class GroupPostSerializer(serializers.ModelSerializer):
     post_data = PostSerializer(source="post", read_only=True)
