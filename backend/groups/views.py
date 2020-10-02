@@ -241,7 +241,8 @@ class AcceptInvite(APIView):
             invite = InviteUser.objects.get(pk=invite_id)
         except InviteUser.DoesNotExist:
             return Response({"success": False, "message": "Invalid invite_id param is provided"}, status=400)
-        if int(invite.group.created_by.id) != int(request.user.id):
+        if int(invite.user.id) != int(request.user.id):
+            # User can only accept own invites
             return Response({"success": False, "message": "You cannot accept invite"}, status=400)
         data = {"member": invite.user.id, "group": invite.group.id}
         group_member = GroupMemberSerializer(data=data)
