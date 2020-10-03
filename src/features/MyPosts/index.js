@@ -25,6 +25,7 @@ import Toast from 'react-native-simple-toast';
 import Share from 'react-native-share';
 import RNFetchBlob from 'rn-fetch-blob';
 import CameraRoll from '@react-native-community/cameraroll';
+import { withNavigationFocus } from "react-navigation";
 
 class MyPosts extends Component {
   constructor(props) {
@@ -42,7 +43,8 @@ class MyPosts extends Component {
       showControls: false,
       postsData: [],
       uploadingStatus: 0, 
-      postId: ''
+      postId: '',
+      myPostLoading: false
     };
   }
 
@@ -58,37 +60,58 @@ class MyPosts extends Component {
 
     let userId = this.props.navigation.getParam('userId', '');
     let postId = this.props.navigation.getParam('postId', '');
+    const loggedInUserId = this.props.user && this.props.user.pk
     if (!userId) {
-      userId = this.props.user && this.props.user.pk;
+      userId = loggedInUserId;
     }
     const accessToken = this.props.accessToken;
 
     const {
       actions: {userDetails},
     } = this.props;
-    if (userId && accessToken) {
-      await userDetails(userId, accessToken);
+
+    const {profile: allProfiles} = this.props;
+    const profile = allProfiles && allProfiles[`${userId}`];
+    if (userId && accessToken && userId !== loggedInUserId) {
+      console.log('----------------------mounting my posts');
+      console.log('----------------------component mounting profile page')
+      if(profile && profile.user && profile.user.pk){
+        //do nothing
+      } else {
+        await userDetails(userId, accessToken);
+      }
     }
+
+    let postsData = [];
+    postsData = cloneDeep(get(profile, 'posts', []));
+
+    this.setState({
+      postsData,
+    });
+    console.log('-------------------------------profile loaded mounted')
+    console.log('-------------------------------profile loaded this.props.postId mounted', postId)
+    console.log('-------------------------------profile loaded this.props.myPostLoading mounted', this.props.myPostLoading)
+    if(postId && !this.props.myPostLoading){
+      setTimeout(() => {
+        // console.log('-------------------yPos', yPos)
+        // console.log('-------------------this.scroller', this.scroller)
+        // console.log('-------------------post click changed')
+        // console.log('-------------------postsData', postsData)
+        // console.log('-------------------postId', postId)
+        let index = 0 
+        if(postsData && postsData.length > 0) {
+          index = postsData.findIndex(elem => elem.id === postId);
+        }
+        let yPos = scaleModerate(index * 659);
+        this.scroller && this.scroller.scrollTo({x: 0, y: yPos, animated: true})
+      }, 1500);
+    }
+    console.log('---------------------did mount postsData', postsData)
 
     this.setState({
       isLoading: false,
       userId,
-      postId
-    }, () => {
-      // if(this.state.postsData && postId){
-      //   console.log('-------------------postsData', this.state.postsData)
-      //   console.log('-------------------postId', postId)
-      //   let index = 0 
-      //   this.state.postsData && this.state.postsData.length > 0 && this.state.postsData.forEach((elem,i) => {
-      //     if(elem.id === postId){
-      //       index = i
-      //     }
-      //   })
-      //   let yPos = scaleModerate(index * 659);
-      //   console.log('-------------------yPos', yPos)
-      //   console.log('-------------------this.scroller', this.scroller)
-      //   this.scroller && this.scroller.scrollTo({x: 0, y: yPos, animated: true})
-      // }
+      postId,
     });
   }
 
@@ -98,50 +121,89 @@ class MyPosts extends Component {
     const userId = this.props.navigation.getParam('userId', '');
     const prevPostId = prevProps.navigation.getParam('postId', '');
     const postId = this.props.navigation.getParam('postId', '');
+    console.log('----------------------component updating my post prevUserId', prevUserId)
+    console.log('----------------------component updating my post userId', userId)
+
+    const loggedInUserId = this.props.user && this.props.user.pk
     
     const accessToken = this.props.accessToken;
     const {
       actions: {userDetails},
     } = this.props;
-    if (prevUserId !== userId) {
+    if (userId && prevUserId !== userId) {
       this.setState({
         isLoading: true,
       });
-      await userDetails(userId, accessToken);
+      const {profile: allProfiles} = this.props;
+      const profile = allProfiles && allProfiles[`${userId}`];
+
+      if(profile && profile.user && profile.user.pk){
+        //do nothing
+      } else {
+        await userDetails(userId, accessToken);
+      }
+
+      let postsData = [];
+      postsData = cloneDeep(get(profile, 'posts', []));
 
       this.setState({
+        postsData,
         isLoading: false,
         userId,
       });
+    }
+
+    if(this.props.myPostLoading !== prevProps.myPostLoading){
+      if(this.props.myPostLoading){
+        this.setState({
+          myPostLoading: true
+        })
+      } else {
+        console.log('-------------------------loading why ?????')
+        this.setState({
+          myPostLoading: false
+        })
+
+        // console.log('-------------------------------loading loaded')
+        // console.log('-------------------------------profile loaded this.state.postsData', this.state.postsData)
+        // console.log('-------------------------------profile loaded this.props.myPostLoading', this.props.myPostLoading)
+        // if(this.state.postsData && this.state.postsData.length > 0 && postId){
+        //   console.log('-------------------postsData', this.state.postsData)
+        //   console.log('-------------------postId', postId)
+        //   let index = 0 
+        //   this.state.postsData && this.state.postsData.length > 0 && this.state.postsData.forEach((elem,i) => {
+        //     if(elem.id === postId){
+        //       index = i
+        //     }
+        //   })
+        //   let yPos = scaleModerate(index * 659);
+        //   setTimeout(async () => {
+        //     console.log('-------------------yPos', yPos)
+        //     console.log('-------------------this.scroller', this.scroller)
+        //     this.scroller && this.scroller.scrollTo({x: 0, y: yPos, animated: true})
+        //   }, 1000);
+        // }
+      }
     }
 
     if (prevPostId !== postId) {
       this.setState({
         postId,
       });
-      // if(this.state.postsData && postId){
-      //   console.log('-------------------postsData', this.state.postsData)
-      //   console.log('-------------------postId', postId)
-      //   let index = 0 
-      //   this.state.postsData && this.state.postsData.length > 0 && this.state.postsData.forEach((elem,i) => {
-      //     if(elem.id === postId){
-      //       index = i
-      //     }
-      //   })
-      //   let yPos = scaleModerate(index * 659);
-      //   console.log('-------------------yPos', yPos)
-      //   console.log('-------------------this.scroller', this.scroller)
-      //   this.scroller && this.scroller.scrollTo({x: 0, y: yPos, animated: true})
-      // }
+      const postsData = cloneDeep(this.state.postsData);
+      if(postsData && postId && !this.props.myPostLoading){
+        let index = 0 
+        // if(postsData && postsData.length > 0) {
+        //   index = postsData.findIndex(elem => elem.id === postId);
+        // }
+        let yPos = scaleModerate(index * 659);
+        // this.scroller && this.scroller.scrollTo({x: 0, y: yPos, animated: true})
+      }
     }
 
 
     if (this.props.profile !== prevProps.profile) {
-      let {userId} = this.state;
       const {profile: allProfiles} = this.props;
-      if (!userId) {
-        userId = this.props.user && this.props.user.pk;
-      }
       const profile = allProfiles && allProfiles[`${userId}`];
       let postsData = [];
       postsData = cloneDeep(get(profile, 'posts', []));
@@ -149,7 +211,42 @@ class MyPosts extends Component {
       this.setState({
         postsData,
       });
+      // console.log('-------------------------------profile loaded')
+      // console.log('-------------------------------profile loaded this.props.postId', postId)
+      // console.log('-------------------------------profile loaded this.props.myPostLoading', this.props.myPostLoading)
+      // if(postId && !this.props.myPostLoading){
+      //   console.log('-------------------post click changed')
+      //   console.log('-------------------postsData', postsData)
+      //   console.log('-------------------postId', postId)
+      //   let index = 0 
+      //   postsData && postsData.length > 0 && postsData.forEach((elem,i) => {
+      //     if(elem.id === postId){
+      //       index = i
+      //     }
+      //   })
+      //   let yPos = scaleModerate(index * 659);
+      //   setTimeout(async () => {
+      //     console.log('-------------------yPos', yPos)
+      //     console.log('-------------------this.scroller', this.scroller)
+      //     this.scroller && this.scroller.scrollTo({x: 0, y: yPos, animated: true})
+      //   }, 1000);
+      // }
     }
+
+    if (prevProps.isFocused !== this.props.isFocused) {
+        const {profile: allProfiles} = this.props;
+        const profile = allProfiles && allProfiles[`${userId}`];
+        let postsData = [];
+        postsData = cloneDeep(get(profile, 'posts', []));
+        if(postsData && postId && !this.props.myPostLoading){
+          let index = 0 
+          if(postsData && postsData.length > 0) {
+            index = postsData.findIndex(elem => elem.id === postId);
+          }
+          let yPos = scaleModerate(index * 659);
+          this.scroller && this.scroller.scrollTo({x: 0, y: yPos, animated: true})
+        }
+      }
   }
 
   hasAndroidPermission = async () => {
@@ -294,7 +391,8 @@ class MyPosts extends Component {
   };
 
   onClose = () => {
-    const userId = this.props.user && this.props.user.pk;
+    let userId = this.state.userId
+    if(!userId) userId = this.state.user && this.props.user.pk;
     this.props.navigation.navigate('ProfilePage', {userId});
   };
 
@@ -303,9 +401,7 @@ class MyPosts extends Component {
   render() {
     const {profile: allProfiles, posts, navigation, commentsList} = this.props;
     let {postsData, userId, postId} = this.state;
-    if (!userId) {
-      userId = this.props.user && this.props.user.pk;
-    }
+
     const profile = allProfiles && allProfiles[`${userId}`];
 
     return (
@@ -377,6 +473,7 @@ class MyPosts extends Component {
 
                   <View style={styles.postImageContainer}>
                     <VideoPlayer
+                      key={postData && postData.id}
                       showBottomcontrol={true}
                       videoHeight={350}
                       postId={postData && postData.id}
@@ -404,15 +501,15 @@ class MyPosts extends Component {
                         });
                       }}
                       onPlay={() => {
+                        this.callPostViewed(
+                          postData && postData.id,
+                          this.state[`isViewed${postData && postData.id}`],
+                        );
                         this.setState({
                           [`paused${postData && postData.id}`]: false,
                         });
                       }}
                       onLoad={fields => {
-                        this.callPostViewed(
-                          postData && postData.id,
-                          this.state[`isViewed${postData && postData.id}`],
-                        );
                         this.setState({
                           [`duration${postData &&
                             postData.id}`]: fields.duration,
@@ -728,6 +825,11 @@ class MyPosts extends Component {
               </Text>
             </View>
           }
+          {this.state.myPostLoading  && 
+            <View style={styles.postLoaderContainer}>
+              <ActivityIndicator animating />
+            </View>
+          }
       </KeyboardAvoidingView>
     );
   }
@@ -741,6 +843,7 @@ const mapStateToProps = state => ({
   commentsList: state.Posts.userPostsCommentList,
   user: state.EmailAuth.user,
   accessToken: state.EmailAuth.accessToken,
+  myPostLoading: state.Profile.myPostLoading,
 });
 
 const mapDispatchToProps = dispatch => ({
@@ -773,7 +876,7 @@ MyPosts.navigationOptions = {
   header: null,
 };
 
-export default connect(
+export default withNavigationFocus(connect(
   mapStateToProps,
   mapDispatchToProps,
-)(MyPosts);
+)(MyPosts));

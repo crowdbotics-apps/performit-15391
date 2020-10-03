@@ -125,6 +125,7 @@ function sendSearchDashBoard(tab, term, token) {
 }
 
 function sendCreatePost(data, token, groupId) {
+  console.log('-------1111-------groupId', groupId)
   if(groupId){
     return request.post('/groups/create-post/', data, {
       headers: {
@@ -381,6 +382,7 @@ function* handleCreatePost(action) {
 
     formData.append('caption', caption);
     if(groupId) formData.append('group_id', groupId);
+    console.log('------------------formData--0000', formData)
     const {status, data, success} = yield call(sendCreatePost, formData, token, groupId);
 
     if (status === 200) {
@@ -408,7 +410,7 @@ function* handleCreatePost(action) {
       });
     }
   } catch (error) {
-    // console.dir(error);
+    console.dir(error);
     yield put({
       type: CREATE_POST_ERROR,
       error: 'Not able to create post',

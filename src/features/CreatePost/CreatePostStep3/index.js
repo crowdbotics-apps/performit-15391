@@ -46,6 +46,7 @@ class CreatePostStep3 extends Component {
     let videoData = this.props.navigation.getParam('videoData', {});
     let thumbnail = this.props.navigation.getParam('thumbnail', {});
     const groupId = this.props.navigation.getParam('groupId', '');
+    console.log('-----------------ceatePost3 groupId 000000', groupId)
     if (!videoData.uri) {
       this.props.navigation.navigate('CreatePostStep1', {groupId});
     }
@@ -82,6 +83,10 @@ class CreatePostStep3 extends Component {
       });
     }
 
+    console.log('-----------------ceatePost3 groupId 111111', groupId)
+    console.log('-----------------ceatePost3 prevGroupId 222222', prevGroupId)
+    console.log('-----------------ceatePost3 this.state.groupId 333333', this.state.groupId)
+
     if ((groupId !== prevGroupId) || (groupId !== this.state.groupId)) {
         this.setState({
           groupId,
@@ -115,7 +120,7 @@ class CreatePostStep3 extends Component {
     const {
       actions: {userDetails, createPost},
     } = this.props;
-
+    console.log('------------------this.state.groupId', this.state.groupId)
     await createPost(accessToken, postObject, this.state.caption, this.state.groupId);
 
     if (userId && accessToken) {

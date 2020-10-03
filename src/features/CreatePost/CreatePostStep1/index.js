@@ -61,6 +61,7 @@ class CreatePostStep1 extends Component {
   async componentDidMount() {
     // write code here
     const groupId = this.props.navigation.getParam('groupId', '');
+    console.log('-----------------ceatePost1 groupId 00000', groupId)
     this.setState({
       groupId
     })
@@ -70,7 +71,9 @@ class CreatePostStep1 extends Component {
     // write code here
     const groupId = this.props.navigation.getParam('groupId', '');
     const prevGroupId = prevProps.navigation.getParam('groupId', '');
-
+    console.log('-----------------ceatePost1 groupId 111111', groupId)
+    console.log('-----------------ceatePost1 prevGroupId 222222', prevGroupId)
+    console.log('-----------------ceatePost1 this.state.groupId 333333', this.state.groupId)
     if ((groupId !== prevGroupId) || (groupId !== this.state.groupId)) {
         this.setState({
           groupId,
@@ -394,7 +397,7 @@ class CreatePostStep1 extends Component {
           type: 'video',
         };
         // .replace('file://', '')
-        this.props.navigation.navigate('PreviewPost', {videoData});
+        this.props.navigation.navigate('PreviewPost', {videoData, groupId: this.state.groupId});
       });
     } else {
       try {
@@ -440,7 +443,7 @@ class CreatePostStep1 extends Component {
       },
       () => {
         activeTab === 'Video'
-          ? this.props.navigation.navigate('PreviewPost', {videoData})
+          ? this.props.navigation.navigate('PreviewPost', {videoData, groupId: this.state.groupId})
           : this.props.navigation.navigate('CreatePostStep2', {videoData, groupId: this.state.groupId});
       },
     );

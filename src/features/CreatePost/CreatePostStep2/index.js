@@ -50,6 +50,7 @@ class CreatePostStep2 extends Component {
     // write code here
     let videoData = this.props.navigation.getParam('videoData', {});
     const groupId = this.props.navigation.getParam('groupId', '');
+    console.log('-----------------ceatePost2 groupId 000000', groupId)
     if (!videoData.uri) {
       this.props.navigation.navigate('CreatePostStep1', {groupId});
     }
@@ -74,7 +75,9 @@ class CreatePostStep2 extends Component {
         videoData,
       });
     }
-
+    console.log('-----------------ceatePost2 groupId 111111', groupId)
+    console.log('-----------------ceatePost2 prevGroupId 222222', prevGroupId)
+    console.log('-----------------ceatePost2 this.state.groupId 333333', this.state.groupId)
     if ((groupId !== prevGroupId) || (groupId !== this.state.groupId)) {
       this.setState({
         groupId,
@@ -165,6 +168,7 @@ class CreatePostStep2 extends Component {
           uri: thumbnail,
           name: filename + '.png',
         },
+        groupId: this.state.groupId
       });
     }
   };
@@ -199,6 +203,7 @@ class CreatePostStep2 extends Component {
       this.props.navigation.navigate('PreviewPost', {
         videoData: this.state.videoData,
         thumbnail,
+        groupId: this.state.groupId
       });
     });
   };

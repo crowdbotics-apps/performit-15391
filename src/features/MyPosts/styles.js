@@ -448,5 +448,16 @@ export const styles = StyleSheet.create({
     left: '25%',
     top: '50%',
     backgroundColor: '#111111'
+  },
+
+  postLoaderContainer: {
+    position: 'absolute',
+    height: scaleModerate(20),
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
+    left: '50%',
+    top: '50%',
+    backgroundColor: '#111111'
   }
 });

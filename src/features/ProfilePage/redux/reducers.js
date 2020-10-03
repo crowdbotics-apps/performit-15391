@@ -7,6 +7,7 @@ const initialState = {
   readNotificationSuccess: '',
   acceptGroupJoinSuccess: '',
   acceptGroupInviteSuccess: '',
+  myPostLoading: false,
   errors: {
     UserDetail: null,
     FollowersConnectionsList: null,
@@ -41,9 +42,13 @@ export default (ProfilePageReducer = (state = initialState, action) => {
           },
         },
         editProfileSuccess: '',
+        myPostLoading: false,
       };
     case actions.PROFILE_USER_DETAIL_ERROR:
-      return {...state, errors: {UserDetail: action.error}};
+      return {
+        ...state,
+       errors: {UserDetail: action.error},
+       myPostLoading: false,};
     case actions.PROFILE_FOLLOWERS_CONNECTIONS_LIST_SUCCESS:
       return {
         ...state,
@@ -359,6 +364,11 @@ export default (ProfilePageReducer = (state = initialState, action) => {
       return {
         ...state,
         acceptGroupInviteSuccess: 'success'
+      };
+    case actions.PROFILE_USER_DETAIL_LOADING:
+      return {
+        ...state,
+        myPostLoading: true,
       };
     default:
       return state;

@@ -47,6 +47,7 @@ class PreviewPost extends Component {
     let videoData = this.props.navigation.getParam('videoData', {});
     let thumbnail = this.props.navigation.getParam('thumbnail', {});
     const groupId = this.props.navigation.getParam('groupId', '');
+    console.log('-----------------pp groupId 000000', groupId)
     if (!videoData.uri) {
       this.props.navigation.navigate('CreatePostStep1', {groupId});
     }
@@ -84,6 +85,10 @@ class PreviewPost extends Component {
         thumbnail,
       });
     }
+
+    console.log('-----------------pp groupId 111111', groupId)
+    console.log('-----------------pp prevGroupId 222222', prevGroupId)
+    console.log('-----------------pp this.state.groupId 333333', this.state.groupId)
 
     if ((groupId !== prevGroupId) || (groupId !== this.state.groupId)) {
       this.setState({

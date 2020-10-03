@@ -133,6 +133,7 @@ class HashTagHomePage extends Component {
                     }}
                     style={styles.profileSingleImageConatiner}>
                     <VideoPlayer
+                      key={hahstag && hahstag.id}
                       showBottomcontrol={false}
                       videoHeight={(screenSize.width / 3 - 1) * 0.66}
                       postId={hahstag && hahstag.id}

@@ -62,9 +62,25 @@ class Profile extends Component {
       },
     } = this.props;
     if (userId && accessToken) {
-      await userDetails(userId, accessToken);
-      await followersConnectionsList(userId, accessToken);
-      await followingConnectionsList(userId, accessToken);
+      const {profile: allProfiles} = this.props;
+      const profile = allProfiles && allProfiles[`${userId}`];
+      if(profile && profile.user && profile.user.pk){
+        //do nothing
+      } else {
+        await userDetails(userId, accessToken);
+      }
+
+      if(profile && profile.followersConnectionsList){
+        //do nothing
+      } else {
+        await followersConnectionsList(userId, accessToken);
+      }
+
+      if(profile && profile.followingConnectionsList){
+        //do nothing
+      } else {
+        await followingConnectionsList(userId, accessToken);
+      }
       await getNotificationsList(accessToken);
     }
     this.setState({
@@ -88,6 +104,7 @@ class Profile extends Component {
     let userId = this.props.navigation.getParam('userId', '');
     const origin = this.props.navigation.getParam('origin', '');
     const accessToken = this.props.accessToken;
+
     const {
       actions: {
         userDetails,
@@ -95,25 +112,55 @@ class Profile extends Component {
         followingConnectionsList,
       },
     } = this.props;
-    if (prevUserId !== userId) {
+
+    // console.log('---------------------prevUserId', prevUserId)
+    // console.log('---------------------UserId', userId)
+    if (userId && prevUserId !== userId) {
+      console.log('----------------------component updating profile page')
       this.setState({
         isLoading: true,
       });
-      await userDetails(userId, accessToken);
-      await followersConnectionsList(userId, accessToken);
-      await followingConnectionsList(userId, accessToken);
+      const {profile: allProfiles} = this.props;
+      const profile = allProfiles && allProfiles[`${userId}`];
+
+      // console.log('----------------------component mounting profile page')
+      if(profile && profile.user && profile.user.pk){
+        //do nothing
+      } else {
+        await userDetails(userId, accessToken);
+      }
+
+      if(profile && profile.followersConnectionsList){
+        //do nothing
+      } else {
+        await followersConnectionsList(userId, accessToken);
+      }
+
+      if(profile && profile.followingConnectionsList){
+        //do nothing
+      } else {
+        await followingConnectionsList(userId, accessToken);
+      }
+
       this.setState({
         isLoading: false,
         userId,
       });
       const {pk} = this.props.user;
       // const user = await login(email, pk + 'password' + pk);
-      if (userId !== pk) {
+      if (userId && userId !== pk) {
         subscribeToInbox(pk, chat => {
           this.props.actions.chatUpdate(chat);
           this.populateChatId(userId);
         });
       }
+    }
+
+    if(!userId && !this.state.userId){
+      this.setState({
+        isLoading: false,
+        userId: this.props.user && this.props.user.pk
+      });
     }
   }
 
@@ -128,7 +175,7 @@ class Profile extends Component {
     if (!userProfile) {
       await userDetails(otherUserId, accessToken);
     }
-    console.log('----------------------chatId  000009000', chatId);
+    // console.log('----------------------chatId  000009000', chatId);
     chatId &&
       this.setState({
         chatId,
@@ -186,9 +233,7 @@ class Profile extends Component {
     let shouldShowFollowButton = true;
     const {navigation, profile: allProfiles, user} = this.props;
     let {userId} = this.state;
-    if (!userId) {
-      userId = this.props.user && this.props.user.pk;
-    }
+
     const profile = allProfiles && allProfiles[`${this.state.userId}`];
     const loggedInProfile = user && allProfiles && allProfiles[`${user.pk}`];
     let followerDataForFollow = '';
@@ -247,6 +292,7 @@ class Profile extends Component {
           }
         });
     }
+    console.log('---------------------profile.posts', profile && profile.posts)
 
     return (
       <ScrollView
@@ -431,10 +477,11 @@ class Profile extends Component {
                   {profile.posts.map(videoData => (
                     <TouchableOpacity
                       onPress={() => {
-                        navigation.navigate('MyPosts', {userId: user.pk, postId: videoData.id});
+                        navigation.navigate('MyPosts', {userId, postId: videoData.id});
                       }}
                       style={styles.profileSingleImageConatiner}>
                       <VideoPlayer
+                        key={videoData && videoData.id}
                         showBottomcontrol={false}
                         videoHeight={(screenSize.width / 3 - 1) * 0.66}
                         postId={videoData && videoData.id}
@@ -463,7 +510,7 @@ class Profile extends Component {
                           console.log('------pause');
                         }}
                         onPlay={() => {
-                          navigation.navigate('MyPosts', {userId: user.pk, postId: videoData.id});
+                          navigation.navigate('MyPosts', {userId, postId: videoData.id});
                         }}
                         onLoad={fields => {
                           this.setState({
@@ -472,7 +519,7 @@ class Profile extends Component {
                           });
                         }}
                         showControls={value => {
-                          navigation.navigate('MyPosts', {userId: user.pk, postId: videoData.id});
+                          navigation.navigate('MyPosts', {userId, postId: videoData.id});
                         }}
                       />
                     </TouchableOpacity>

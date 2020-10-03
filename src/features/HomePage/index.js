@@ -70,10 +70,10 @@ class Home extends Component {
     } = this.props;
     if (userId && accessToken) {
       Geolocation.getCurrentPosition(
-        position => {
+        async position => {
           const location = JSON.stringify(position);
           if(position && position.coords && position.coords.latitude && position.coords.longitude){
-            updateCurrentLocation(accessToken, position.coords.latitude, position.coords.longitude);
+            await updateCurrentLocation(accessToken, position.coords.latitude, position.coords.longitude);
           }
           this.setState({location});
         },
@@ -103,13 +103,25 @@ class Home extends Component {
     const {
       actions: {userDetails, followersConnectionsList, userPosts},
     } = this.props;
-    if (prevUserId !== userId) {
+    if (accessToken && userId && prevUserId !== userId) {
       this.setState({
         isLoading: true,
       });
+      Geolocation.getCurrentPosition(
+        async position => {
+          const location = JSON.stringify(position);
+          if(position && position.coords && position.coords.latitude && position.coords.longitude){
+            await updateCurrentLocation(accessToken, position.coords.latitude, position.coords.longitude);
+          }
+          this.setState({location});
+        },
+        error => console.log('Error', JSON.stringify(error)),
+        {enableHighAccuracy: true, timeout: 20000, maximumAge: 1000},
+      );
       await userDetails(userId, accessToken);
       await followersConnectionsList(userId, accessToken);
       await userPosts('following', accessToken, userId);
+      await getNotificationsList(accessToken);
 
       this.setState({
         isLoading: false,
@@ -518,6 +530,7 @@ class Home extends Component {
 
                   <View style={styles.postImageContainer}>
                     <VideoPlayer
+                      key={postData && postData.id}
                       showBottomcontrol={true}
                       videoHeight={350}
                       postId={postData && postData.id}
@@ -545,15 +558,15 @@ class Home extends Component {
                         });
                       }}
                       onPlay={() => {
+                        this.callPostViewed(
+                          postData && postData.id,
+                          this.state[`isViewed${postData && postData.id}`],
+                        );
                         this.setState({
                           [`paused${postData && postData.id}`]: false,
                         });
                       }}
                       onLoad={fields => {
-                        this.callPostViewed(
-                          postData && postData.id,
-                          this.state[`isViewed${postData && postData.id}`],
-                        );
                         this.setState({
                           [`duration${postData &&
                             postData.id}`]: fields.duration,

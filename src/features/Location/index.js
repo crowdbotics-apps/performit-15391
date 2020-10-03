@@ -217,33 +217,17 @@ class Location extends Component {
     this.state = {
       isLoading: false,
       userId: '',
-      currentPassword: '',
-      showCurrentPassword: false,
-      newPassword: '',
-      showNewPassword: false,
-      confirmNewPassword: '',
-      showConfirmNewPassword: false,
-      showError: false,
-      error: '',
-      updateForm: false,
-      showSuccessModal: false,
       user_types: [],
       distance: 10,
       searchTerm: '',
       lat: '',
       lng: '',
-      isMale: true,
       isArtistChecked: false,
       isSingerChecked: false,
       isRapperChecked: false,
       isDancerChecked: false,
       isProducerChecked: false,
       isOtherChecked: false,
-      profilePic: '',
-      profileSource: {},
-      isEditLoading: false,
-      counter: 30,
-      timer: null,
       showFilters: false
     };
   }
@@ -687,24 +671,15 @@ class Location extends Component {
 }
 
 const mapStateToProps = state => ({
-  userDetailErrors: state.Profile.errors.UserDetail,
   profile: state.Profile.profile,
   user: state.EmailAuth.user,
   accessToken: state.EmailAuth.accessToken,
-  editProfileErrors: state.Profile.errors.ChangePassword,
-  editProfileSuccess: state.Profile.editProfileSuccess,
   nearbyUsers: state.Posts.nearbyUsers,
   isNearbyUsersLoading: state.Posts.isNearbyUsersLoading,
 });
 
 const mapDispatchToProps = dispatch => ({
   actions: {
-    userDetails: (userId, token) => {
-      dispatch(profileActions.userDetails(userId, token));
-    },
-    editProfile: (token, user, userTypes) => {
-      dispatch(profileActions.editProfile(token, user, userTypes));
-    },
     findNearbyUsers: (token, user_types, distance, term) => {
       dispatch(homeActions.findNearbyUsers(token, user_types, distance, term));
     }

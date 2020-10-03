@@ -214,8 +214,13 @@ class GroupsDescription extends Component {
   requestOrInviteUser = async (groupData) => {
     if(groupData && groupData.group && groupData.group.group_owner && groupData.group.group_owner.pk === this.state.userId){
       this.props.navigation.navigate('InviteFriendsPage', {groupId: this.state.groupId})
+      return false;
+    } else if (groupData && groupData.group && groupData.group.meta_data && groupData.group.meta_data.is_invite_sent && !!groupData.group.meta_data.is_invite_accepted){
+        this.props.navigation.navigate('InviteFriendsPage', {groupId: this.state.groupId});
+        return false;
     } else if (groupData && groupData.group && groupData.group.meta_data && groupData.group.meta_data.joining_access_requested && !groupData.group.meta_data.joining_access_accepted){
         Toast.show('Group access is already requested');
+        return false;
     } else if (groupData && groupData.group && groupData.group.meta_data && groupData.group.meta_data.joining_access_requested && !!groupData.group.meta_data.joining_access_accepted){
         this.props.navigation.navigate('InviteFriendsPage', {groupId: this.state.groupId});
     }else {
@@ -284,6 +289,10 @@ class GroupsDescription extends Component {
       text = 'Invite'
     }
 
+    if (groupData && groupData.group && groupData.group.meta_data && groupData.group.meta_data.is_invite_sent && !!groupData.group.meta_data.is_invite_accepted){
+        text = 'Invite'
+    }
+
     return text;
 
   }
@@ -306,6 +315,10 @@ class GroupsDescription extends Component {
       canViewPost = false
     } else if (groupData && groupData.group && groupData.group.meta_data && groupData.group.meta_data.joining_access_requested && groupData.group.meta_data.joining_access_accepted) {
       canViewPost = true
+    }
+
+    if (groupData && groupData.group && groupData.group.meta_data && groupData.group.meta_data.is_invite_sent && !!groupData.group.meta_data.is_invite_accepted){
+        canViewPost = true
     }
 
     return canViewPost;
@@ -508,6 +521,7 @@ class GroupsDescription extends Component {
 
                   <View style={styles.postImageContainer}>
                     <VideoPlayer
+                      key={postData && postData.id}
                       showBottomcontrol={true}
                       videoHeight={350}
                       postId={postData && postData.id}

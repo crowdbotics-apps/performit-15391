@@ -43,7 +43,8 @@ import {
   ACCEPT_GROUP_JOIN_ERROR,
   ACCEPT_GROUP_INVITE_REQUEST,
   ACCEPT_GROUP_INVITE_SUCCESS,
-  ACCEPT_GROUP_INVITE_ERROR
+  ACCEPT_GROUP_INVITE_ERROR,
+  PROFILE_USER_DETAIL_LOADING
 } from './constants';
 import {request} from '../../../utils/http';
 
@@ -232,6 +233,10 @@ function sendAcceptGroupInvite(invite_id, token) {
 }
 
 function* handleGetUserDetails(action) {
+  yield put({
+    type: PROFILE_USER_DETAIL_LOADING,
+  });
+
   const {userId, token} = action;
   try {
     const {status, data} = yield call(sendUserDetails, userId, token);
@@ -754,6 +759,7 @@ function* handleAcceptGroupInvite(action) {
   const {invite_id, token} = action;
   try {
     const {status, data} = yield call(sendAcceptGroupInvite, invite_id, token);
+    console.log('--------------------------data invite', data)
     if (status === 200) {
       yield put({
         type: ACCEPT_GROUP_INVITE_SUCCESS,
@@ -775,6 +781,7 @@ function* handleAcceptGroupInvite(action) {
       });
     }
   } catch (error) {
+    console.dir(error)
     yield put({
       type: ACCEPT_GROUP_INVITE_ERROR,
       error: 'Something went wrong',
