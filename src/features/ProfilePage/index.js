@@ -64,11 +64,6 @@ class Profile extends Component {
     if (userId && accessToken) {
       const {profile: allProfiles} = this.props;
       const profile = allProfiles && allProfiles[`${userId}`];
-      if(profile && profile.user && profile.user.pk){
-        //do nothing
-      } else {
-        await userDetails(userId, accessToken);
-      }
 
       if(profile && profile.followersConnectionsList){
         //do nothing
@@ -80,6 +75,12 @@ class Profile extends Component {
         //do nothing
       } else {
         await followingConnectionsList(userId, accessToken);
+      }
+
+      if(profile && profile.user && profile.user.pk){
+        //do nothing
+      } else {
+        await userDetails(userId, accessToken);
       }
       await getNotificationsList(accessToken);
     }
@@ -123,13 +124,6 @@ class Profile extends Component {
       const {profile: allProfiles} = this.props;
       const profile = allProfiles && allProfiles[`${userId}`];
 
-      // console.log('----------------------component mounting profile page')
-      if(profile && profile.user && profile.user.pk){
-        //do nothing
-      } else {
-        await userDetails(userId, accessToken);
-      }
-
       if(profile && profile.followersConnectionsList){
         //do nothing
       } else {
@@ -140,6 +134,12 @@ class Profile extends Component {
         //do nothing
       } else {
         await followingConnectionsList(userId, accessToken);
+      }
+            // console.log('----------------------component mounting profile page')
+      if(profile && profile.user && profile.user.pk){
+        //do nothing
+      } else {
+        await userDetails(userId, accessToken);
       }
 
       this.setState({
@@ -161,6 +161,18 @@ class Profile extends Component {
         isLoading: false,
         userId: this.props.user && this.props.user.pk
       });
+    }
+
+    if(this.props.myPostLoading !== prevProps.myPostLoading){
+      if(this.props.myPostLoading){
+        this.setState({
+          isLoading: true
+        })
+      } else {
+        this.setState({
+          isLoading: false
+        })
+      }
     }
   }
 
@@ -557,6 +569,7 @@ const mapStateToProps = state => ({
   profile: state.Profile.profile,
   user: state.EmailAuth.user,
   accessToken: state.EmailAuth.accessToken,
+  myPostLoading: state.Profile.myPostLoading
 });
 
 const mapDispatchToProps = dispatch => ({

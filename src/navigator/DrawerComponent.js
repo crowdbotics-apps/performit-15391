@@ -159,10 +159,21 @@ const mapStateToProps = state => ({
   profile: state.Profile.profile,
 });
 
+// const mapDispatchToProps = dispatch => ({
+//   logout: () => {
+    // dispatch({
+    //   type: 'logout',
+    // });
+//   }
+// });
+
 const mapDispatchToProps = dispatch => ({
   actions: {
     logout: () => {
-      dispatch(emailAuthActions.logout());
+      // dispatch(emailAuthActions.logout());
+      dispatch({
+        type: 'logout',
+      });
     },
   },
 });

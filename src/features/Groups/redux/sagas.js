@@ -22,7 +22,8 @@ import {
   USER_GROUP_REQUEST,
   USER_GROUP_SUCCESS,
   USER_GROUP_ERROR,
-  USER_GROUP_LOADING
+  USER_GROUP_LOADING,
+  GROUP_DETAILS_LOADING
 } from './constants';
 import {request} from '../../../utils/http';
 
@@ -218,6 +219,10 @@ function* handleSetEditGroupDefaultSuccess(action) {
 }
 
 function* handleGetGroupDetails(action) {
+  yield put({
+    type: GROUP_DETAILS_LOADING,
+  });
+  
   const {group_id, page, token} = action;
   try {
     const {status, data} = yield call(sendGetGroupDetails, group_id, page, token);

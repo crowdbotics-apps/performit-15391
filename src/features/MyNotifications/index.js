@@ -147,7 +147,11 @@ class MyNotifications extends Component {
 
                   <View style={styles.followProfileRowLeftContainer}>
                     <TouchableOpacity
-                      onPress={() => this.onNotificationClick(notification)}
+                      onPress={() => navigation.navigate('ProfilePage', {
+                            userId: notification &&
+                            notification.created_by &&
+                            notification.created_by.pk
+                          })}
                       style={[styles.profileRowImageContainer]}>
                       <Image
                         style={[styles.profileRowImage]}
@@ -155,7 +159,8 @@ class MyNotifications extends Component {
                           uri: notification &&
                            notification.created_by &&
                           notification.created_by.meta_data &&
-                            notification.created_by.meta_data.profile_pic
+                          notification.created_by.meta_data.user_details &&
+                            notification.created_by.meta_data.user_details.profile_pic
                         }}
                       />
                     </TouchableOpacity>

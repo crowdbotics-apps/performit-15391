@@ -100,6 +100,18 @@ class GroupsDescription extends Component {
         });
       }
     }
+
+    if(this.props.groupDetailLoading !== prevProps.groupDetailLoading){
+      if(this.props.groupDetailLoading){
+        this.setState({
+          isLoading: true
+        })
+      } else {
+        this.setState({
+          isLoading: false
+        })
+      }
+    }
   }
 
   componentWillUnmount() {
@@ -356,11 +368,11 @@ class GroupsDescription extends Component {
                   </TouchableOpacity>
                   <Text style={styles.headerText}>{groupData && groupData.group && groupData.group.group_name}</Text>
                 </View>
-                <TouchableOpacity
+                {!this.state.isLoading && <TouchableOpacity
                  onPress={() => this.requestOrInviteUser(groupData)}
                  style={styles.headerRightContainer}>
                   <Text style={styles.headerRightText}>{this.requestOrInviteUserText(groupData)}</Text>
-                </TouchableOpacity>
+                </TouchableOpacity>}
               </SafeAreaView>
         <ScrollView
           contentContainerStyle={styles.screen}
@@ -895,7 +907,8 @@ const mapStateToProps = state => ({
   user: state.EmailAuth.user,
   accessToken: state.EmailAuth.accessToken,
   groupsFeed: state.Group.groupsFeed,
-  joinGroupSuccess: state.Group.joinGroupSuccess
+  joinGroupSuccess: state.Group.joinGroupSuccess,
+  groupDetailLoading: state.Group.groupDetailLoading
 });
 
 const mapDispatchToProps = dispatch => ({

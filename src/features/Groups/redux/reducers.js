@@ -9,6 +9,7 @@ const initialState = {
   groupsFeed: {},
   userGroups: {},
   userGroupLoading: false,
+  groupDetailLoading: false,
   errors: {
     CreateGroup: null,
     EditGroup: null,
@@ -51,9 +52,12 @@ export default (GroupReducer = (state = initialState, action) => {
           ,
         },
         groupDetailsSuccess: 'success',
+        groupDetailLoading: false
       };
     case actions.GROUP_DETAILS_ERROR:
-      return {...state, errors: {GroupDetail: action.error}};
+      return {...state, errors: {GroupDetail: action.error}, groupDetailLoading: false};
+    case actions.GROUP_DETAILS_LOADING:
+      return {...state, groupDetailLoading: true};
     case actions.JOIN_GROUP_ERROR:
       return {...state, errors: {JoinGroup: action.error}};
     case actions.JOIN_GROUP_SUCCESS:

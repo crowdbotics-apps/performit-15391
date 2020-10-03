@@ -400,8 +400,9 @@ class Location extends Component {
               longitudeDelta: 0.221,
             }}
           >
-            {nearbyUsersData && nearbyUsersData.length > 0 && nearbyUsersData.map(nearByUser => (
+            {nearbyUsersData && nearbyUsersData.length > 0 && nearbyUsersData.map((nearByUser, index) => (
               <Marker
+                key={index}
                 zIndex={i++}
                 coordinate = {{
                   latitude: nearByUser.meta_data && nearByUser.meta_data.live_location_lat,
@@ -492,6 +493,7 @@ class Location extends Component {
             ))}
 
             <Marker
+              index={9999}
               zIndex={9999}
               trackViewChanges={ false }
               coordinate = {{
