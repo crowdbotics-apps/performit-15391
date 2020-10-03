@@ -22,6 +22,7 @@ const persistedReducer = persistReducer(persistConfig, combinedReducers);
 const reducerWithLogout = (state, action) => {
   if (action.type === 'logout') {
     state = undefined;
+    AsyncStorage.clear();
   }
   return persistedReducer(state, action);
 };
