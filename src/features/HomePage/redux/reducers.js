@@ -11,6 +11,7 @@ const initialState = {
   searchDashBoardSuccess: false,
   isNearbyUsersLoading: false,
   isSearchDashboardLoading: false,
+  createPostSuccess: false,
   errors: {
     UserPosts: null,
     UserPostsCommentList: null,
@@ -18,7 +19,7 @@ const initialState = {
     UserAddCommentToPost: null,
     serchDashBoardError: null,
     CreatePost: null,
-    UpdateLocation: null,
+    UpdateLocation: null
   },
 };
 
@@ -124,7 +125,9 @@ export default (HomePageReducer = (state = initialState, action) => {
         errors: {serchDashBoardError: action.error},
       };
     case actions.CREATE_POST_ERROR:
-      return {...state, errors: {CreatePost: action.error}};
+      return {...state, createPostSuccess: '', errors: {CreatePost: action.error}};
+    case actions.CREATE_POST_SUCCESS:
+      return {...state, createPostSuccess: true};
     case actions.NEARBY_USERS_SUCCESS:
       return {
         ...state,

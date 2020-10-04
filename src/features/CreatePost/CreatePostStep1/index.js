@@ -61,7 +61,6 @@ class CreatePostStep1 extends Component {
   async componentDidMount() {
     // write code here
     const groupId = this.props.navigation.getParam('groupId', '');
-    console.log('-----------------ceatePost1 groupId 00000', groupId)
     this.setState({
       groupId
     })
@@ -71,9 +70,6 @@ class CreatePostStep1 extends Component {
     // write code here
     const groupId = this.props.navigation.getParam('groupId', '');
     const prevGroupId = prevProps.navigation.getParam('groupId', '');
-    console.log('-----------------ceatePost1 groupId 111111', groupId)
-    console.log('-----------------ceatePost1 prevGroupId 222222', prevGroupId)
-    console.log('-----------------ceatePost1 this.state.groupId 333333', this.state.groupId)
     if ((groupId !== prevGroupId) || (groupId !== this.state.groupId)) {
         this.setState({
           groupId,
@@ -141,7 +137,7 @@ class CreatePostStep1 extends Component {
         .then(result => {
           switch (result) {
             case RESULTS.GRANTED:
-              console.log('The permission is granted');
+              // console.log('The permission is granted');
               if (this.state.activeTab === 'Audio') {
                 this.setState(
                   {
@@ -177,7 +173,7 @@ class CreatePostStep1 extends Component {
                 .then(result => {
                   switch (result) {
                     case RESULTS.GRANTED:
-                      console.log('The permission is granted');
+                      // console.log('The permission is granted');
                       if (this.state.activeTab === 'Video') {
                         this.setState(
                           {
@@ -215,7 +211,7 @@ class CreatePostStep1 extends Component {
         .then(result => {
           switch (result) {
             case RESULTS.GRANTED:
-              console.log('The permission is granted');
+              // console.log('The permission is granted');
               break;
           }
         })
@@ -227,7 +223,7 @@ class CreatePostStep1 extends Component {
         .then(result => {
           switch (result) {
             case RESULTS.GRANTED:
-              console.log('The permission is granted');
+              // console.log('The permission is granted');
               break;
           }
         })

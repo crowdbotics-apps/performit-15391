@@ -73,8 +73,6 @@ class MyPosts extends Component {
     const {profile: allProfiles} = this.props;
     const profile = allProfiles && allProfiles[`${userId}`];
     if (userId && accessToken && userId !== loggedInUserId) {
-      console.log('----------------------mounting my posts');
-      console.log('----------------------component mounting profile page')
       if(profile && profile.user && profile.user.pk){
         //do nothing
       } else {
@@ -88,16 +86,8 @@ class MyPosts extends Component {
     this.setState({
       postsData,
     });
-    console.log('-------------------------------profile loaded mounted')
-    console.log('-------------------------------profile loaded this.props.postId mounted', postId)
-    console.log('-------------------------------profile loaded this.props.myPostLoading mounted', this.props.myPostLoading)
     if(postId && !this.props.myPostLoading){
       setTimeout(() => {
-        // console.log('-------------------yPos', yPos)
-        // console.log('-------------------this.scroller', this.scroller)
-        // console.log('-------------------post click changed')
-        // console.log('-------------------postsData', postsData)
-        // console.log('-------------------postId', postId)
         let index = 0 
         if(postsData && postsData.length > 0) {
           index = postsData.findIndex(elem => elem.id === postId);
@@ -106,7 +96,6 @@ class MyPosts extends Component {
         this.scroller && this.scroller.scrollTo({x: 0, y: yPos, animated: true})
       }, 1500);
     }
-    console.log('---------------------did mount postsData', postsData)
 
     this.setState({
       isLoading: false,
@@ -121,8 +110,6 @@ class MyPosts extends Component {
     const userId = this.props.navigation.getParam('userId', '');
     const prevPostId = prevProps.navigation.getParam('postId', '');
     const postId = this.props.navigation.getParam('postId', '');
-    console.log('----------------------component updating my post prevUserId', prevUserId)
-    console.log('----------------------component updating my post userId', userId)
 
     const loggedInUserId = this.props.user && this.props.user.pk
     
@@ -159,30 +146,9 @@ class MyPosts extends Component {
           myPostLoading: true
         })
       } else {
-        console.log('-------------------------loading why ?????')
         this.setState({
           myPostLoading: false
         })
-
-        // console.log('-------------------------------loading loaded')
-        // console.log('-------------------------------profile loaded this.state.postsData', this.state.postsData)
-        // console.log('-------------------------------profile loaded this.props.myPostLoading', this.props.myPostLoading)
-        // if(this.state.postsData && this.state.postsData.length > 0 && postId){
-        //   console.log('-------------------postsData', this.state.postsData)
-        //   console.log('-------------------postId', postId)
-        //   let index = 0 
-        //   this.state.postsData && this.state.postsData.length > 0 && this.state.postsData.forEach((elem,i) => {
-        //     if(elem.id === postId){
-        //       index = i
-        //     }
-        //   })
-        //   let yPos = scaleModerate(index * 659);
-        //   setTimeout(async () => {
-        //     console.log('-------------------yPos', yPos)
-        //     console.log('-------------------this.scroller', this.scroller)
-        //     this.scroller && this.scroller.scrollTo({x: 0, y: yPos, animated: true})
-        //   }, 1000);
-        // }
       }
     }
 
@@ -211,26 +177,6 @@ class MyPosts extends Component {
       this.setState({
         postsData,
       });
-      // console.log('-------------------------------profile loaded')
-      // console.log('-------------------------------profile loaded this.props.postId', postId)
-      // console.log('-------------------------------profile loaded this.props.myPostLoading', this.props.myPostLoading)
-      // if(postId && !this.props.myPostLoading){
-      //   console.log('-------------------post click changed')
-      //   console.log('-------------------postsData', postsData)
-      //   console.log('-------------------postId', postId)
-      //   let index = 0 
-      //   postsData && postsData.length > 0 && postsData.forEach((elem,i) => {
-      //     if(elem.id === postId){
-      //       index = i
-      //     }
-      //   })
-      //   let yPos = scaleModerate(index * 659);
-      //   setTimeout(async () => {
-      //     console.log('-------------------yPos', yPos)
-      //     console.log('-------------------this.scroller', this.scroller)
-      //     this.scroller && this.scroller.scrollTo({x: 0, y: yPos, animated: true})
-      //   }, 1000);
-      // }
     }
 
     if (prevProps.isFocused !== this.props.isFocused) {
@@ -262,25 +208,20 @@ class MyPosts extends Component {
   }
 
   sharePost = async (video) => {
-    console.log('------------------sare 00000')
     if (Platform.OS === "android" && !(await this.hasAndroidPermission())) {
-      console.log('------------------sare 22222 ')
       Toast.show('User permission not granted');
       return;
     }
     this.setState({ uploadingStatus: 0.01 });
-    console.log('------------------sare 3333 ', video && video.content)
 
     const cache = await RNFetchBlob.config({
                 fileCache: true,
                 appendExt: 'mp4',
               }).fetch('GET', video.content, {}).progress((received, total) => {
                     this.setState({ uploadingStatus: (received / total) * 100 })
-                    console.log('Progress', (received / total) * 100);
+                    // console.log('Progress', (received / total) * 100);
                 });
-    console.log('------------------cache', cache);
     const gallery = await CameraRoll.save(cache.path(), 'video');
-    console.log('------------------gallery', gallery)
     cache.flush();
     this.setState({ uploadingStatus: 0 }, async () => {
       await Share.shareSingle({

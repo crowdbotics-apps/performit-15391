@@ -259,6 +259,7 @@ class CreateGroup extends Component {
               : updatedResponse.uri &&
                 updatedResponse.uri.replace('file://', ''),
           name: updatedResponse.fileName,
+          type: "image/*"
         };
 
         // You can also display the image using data:
@@ -323,10 +324,16 @@ class CreateGroup extends Component {
         </SafeAreaView>
         <View style={styles.imageContainer}>
           <View style={[styles.profileImageContainer]}>
+            {groupPic ?
+            <Image
+              style={[styles.profileImage]}
+              source={{uri: groupPic}}
+            />
+            :
             <Image
               style={[styles.profileImage]}
               source={require('../../../assets/images/create-group-logo.png')}
-            />
+            />}
           </View>
           <View style={[styles.tncContainer]}>
             <TouchableOpacity

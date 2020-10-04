@@ -365,14 +365,21 @@ class Profile extends Component {
                     <Text style={styles.profileSubText}>{userTypes}</Text>
                   </View>
                   <View style={styles.profileStatsContainer}>
-                    <View style={styles.profileSingleStatContainer}>
+                    <TouchableOpacity 
+                      onPress={() =>
+                        profile.posts && profile.posts.length > 0 ? 
+                        navigation.navigate('MyPosts', {userId, postId: ''})
+                        : Toast.show('There are no posts')
+                      }
+                      style={styles.profileSingleStatContainer}>
                       <Text style={styles.profileSingleStatFirstText}>
                         {(profile.posts && profile.posts.length) || '0'}
                       </Text>
                       <Text style={styles.profileSingleStatSecondText}>
                         Posts
                       </Text>
-                    </View>
+                    </TouchableOpacity>
+                    
                     <TouchableOpacity
                       onPress={() =>
                         navigation.navigate('FollowPage', {

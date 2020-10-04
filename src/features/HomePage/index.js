@@ -73,7 +73,7 @@ class Home extends Component {
         async position => {
           const location = JSON.stringify(position);
           if(position && position.coords && position.coords.latitude && position.coords.longitude){
-            await updateCurrentLocation(accessToken, position.coords.latitude, position.coords.longitude);
+            await updateCurrentLocation(accessToken, position.coords.latitude.toFixed(4), position.coords.longitude.toFixed(4));
           }
           this.setState({location});
         },
@@ -111,7 +111,7 @@ class Home extends Component {
         async position => {
           const location = JSON.stringify(position);
           if(position && position.coords && position.coords.latitude && position.coords.longitude){
-            await updateCurrentLocation(accessToken, position.coords.latitude, position.coords.longitude);
+            await updateCurrentLocation(accessToken, position.coords.latitude.toFixed(4), position.coords.longitude.toFixed(4));
           }
           this.setState({location});
         },
@@ -199,25 +199,20 @@ class Home extends Component {
   }
 
   sharePost = async (video) => {
-    console.log('------------------sare 00000')
     if (Platform.OS === "android" && !(await this.hasAndroidPermission())) {
-      console.log('------------------sare 22222 ')
       Toast.show('User permission not granted');
       return;
     }
     this.setState({ uploadingStatus: 0.01 });
-    console.log('------------------sare 3333 ', video && video.content)
 
     const cache = await RNFetchBlob.config({
                 fileCache: true,
                 appendExt: 'mp4',
               }).fetch('GET', video.content, {}).progress((received, total) => {
                     this.setState({ uploadingStatus: (received / total) * 100 })
-                    console.log('Progress', (received / total) * 100);
+                    // console.log('Progress', (received / total) * 100);
                 });
-    console.log('------------------cache', cache);
     const gallery = await CameraRoll.save(cache.path(), 'video');
-    console.log('------------------gallery', gallery)
     cache.flush();
     this.setState({ uploadingStatus: 0 }, async () => {
       await Share.shareSingle({

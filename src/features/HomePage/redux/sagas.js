@@ -1,4 +1,5 @@
 import {all, takeLatest, put, call} from 'redux-saga/effects';
+import {cloneDeep} from 'lodash';
 
 import {
   USER_POSTS_REQUEST,
@@ -125,7 +126,6 @@ function sendSearchDashBoard(tab, term, token) {
 }
 
 function sendCreatePost(data, token, groupId) {
-  console.log('-------1111-------groupId', groupId)
   if(groupId){
     return request.post('/groups/create-post/', data, {
       headers: {
@@ -372,17 +372,28 @@ function* handleSearchPerformit(action) {
 }
 
 function* handleCreatePost(action) {
+  yield put({
+    type: CREATE_POST_ERROR,
+    error: '',
+  });
+  
   const {token, content, caption, groupId} = action;
+  let updatedContent = cloneDeep(content)
+  if(updatedContent && updatedContent.content && updatedContent.content.type === 'video'){
+    updatedContent.content.type = 'video/*'
+  } else if(updatedContent && updatedContent.content && updatedContent.content.type === 'audio'){
+    updatedContent.content.type = 'audio/*'
+  }
 
   try {
     const formData = new FormData();
-    Object.keys(content).forEach(key => {
-      formData.append(key, content[key]);
+    Object.keys(updatedContent).forEach(key => {
+      if(updatedContent[key] && updatedContent[key].uri) formData.append(key, updatedContent[key]);
     });
 
     formData.append('caption', caption);
     if(groupId) formData.append('group_id', groupId);
-    console.log('------------------formData--0000', formData)
+    // console.log('------------------formData--0000', formData)
     const {status, data, success} = yield call(sendCreatePost, formData, token, groupId);
 
     if (status === 200) {
@@ -410,7 +421,7 @@ function* handleCreatePost(action) {
       });
     }
   } catch (error) {
-    console.dir(error);
+    // console.dir(error);
     yield put({
       type: CREATE_POST_ERROR,
       error: 'Not able to create post',
@@ -483,6 +494,7 @@ function* handleUpdateUserLocation(action) {
       });
     }
   } catch (error) {
+    // console.dir(error)
     yield put({
       type: UPDATE_LOCATION_ERROR,
       error: 'Something went wrong',

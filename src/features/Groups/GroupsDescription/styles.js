@@ -650,5 +650,16 @@ export const styles = StyleSheet.create({
   noAccessImage: {
     width: scaleModerate(281),
     height: scaleModerate(132),
+  },
+
+  loaderContainer: {
+    position: 'absolute',
+    height: scaleModerate(20),
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
+    left: '25%',
+    top: '50%',
+    backgroundColor: '#111111'
   }
 });

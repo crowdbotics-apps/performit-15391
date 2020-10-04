@@ -436,7 +436,7 @@ class EditProfile extends Component {
         ) {
           updatedResponse.fileName = 'profile.jpg';
         }
-
+        console.log('---------------------------updatedResponse', updatedResponse)
         const source = {
           uri:
             Platform.OS === 'android'
@@ -444,6 +444,7 @@ class EditProfile extends Component {
               : updatedResponse.uri &&
                 updatedResponse.uri.replace('file://', ''),
           name: updatedResponse.fileName,
+          type: "image/*"
         };
 
         // You can also display the image using data:
@@ -637,10 +638,6 @@ class EditProfile extends Component {
           <TouchableOpacity
             style={[styles.inputEyeImage]}
             onPress={() => console.log('-----')}>
-            <Image
-              style={[styles.inputEyeImage]}
-              source={require('../../assets/images/down_trangle.png')}
-            />
           </TouchableOpacity>
         </View>
 

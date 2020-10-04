@@ -408,6 +408,11 @@ class Location extends Component {
                   latitude: nearByUser.meta_data && nearByUser.meta_data.live_location_lat,
                   longitude: nearByUser.meta_data && nearByUser.meta_data.live_location_long}}
                 trackViewChanges={ false }
+                onPress={(e) => {e.stopPropagation();
+                         navigation.navigate('ProfilePage', {
+                          userId: nearByUser.pk,
+                        });
+                       }}
               >
                 <View style={{
                   width: scaleModerate(81),

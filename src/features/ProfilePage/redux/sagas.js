@@ -586,6 +586,8 @@ function* handleEditProfile(action) {
       userTypes.forEach(userType => {
         formData.append('user_types', userType);
       });
+
+    console.log('--------------------------------------formData 111111', formData)  
     const {status, data, success} = yield call(
       sendEditProfile,
       formData,
@@ -617,6 +619,7 @@ function* handleEditProfile(action) {
       });
     }
   } catch (error) {
+    console.dir(error)
     yield put({
       type: EDIT_PROFILE_ERROR,
       error: 'Not able to update user profile',

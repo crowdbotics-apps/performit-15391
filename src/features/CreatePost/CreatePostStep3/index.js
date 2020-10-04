@@ -10,10 +10,12 @@ import {
   Switch,
 } from 'react-native';
 import Modal from 'react-native-modalbox';
+import Toast from 'react-native-simple-toast';
 import {NavigationEvents} from 'react-navigation';
 import {Text, Button} from 'react-native-ui-kitten';
 import {styles} from './styles';
 import * as homeActions from '../../HomePage/redux/actions';
+import * as groupActions from '../../Groups/redux/actions';
 import {connect} from 'react-redux';
 import * as profileActions from '../../ProfilePage/redux/actions';
 
@@ -29,7 +31,10 @@ class CreatePostStep3 extends Component {
       videoData: {},
       caption: '',
       thumbnail: {},
-      groupId: ''
+      groupId: '',
+      timer: null,
+      counter: 120,
+      showError: false
     };
   }
 
@@ -46,7 +51,6 @@ class CreatePostStep3 extends Component {
     let videoData = this.props.navigation.getParam('videoData', {});
     let thumbnail = this.props.navigation.getParam('thumbnail', {});
     const groupId = this.props.navigation.getParam('groupId', '');
-    console.log('-----------------ceatePost3 groupId 000000', groupId)
     if (!videoData.uri) {
       this.props.navigation.navigate('CreatePostStep1', {groupId});
     }
@@ -83,14 +87,16 @@ class CreatePostStep3 extends Component {
       });
     }
 
-    console.log('-----------------ceatePost3 groupId 111111', groupId)
-    console.log('-----------------ceatePost3 prevGroupId 222222', prevGroupId)
-    console.log('-----------------ceatePost3 this.state.groupId 333333', this.state.groupId)
-
     if ((groupId !== prevGroupId) || (groupId !== this.state.groupId)) {
         this.setState({
           groupId,
         });
+    }
+
+    if (this.props.createPostError !== prevProps.createPostError) {
+      this.setState({
+        showError: true,
+      });
     }
   }
 
@@ -118,26 +124,93 @@ class CreatePostStep3 extends Component {
     const accessToken = this.props.accessToken;
 
     const {
-      actions: {userDetails, createPost},
+      actions: {userDetails, createPost, getGroupDetails},
     } = this.props;
-    console.log('------------------this.state.groupId', this.state.groupId)
     await createPost(accessToken, postObject, this.state.caption, this.state.groupId);
 
-    if (userId && accessToken) {
-      await userDetails(userId, accessToken);
-    }
-    this.setState(
-      {
-        isLoading: false,
-        showDiscardContentModal: false,
-        videoData: {},
-        caption: '',
-      },
-      () => {
-        this.props.navigation.navigate('HomePage', {userId: ''});
-      },
-    );
+    // if (userId && accessToken) {
+    //   await userDetails(userId, accessToken);
+
+    //   this.state.groupId && await getGroupDetails(this.state.groupId, 1, accessToken);
+    // }
+
+    let timer = setInterval(this.tick, 1000);
+    this.setState({
+      timer,
+    });
+    setTimeout(async () => {
+      clearInterval(this.state.timer);
+      this.setState({
+        counter: 120,
+      });
+    }, 120000);
+
+    // this.setState(
+    //   {
+    //     isLoading: false,
+    //     showDiscardContentModal: false,
+    //     videoData: {},
+    //     caption: '',
+    //   },
+    //   () => {
+    //     this.props.navigation.navigate('HomePage', {userId: ''});
+    //   },
+    // );
   };
+
+  tick = async () => {
+    this.setState({
+      counter: this.state.counter - 1,
+    });
+
+    if (this.props.createPostSuccess === 'success') {
+      clearInterval(this.state.timer);
+      const userId = this.props.user && this.props.user.pk;
+      const {
+        actions: {userDetails, getGroupDetails},
+        accessToken,
+      } = this.props;
+      if (userId && accessToken) {
+        await userDetails(userId, accessToken);
+        this.state.groupId && await getGroupDetails(this.state.groupId, 1, accessToken);
+        this.showToastOnErrors();
+        this.setState({
+          showError: false,
+          isLoading: false,
+          showDiscardContentModal: false,
+          videoData: {},
+          caption: '',
+        });
+      }
+    } else if (this.props.createPostError) {
+        clearInterval(this.state.timer);
+        this.setState({
+          showError: false,
+          isLoading: false,
+          showDiscardContentModal: false,
+          videoData: {},
+          caption: '',
+        });
+        // Toast.show(this.props.createPostError);
+        this.props.navigation.navigate('HomePage', {userId: ''});
+    }
+  };
+
+  showToastOnErrors() {
+    const {createPostError} = this.props;
+    if (this.state.showError) {
+      if (createPostError) {
+        this.props.navigation.navigate('HomePage', {userId: ''});
+        Toast.show(createPostError);
+      } else {
+        this.props.navigation.navigate('HomePage', {userId: ''});
+        Toast.show('Post is created successfully');
+      }
+    } else {
+      this.props.navigation.navigate('HomePage', {userId: ''});
+      Toast.show('Post is created successfully');
+    }
+  }
 
   handleCaptionChange = text => {
     this.setState({caption: text});
@@ -188,11 +261,9 @@ class CreatePostStep3 extends Component {
                 </TouchableOpacity>
               )
             ) : (
-              <View style={[styles.inputDrawerContainer]}>
-                <View style={[styles.inputDrawer]}>
+                <View>
                   <ActivityIndicator animating />
                 </View>
-              </View>
             )}
           </View>
         </SafeAreaView>
@@ -264,6 +335,8 @@ const mapStateToProps = state => ({
   user: state.EmailAuth.user,
   searchHashTagsList: state.Posts.searchHashTagsList,
   accessToken: state.EmailAuth.accessToken,
+  createPostError: state.Posts.errors.CreatePost,
+  createPostSuccess: state.Posts.createPostSuccess
 });
 
 const mapDispatchToProps = dispatch => ({
@@ -279,6 +352,9 @@ const mapDispatchToProps = dispatch => ({
     },
     createPost: (token, content, caption, groupId) => {
       dispatch(homeActions.createPost(token, content, caption, groupId));
+    },
+    getGroupDetails: (group_id, page, token) => {
+      dispatch(groupActions.getGroupDetails(group_id, page, token));
     },
   },
 });
