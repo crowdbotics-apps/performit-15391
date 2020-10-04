@@ -122,7 +122,7 @@ class CreatePost(APIView):
         can_post = False
         if int(existing_group.created_by.id) == int(request.user.id) or member.exists():
             can_post = True
-        if can_post:
+        if not can_post:
             return Response({"success": False, "message": "User Can not post in the group"}, status=400)
         response = PostFunctions.create_post(request)
         if response.get("success"):
