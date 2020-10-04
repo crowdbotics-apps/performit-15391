@@ -385,16 +385,51 @@ const LoggedInBottomTabNavigator = (isLoggedIn = false) => {
     },
     Notifications: {
       screen: NotificationNavigator,
-      navigationOptions: ({navigation}) => ({
+      navigationOptions: ({screenProps }) => { 
+        console.log('---------------------------screenProps', screenProps)
+        const unReadNotifications = screenProps && screenProps.notificationsLists && screenProps.notificationsLists.data
+        && screenProps.notificationsLists.data.length > 0 && screenProps.notificationsLists.data.filter(elem => !elem.is_read)
+        console.log('------------------unReadNotifications', unReadNotifications)
+        return ({
         tabBarVisible: true,
         title: null,
         tabBarIcon: ({focused}) => (
-          <Image
-            source={require('../assets/images/notifications_small.png')}
-            style={focused ? focusedImageStyle : imageStyle}
-          />
+          <View style={{
+            width: 24,
+            height: 24,
+            flexDirection: 'row',
+            justifyContent: 'center',
+            alignItems: 'center',
+          }}>
+            <Image
+              source={require('../assets/images/notifications_small.png')}
+              style={focused ? focusedImageStyle : imageStyle}
+            />
+            {unReadNotifications && unReadNotifications.length > 0 && <View style={{
+              width: 18,
+              height: 18,
+              borderRadius: 9,
+              backgroundColor: '#FC573B',
+              position: 'absolute',
+              top: -8,
+              right: -5,
+              flexDirection: 'row',
+              justifyContent: 'center',
+              alignItems: 'center',
+            }}>
+              <Text style={{
+                color: '#ffffff',
+                fontSize: 12,
+                fontFamily: 'Nunito',
+                fontWeight: 'normal',
+              }}>
+                {unReadNotifications.length}
+              </Text>
+            </View>}
+          </View>
         ),
-      }),
+      })
+    },
     },
     Profile: {
       screen: DrawerAppNavigator,
@@ -432,6 +467,13 @@ const LoggedInBottomTabNavigator = (isLoggedIn = false) => {
 // const AppContainer = createAppContainer(LoggedInBottomTabNavigator);
 
 class Routes extends React.Component {
+  // constructor(props) {
+  //   super(props);
+  //   this.state = {
+  //     notificationsLists: []
+  //   };
+  // }
+
   componentDidMount() {
     // messaging().onMessage(message => {
     // // Alert.alert(message);
@@ -447,13 +489,31 @@ class Routes extends React.Component {
     if (!nextProps.token && this.props.token) {
       return true;
     }
+
+  //   const prevUnReadNotifications = this.props.notificationsLists && this.props.notificationsLists.data
+  // && this.props.notificationsLists.data.length > 0 && this.props.notificationsLists.data.filter(elem => !elem.is_read)
+  // console.log('-----------------------should update prevUnReadNotifications', prevUnReadNotifications)
+
+  // const currentUnReadNotifications = nextProps.notificationsLists && nextProps.notificationsLists.data
+  // && nextProps.notificationsLists.data.length > 0 && nextProps.notificationsLists.data.filter(elem => !elem.is_read)
+
+  // console.log('-----------------------should update currentUnReadNotifications', currentUnReadNotifications)
+
+  // if(prevUnReadNotifications && currentUnReadNotifications &&
+  //   prevUnReadNotifications.length !== currentUnReadNotifications.length){
+  //   this.setState({
+  //       notificationsLists: nextProps.notificationsLists
+  //     })
+  //   return true
+  // }
+
     return false;
   }
 
   render() {
     const AppContainer = createAppContainer(LoggedInBottomTabNavigator(!!this.props.token));
     return (
-        <AppContainer ref={nav => { this.navigator = nav;}}>
+        <AppContainer screenProps={{ notificationsLists: this.props.notificationsLists }} ref={nav => { this.navigator = nav;}}>
         </AppContainer>
     );
   }
@@ -461,4 +521,5 @@ class Routes extends React.Component {
 
 export default connect(state => ({
   token: get(state, 'EmailAuth.accessToken', false),
+  notificationsLists: get(state, 'Profile.notificationsLists', {})
 }))(Routes);

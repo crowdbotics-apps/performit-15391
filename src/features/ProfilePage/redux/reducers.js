@@ -8,6 +8,7 @@ const initialState = {
   acceptGroupJoinSuccess: '',
   acceptGroupInviteSuccess: '',
   myPostLoading: false,
+  getNotificationsLoading: false,
   errors: {
     UserDetail: null,
     FollowersConnectionsList: null,
@@ -338,19 +339,39 @@ export default (ProfilePageReducer = (state = initialState, action) => {
     case actions.INVITE_USER_TO_GROUP_SUCCESS:
       return {...state};
     case actions.GET_NOTIFICATIONS_ERROR:
-      return {...state, errors: {GetNotifications: action.error}};
+      return {...state, errors: {GetNotifications: action.error}, getNotificationsLoading: false};
     case actions.GET_NOTIFICATIONS_SUCCESS:
       return {
         ...state,
-        notificationsLists: action.data
+        notificationsLists: action.data,
+        getNotificationsLoading: false
       };
     case actions.READ_NOTIFICATION_ERROR:
       return {...state, errors: {ReadNotifications: action.error}};
     case actions.READ_NOTIFICATION_SUCCESS:
-      return {
-        ...state,
-        readNotificationSuccess: 'success'
-      };
+      const index = state && state.notificationsLists && state.notificationsLists.data &&
+      state.notificationsLists.data.length > 0 && state.notificationsLists.data.findIndex(elem => elem.id === action.notification_id);
+      if(index && index > -1) {
+        return {
+          ...state,
+          notificationsLists:{
+            ...state.notificationsLists,
+            data:{
+              ...state.notificationsLists.data,
+              [`${index}`]: {
+                ...state.notificationsLists.data[`${index}`],
+                is_read: true,
+              },
+            }
+          },
+          readNotificationSuccess: 'success'
+        };
+      } else {
+        return {
+          ...state,
+          readNotificationSuccess: 'success'
+        };
+      }
     case actions.ACCEPT_GROUP_JOIN_ERROR:
       return {...state, errors: {AcceptGroupJoin: action.error}};
     case actions.ACCEPT_GROUP_JOIN_SUCCESS:
@@ -369,6 +390,11 @@ export default (ProfilePageReducer = (state = initialState, action) => {
       return {
         ...state,
         myPostLoading: true,
+      };
+    case actions.GET_NOTIFICATIONS_LOADING:
+      return {
+        ...state,
+        getNotificationsLoading: true,
       };
     default:
       return state;

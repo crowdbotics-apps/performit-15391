@@ -44,7 +44,8 @@ import {
   ACCEPT_GROUP_INVITE_REQUEST,
   ACCEPT_GROUP_INVITE_SUCCESS,
   ACCEPT_GROUP_INVITE_ERROR,
-  PROFILE_USER_DETAIL_LOADING
+  PROFILE_USER_DETAIL_LOADING,
+  GET_NOTIFICATIONS_LOADING,
 } from './constants';
 import {request} from '../../../utils/http';
 
@@ -662,6 +663,10 @@ function* handleInviteUserToGroup(action) {
 }
 
 function* handleGetNotifications(action) {
+  yield put({
+    type: GET_NOTIFICATIONS_LOADING
+  });
+
   const {token} = action;
   try {
     const {status, data} = yield call(sendGetNotifications, token);
@@ -687,6 +692,7 @@ function* handleGetNotifications(action) {
       });
     }
   } catch (error) {
+    console.dir(error)
     yield put({
       type: GET_NOTIFICATIONS_ERROR,
       error: 'Something went wrong',
@@ -701,6 +707,7 @@ function* handlReadNotification(action) {
     if (status === 200) {
       yield put({
         type: READ_NOTIFICATION_SUCCESS,
+        notification_id
       });
       yield put({
         type: READ_NOTIFICATION_ERROR,
@@ -719,6 +726,7 @@ function* handlReadNotification(action) {
       });
     }
   } catch (error) {
+    console.dir(error)
     yield put({
       type: READ_NOTIFICATION_ERROR,
       error: 'Something went wrong',
@@ -751,6 +759,7 @@ function* handleAcceptGroupJoin(action) {
       });
     }
   } catch (error) {
+    console.dir(error)
     yield put({
       type: ACCEPT_GROUP_JOIN_ERROR,
       error: 'Something went wrong',
