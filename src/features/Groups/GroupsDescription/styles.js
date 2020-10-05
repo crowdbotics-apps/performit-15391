@@ -574,7 +574,7 @@ export const styles = StyleSheet.create({
     width: scaleModerate(80),
     height: scaleModerate(80),
     right: scaleModerate(20),
-    bottom: scaleModerate(50),
+    bottom: scaleModerate(120),
   },
 
   postButtonImage: {

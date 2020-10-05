@@ -151,7 +151,7 @@ class GroupsDescription extends Component {
     const accessToken = this.props.accessToken;
     const userId = this.state.userId;
     const {
-      actions: {userDetails, addCommentToPost},
+      actions: {getGroupDetails, addCommentToPost},
     } = this.props;
 
     await addCommentToPost(
@@ -159,7 +159,8 @@ class GroupsDescription extends Component {
       this.state[`newComment${postId}`],
       accessToken,
     );
-    await userDetails(userId, accessToken);
+    // await userDetails(userId, accessToken);
+    await getGroupDetails(this.state.groupId, 1, accessToken);
     this.setState({
       [`newComment${postId}`]: '',
     });
@@ -173,11 +174,16 @@ class GroupsDescription extends Component {
     }
   };
 
-  ratePost = async (postId, rating) => {
+  ratePost = async (postId, rating, postOwnerId) => {
+    if(this.props.user && postOwnerId === this.props.user.pk){
+      Toast.show('User cannot rate his own post');
+      return false;
+    }
+
     const accessToken = this.props.accessToken;
     const userId = this.state.userId;
     const {
-      actions: {userDetails, addEditPostRank},
+      actions: {getGroupDetails, addEditPostRank},
     } = this.props;
     let postsData = cloneDeep(this.state.postsData);
     postsData.length > 0 &&
@@ -190,7 +196,8 @@ class GroupsDescription extends Component {
       postsData,
     });
     await addEditPostRank(postId, rating, accessToken);
-    await userDetails(userId, accessToken);
+    // await userDetails(userId, accessToken);
+    await getGroupDetails(this.state.groupId, 1, accessToken);
   };
 
   callPostViewed = (postId, isViewed) => {
@@ -208,6 +215,7 @@ class GroupsDescription extends Component {
     this.props.navigation.navigate('MyPostsCommentsPage', {
       postId,
       activeTab: this.state.activeTab,
+      groupId: this.state.groupId,
     });
   };
 
@@ -633,7 +641,7 @@ class GroupsDescription extends Component {
                       <View style={styles.postStatsLeftContainer}>
                         <TouchableOpacity
                           onPress={() =>
-                            this.ratePost(postData && postData.id, 1)
+                            this.ratePost(postData && postData.id, 1, postData && postData.user && postData.user.pk)
                           }
                           style={[styles.starImage]}>
                           {postData &&
@@ -653,7 +661,7 @@ class GroupsDescription extends Component {
                         </TouchableOpacity>
                         <TouchableOpacity
                           onPress={() =>
-                            this.ratePost(postData && postData.id, 2)
+                            this.ratePost(postData && postData.id, 2, postData && postData.user && postData.user.pk)
                           }
                           style={[styles.starImage]}>
                           {postData &&
@@ -673,7 +681,7 @@ class GroupsDescription extends Component {
                         </TouchableOpacity>
                         <TouchableOpacity
                           onPress={() =>
-                            this.ratePost(postData && postData.id, 3)
+                            this.ratePost(postData && postData.id, 3, postData && postData.user && postData.user.pk)
                           }
                           style={[styles.starImage]}>
                           {postData &&
@@ -693,7 +701,7 @@ class GroupsDescription extends Component {
                         </TouchableOpacity>
                         <TouchableOpacity
                           onPress={() =>
-                            this.ratePost(postData && postData.id, 4)
+                            this.ratePost(postData && postData.id, 4, postData && postData.user && postData.user.pk)
                           }
                           style={[styles.starImage]}>
                           {postData &&
@@ -713,7 +721,7 @@ class GroupsDescription extends Component {
                         </TouchableOpacity>
                         <TouchableOpacity
                           onPress={() =>
-                            this.ratePost(postData && postData.id, 5)
+                            this.ratePost(postData && postData.id, 5, postData && postData.user && postData.user.pk)
                           }
                           style={[styles.starImage]}>
                           {postData &&
@@ -760,11 +768,13 @@ class GroupsDescription extends Component {
                         <Text style={styles.postStatsRightText}>
                           {postData &&
                             postData.meta_data &&
-                            postData.meta_data.post_views}{' '}
+                            postData.meta_data.counts &&
+                            postData.meta_data.counts.views_count}{' '}
                           view
                           {postData &&
                             postData.meta_data &&
-                            postData.meta_data.post_views > 1 &&
+                            postData.meta_data.counts &&
+                            postData.meta_data.counts.views_count > 1 &&
                             's'}
                         </Text>
                       </View>
@@ -826,7 +836,7 @@ class GroupsDescription extends Component {
                     <View style={styles.captionParentContainer} />
                   )}
 
-                  {/*{postData &&
+                  {postData &&
                   postData.meta_data &&
                   postData.meta_data.counts &&
                   postData.meta_data.counts.comments_count ? (
@@ -847,20 +857,7 @@ class GroupsDescription extends Component {
                     </View>
                   ) : (
                     <></>
-                  )}*/}
-
-                  <View style={styles.commentsParentContainer}>
-                    <View style={styles.commentsContainer}>
-                      <TouchableOpacity
-                        onPress={() =>
-                          this.viewAllComments(postData && postData.id)
-                        }>
-                        <Text style={styles.commentsText}>
-                          View all comments
-                        </Text>
-                      </TouchableOpacity>
-                    </View>
-                  </View>
+                  )}
                   {postData && postData.id && (
                     <View style={styles.enterCommentContainer}>
                       <TextInput
@@ -916,16 +913,7 @@ class GroupsDescription extends Component {
               <ActivityIndicator animating />
             </View>
           )}
-          {groupData && groupData.group && groupData.group.group_owner && groupData.group.group_owner.pk === this.state.userId && 
-            <TouchableOpacity style={styles.addPostButton}
-              onPress={() => this.props.navigation.navigate('CreatePostStep1', {groupId: this.state.groupId})}
-            >
-              <Image
-                style={[styles.postButtonImage]}
-                source={require('../../../assets/images/create-group-post.png')}
-              />
-          </TouchableOpacity>}
-
+          <View style={{width: '100%', height: scaleModerate(120)}} />
           <Modal
             isOpen={this.state.showJoinGroupSuccessModal}
             onClosed={() => this.setState({showJoinGroupSuccessModal: false})}
@@ -942,6 +930,16 @@ class GroupsDescription extends Component {
             </TouchableOpacity>
           </Modal>
         </ScrollView>
+
+        {groupData && groupData.group && groupData.group.group_owner && groupData.group.group_owner.pk === this.state.userId && 
+            <TouchableOpacity style={styles.addPostButton}
+              onPress={() => this.props.navigation.navigate('CreatePostStep1', {groupId: this.state.groupId})}
+            >
+              <Image
+                style={[styles.postButtonImage]}
+                source={require('../../../assets/images/create-group-post.png')}
+              />
+          </TouchableOpacity>}
         {this.state.uploadingStatus > 0 && this.state.uploadingStatus < 100  && 
             <View style={styles.loaderContainer}>
               <Text

@@ -588,7 +588,7 @@ function* handleEditProfile(action) {
         formData.append('user_types', userType);
       });
 
-    console.log('--------------------------------------formData 111111', formData)  
+    // console.log('--------------------------------------formData 111111', formData)
     const {status, data, success} = yield call(
       sendEditProfile,
       formData,
@@ -620,7 +620,7 @@ function* handleEditProfile(action) {
       });
     }
   } catch (error) {
-    console.dir(error)
+    // console.dir(error)
     yield put({
       type: EDIT_PROFILE_ERROR,
       error: 'Not able to update user profile',
@@ -692,7 +692,7 @@ function* handleGetNotifications(action) {
       });
     }
   } catch (error) {
-    console.dir(error)
+    // console.dir(error)
     yield put({
       type: GET_NOTIFICATIONS_ERROR,
       error: 'Something went wrong',
@@ -726,7 +726,7 @@ function* handlReadNotification(action) {
       });
     }
   } catch (error) {
-    console.dir(error)
+    // console.dir(error)
     yield put({
       type: READ_NOTIFICATION_ERROR,
       error: 'Something went wrong',
@@ -759,7 +759,7 @@ function* handleAcceptGroupJoin(action) {
       });
     }
   } catch (error) {
-    console.dir(error)
+    // console.dir(error)
     yield put({
       type: ACCEPT_GROUP_JOIN_ERROR,
       error: 'Something went wrong',
@@ -771,7 +771,7 @@ function* handleAcceptGroupInvite(action) {
   const {invite_id, token} = action;
   try {
     const {status, data} = yield call(sendAcceptGroupInvite, invite_id, token);
-    console.log('--------------------------data invite', data)
+    // console.log('--------------------------data invite', data)
     if (status === 200) {
       yield put({
         type: ACCEPT_GROUP_INVITE_SUCCESS,
@@ -793,7 +793,7 @@ function* handleAcceptGroupInvite(action) {
       });
     }
   } catch (error) {
-    console.dir(error)
+    // console.dir(error)
     yield put({
       type: ACCEPT_GROUP_INVITE_ERROR,
       error: 'Something went wrong',

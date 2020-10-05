@@ -14,6 +14,7 @@ import {
 import {Text, Button} from 'react-native-ui-kitten';
 import {styles} from './styles';
 import * as homeActions from '../HomePage/redux/actions';
+import * as groupActions from '../Groups/redux/actions';
 import {connect} from 'react-redux';
 import {scaleModerate} from '../../utils/scale';
 import * as profileActions from '../ProfilePage/redux/actions';
@@ -27,6 +28,7 @@ class CommentsPage extends Component {
       userId: '',
       activeTab: 'top',
       newComment: '',
+      groupId: ''
     };
   }
 
@@ -44,6 +46,7 @@ class CommentsPage extends Component {
 
     const postId = this.props.navigation.getParam('postId', '');
     const activeTab = this.props.navigation.getParam('activeTab', 'following');
+    const groupId = this.props.navigation.getParam('groupId', '');
     const {
       actions: {fetchCommentsForPost},
     } = this.props;
@@ -54,13 +57,17 @@ class CommentsPage extends Component {
       isLoading: false,
       postId,
       activeTab,
+      groupId
     });
   }
 
   async componentDidUpdate(prevProps) {
     const prevPostId = prevProps.navigation.getParam('postId', '');
     const postId = this.props.navigation.getParam('postId', '');
+    const prevGroupId = prevProps.navigation.getParam('groupId', '');
+    const groupId = this.props.navigation.getParam('groupId', '');
     const activeTab = this.props.navigation.getParam('activeTab', 'following');
+
     if (prevPostId !== postId) {
       this.setState({
         isLoading: true,
@@ -77,6 +84,12 @@ class CommentsPage extends Component {
         activeTab,
       });
     }
+
+    if (prevGroupId !== groupId) {
+      this.setState({
+        groupId
+      });
+    }
   }
 
   handleCommentChange = (postId, text) => {
@@ -90,7 +103,7 @@ class CommentsPage extends Component {
     const accessToken = this.props.accessToken;
     const userId = this.props.user && this.props.user.pk;
     const {
-      actions: {userPosts, addCommentToPost, fetchCommentsForPost},
+      actions: {userPosts, addCommentToPost, fetchCommentsForPost, getGroupDetails},
     } = this.props;
 
     await addCommentToPost(
@@ -101,6 +114,7 @@ class CommentsPage extends Component {
     await fetchCommentsForPost(postId, accessToken);
     Keyboard.dismiss();
     await userPosts(this.state.activeTab, accessToken, userId);
+    this.state.groupId && await getGroupDetails(this.state.groupId, 1, accessToken);
     this.setState({
       [`newComment${postId}`]: '',
     });
@@ -129,7 +143,7 @@ class CommentsPage extends Component {
         <SafeAreaView style={styles.headerContainer}>
           <TouchableOpacity
             style={[styles.inputDrawerContainer]}
-            onPress={() => navigation.goBack()}>
+            onPress={() => this.state.groupId ? navigation.navigate('GroupsDescriptionPage', {groupId: this.state.groupId}) : navigation.goBack()}>
             <View style={[styles.inputDrawer]}>
               <Image
                 style={[styles.inputDrawer]}
@@ -265,6 +279,9 @@ const mapDispatchToProps = dispatch => ({
     },
     addCommentToPost: (postId, comment, accessToken) => {
       dispatch(homeActions.addCommentToPost(postId, comment, accessToken));
+    },
+    getGroupDetails: (group_id, page, token) => {
+      dispatch(groupActions.getGroupDetails(group_id, page, token));
     },
   },
 });

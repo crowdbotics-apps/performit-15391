@@ -279,7 +279,11 @@ class MyPosts extends Component {
     }
   };
 
-  ratePost = async (postId, rating) => {
+  ratePost = async (postId, rating, postOwner) => {
+    if(this.props.user && postOwnerId === this.props.user.pk){
+      Toast.show('User cannot rate his own post');
+      return false;
+    }
     const accessToken = this.props.accessToken;
     const userId = this.state.userId;
     const {
@@ -468,7 +472,7 @@ class MyPosts extends Component {
                       <View style={styles.postStatsLeftContainer}>
                         <TouchableOpacity
                           onPress={() =>
-                            this.ratePost(postData && postData.id, 1)
+                            this.ratePost(postData && postData.id, 1, postsData && postData.created_by && postData.created_by.pk)
                           }
                           style={[styles.starImage]}>
                           {postData &&
@@ -488,7 +492,7 @@ class MyPosts extends Component {
                         </TouchableOpacity>
                         <TouchableOpacity
                           onPress={() =>
-                            this.ratePost(postData && postData.id, 2)
+                            this.ratePost(postData && postData.id, 2, postsData && postData.created_by && postData.created_by.pk)
                           }
                           style={[styles.starImage]}>
                           {postData &&
@@ -508,7 +512,7 @@ class MyPosts extends Component {
                         </TouchableOpacity>
                         <TouchableOpacity
                           onPress={() =>
-                            this.ratePost(postData && postData.id, 3)
+                            this.ratePost(postData && postData.id, 3, postsData && postData.created_by && postData.created_by.pk)
                           }
                           style={[styles.starImage]}>
                           {postData &&
@@ -528,7 +532,7 @@ class MyPosts extends Component {
                         </TouchableOpacity>
                         <TouchableOpacity
                           onPress={() =>
-                            this.ratePost(postData && postData.id, 4)
+                            this.ratePost(postData && postData.id, 4, postsData && postData.created_by && postData.created_by.pk)
                           }
                           style={[styles.starImage]}>
                           {postData &&
@@ -548,7 +552,7 @@ class MyPosts extends Component {
                         </TouchableOpacity>
                         <TouchableOpacity
                           onPress={() =>
-                            this.ratePost(postData && postData.id, 5)
+                            this.ratePost(postData && postData.id, 5, postsData && postData.created_by && postData.created_by.pk)
                           }
                           style={[styles.starImage]}>
                           {postData &&
@@ -743,6 +747,7 @@ class MyPosts extends Component {
               <ActivityIndicator animating />
             </View>
           )}
+          <View style={{width: '100%', height: scaleModerate(120)}} />
         </ScrollView>
         {this.state.uploadingStatus > 0 && this.state.uploadingStatus < 100  && 
             <View style={styles.loaderContainer}>

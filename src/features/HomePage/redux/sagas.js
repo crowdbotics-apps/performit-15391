@@ -127,6 +127,7 @@ function sendSearchDashBoard(tab, term, token) {
 
 function sendCreatePost(data, token, groupId) {
   if(groupId){
+    // console.log('---------------------/groups/create-post/')
     return request.post('/groups/create-post/', data, {
       headers: {
         Accept: 'application/json',
@@ -135,6 +136,7 @@ function sendCreatePost(data, token, groupId) {
       },
     });
   } else {
+    // console.log('---------------------/posts/create/')
     return request.post('/posts/create/', data, {
       headers: {
         Accept: 'application/json',
@@ -260,6 +262,7 @@ function* handleEditPostRank(action) {
       });
     }
   } catch (error) {
+    // console.dir(error)
     yield put({
       type: USER_EDIT_POST_RANK_ERROR,
       error: 'Something went wrong',
@@ -292,6 +295,7 @@ function* handleAddPostView(action) {
       });
     }
   } catch (error) {
+    // console.dir(error)
     yield put({
       type: USER_ADD_POST_VIEW_ERROR,
       error: 'Something went wrong',
@@ -329,6 +333,7 @@ function* handleAddPostComment(action) {
       });
     }
   } catch (error) {
+    // console.dir(error)
     yield put({
       type: USER_ADD_COMMENT_POST_ERROR,
       error: 'Something went wrong',

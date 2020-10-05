@@ -162,14 +162,14 @@ class CreatePostStep3 extends Component {
     this.setState({
       counter: this.state.counter - 1,
     });
+    const userId = this.props.user && this.props.user.pk;
+    const {
+      actions: {userDetails, getGroupDetails},
+      accessToken,
+    } = this.props;
 
     if (this.props.createPostSuccess === 'success') {
       clearInterval(this.state.timer);
-      const userId = this.props.user && this.props.user.pk;
-      const {
-        actions: {userDetails, getGroupDetails},
-        accessToken,
-      } = this.props;
       if (userId && accessToken) {
         await userDetails(userId, accessToken);
         this.state.groupId && await getGroupDetails(this.state.groupId, 1, accessToken);
@@ -184,15 +184,19 @@ class CreatePostStep3 extends Component {
       }
     } else if (this.props.createPostError) {
         clearInterval(this.state.timer);
-        this.setState({
-          showError: false,
-          isLoading: false,
-          showDiscardContentModal: false,
-          videoData: {},
-          caption: '',
-        });
-        // Toast.show(this.props.createPostError);
-        this.props.navigation.navigate('HomePage', {userId: ''});
+        if (userId && accessToken) {
+          await userDetails(userId, accessToken);
+          this.state.groupId && await getGroupDetails(this.state.groupId, 1, accessToken);
+          this.setState({
+            showError: false,
+            isLoading: false,
+            showDiscardContentModal: false,
+            videoData: {},
+            caption: '',
+          });
+          // Toast.show(this.props.createPostError);
+          this.props.navigation.navigate('HomePage', {userId: ''});
+        }
     }
   };
 
