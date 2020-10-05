@@ -7,6 +7,11 @@ import math
 from notifications.functions import NotificationFunctions
 from notifications.models import Notification
 from posts.models import Post
+import requests
+from performit_15391 import settings
+import random
+import string
+import os
 class PostFunctions:
     @staticmethod
     def valid_extension(extension):
@@ -40,13 +45,26 @@ class PostFunctions:
             post = PostSerializer(data=data)
             if post.is_valid():
                 instance = post.save()
-                file_info = mutagen.File(instance.content.path).info.pprint()
+                # if not settings.DEBUG:
+                    # AWS storage is being used
+                image_url = instance.content.url
+                if not settings.DEBUG:
+                    # if debug is false
+                    image_url = request.build_absolute_uri(image_url)
+                remote_request = requests.get(image_url, stream=True)
+                if remote_request.status_code == requests.codes.ok:
+                    allowed_chars = ''.join((string.ascii_letters, string.digits))
+                    unique_name = ''.join(random.choice(allowed_chars) for _ in range(5))
+                    open('upload' + unique_name + '.' +extension, 'wb').write(remote_request.content)
+                file_info = mutagen.File('upload' + unique_name + '.' +extension).info.pprint()
                 second = str(file_info)
                 info_lst = second.split(",")
                 number_of_seconds = str(info_lst[1])
                 number_of_seconds = re.findall('\d*\.?\d+',number_of_seconds)
                 number_of_seconds = math.floor(float(number_of_seconds[0]))
                 serializer = PostSerializer(instance, many=False, context={'request': request})
+                if os.path.exists('upload' + unique_name + '.' +extension):
+                    os.remove('upload' + unique_name + '.' +extension)
                 if 90 > number_of_seconds:
                     return {"success": True, "message": "Post Created", "data": serializer.data}
                 existing = Post.objects.get(pk=serializer.data.get('id'))

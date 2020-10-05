@@ -34,7 +34,7 @@ class Feed(APIView):
         except Group.DoesNotExist:
             return Response({"success": False, "message": "Invalid group_id param is provided"}, status=400)
         group_posts = GroupPost.objects.filter(group=existing_group.id).values_list("post", flat=True)
-        posts = Post.objects.filter(pk__in=group_posts).order_by('created_at')
+        posts = Post.objects.filter(pk__in=group_posts).order_by('-created_at')
         try:
             paginated_data = Paginator(posts, size)
         except (EmptyPage, InvalidPage):

@@ -361,7 +361,8 @@ class EditProfile(APIView):
                     break
             try:
                 existing_detail = UserDetail.objects.get(user=request.user.id)
-                existing_detail.profile_pic = profile_pic
+                if profile_pic is not None:
+                    existing_detail.profile_pic = profile_pic
                 existing_detail.location_address = user_detail_data.get("location_address")
                 existing_detail.location_lat = user_detail_data.get("location_lat")
                 existing_detail.location_long = user_detail_data.get("location_long")
