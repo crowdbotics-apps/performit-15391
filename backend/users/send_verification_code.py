@@ -10,7 +10,7 @@ class SendVerificationCode:
                 send_mail(
                     'Email Verification',
                     message,
-                    'no-reply@performit-15391.botics.co',
+                    'no-reply@performitapp.com',
                     [receiver.email],
                     fail_silently=False,
                 )
