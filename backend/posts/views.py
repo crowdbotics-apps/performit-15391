@@ -158,19 +158,19 @@ class Create(APIView):
             post = PostSerializer(data=data)
             if post.is_valid():
                 instance = post.save()
-                file_info = mutagen.File(instance.content.path).info.pprint()
-                second = str(file_info)
-                info_lst = second.split(",")
-                number_of_seconds = str(info_lst[1])
-                number_of_seconds = re.findall('\d*\.?\d+',number_of_seconds)
-                number_of_seconds = math.floor(float(number_of_seconds[0]))
+                # file_info = mutagen.File(instance.content.path).info.pprint()
+                # second = str(file_info)
+                # info_lst = second.split(",")
+                # number_of_seconds = str(info_lst[1])
+                # number_of_seconds = re.findall('\d*\.?\d+',number_of_seconds)
+                # number_of_seconds = math.floor(float(number_of_seconds[0]))
                 serializer = PostSerializer(instance, many=False, context={'request': request})
-                if 90 > number_of_seconds:
-                    return Response({"success": True, "message": "Post Created", "data": serializer.data})
-                existing = Post.objects.get(pk=serializer.data.get('id'))
-                existing.delete()
-                return Response({"success": False, "message": "content duration is greater than 90 seconds"},
-                                status=400)
+                # if 90 > number_of_seconds:
+                return Response({"success": True, "message": "Post Created", "data": serializer.data})
+                # existing = Post.objects.get(pk=serializer.data.get('id'))
+                # existing.delete()
+                # return Response({"success": False, "message": "content duration is greater than 90 seconds"},
+                #                 status=400)
             return Response({"success": False, "message": post.errors}, status=400)
         return Response({"success": False, "message": "Invalid post content provided only Audio, video allowed"}, status=400)
 
