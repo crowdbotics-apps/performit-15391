@@ -14,7 +14,8 @@ import {
   ActivityIndicator,
 } from 'react-native';
 import MapView, { PROVIDER_GOOGLE, Marker } from 'react-native-maps';
-import {cloneDeep} from 'lodash';
+import {check, request, openSettings, PERMISSIONS, RESULTS} from 'react-native-permissions';
+import {cloneDeep, get} from 'lodash';
 import * as homeActions from '../HomePage/redux/actions';
 import Modal from 'react-native-modalbox';
 import {styles} from './styles';
@@ -23,6 +24,8 @@ import {connect} from 'react-redux';
 import CheckBox from 'react-native-check-box';
 import {scaleModerate, scaleVertical} from '../../utils/scale';
 import Slider from '@react-native-community/slider';
+import { withNavigationFocus } from "react-navigation";
+import Geolocation from '@react-native-community/geolocation';
 
 const mapStyle = [
   {
@@ -228,7 +231,8 @@ class Location extends Component {
       isDancerChecked: false,
       isProducerChecked: false,
       isOtherChecked: false,
-      showFilters: false
+      showFilters: false,
+      permissionNotGranted: false
     };
   }
 
@@ -248,8 +252,64 @@ class Location extends Component {
       actions: {findNearbyUsers},
     } = this.props;
     if (accessToken) {
-      await findNearbyUsers(accessToken, this.state.user_types, this.state.distance, this.state.term);
+      let permissionGranted = false
+      if (Platform.OS === 'ios') {
+        await check(PERMISSIONS.IOS.LOCATION_WHEN_IN_USE)
+          .then(result => {
+            console.log('-------------------result 1', result)
+              switch (result) {
+                  case RESULTS.GRANTED:
+                    permissionGranted = true
+                    // console.log('The permission is granted');
+                    break;
+                }
+            })
+        .catch(error => {
+          // …
+        });
+        await check(PERMISSIONS.IOS.LOCATION_ALWAYS)
+          .then(result => {
+            console.log('-------------------result 2', result)
+              switch (result) {
+                case RESULTS.GRANTED:
+                  permissionGranted = true
+                  // console.log('The permission is granted');
+                  break;
+              }
+            })
+        .catch(error => {
+          // …
+        });
+      } else {
+        await check(PERMISSIONS.ANDROID.ACCESS_FINE_LOCATION)
+          .then(result => {
+            console.log('-------------------result android', result)
+            switch (result) {
+              case RESULTS.GRANTED:
+                permissionGranted = true
+                // console.log('The permission is granted');
+                break;
+            }
+          })
+        .catch(error => {
+          // …
+        });
+      }
+
+      console.log('-------------------result permissionGranted mount', permissionGranted)
+      if(permissionGranted) {
+        this.setState({
+          permissionNotGranted: false
+        })
+        await findNearbyUsers(accessToken, this.state.user_types, this.state.distance, this.state.term);
+      } else {
+        this.setState({
+          permissionNotGranted: true
+        })
+      }
     }
+
+    console.log("--------------did focus 1010101010");
   }
 
   async componentDidUpdate(prevProps, prevState) {
@@ -321,6 +381,104 @@ class Location extends Component {
         })
       }
     }
+
+    if(this.props.updateLocationLoading !== prevProps.updateLocationLoading && !this.props.updateLocationLoading){
+      const accessToken = this.props.accessToken;
+      const {
+        actions: {userDetails, findNearbyUsers},
+      } = this.props;
+      const userId = this.props.user && this.props.user.pk;
+      if (accessToken) {
+        await userDetails(userId, accessToken);
+        await findNearbyUsers(accessToken, this.state.user_types, this.state.distance, this.state.term);
+      }
+    }
+
+    if (prevProps.isFocused !== this.props.isFocused && this.props.isFocused) {
+      console.log("--------------did focus location")
+      const accessToken = this.props.accessToken;
+
+      const {
+        actions: {findNearbyUsers, updateCurrentLocation},
+      } = this.props;
+      if (accessToken) {
+        let permissionGranted = false
+        if (Platform.OS === 'ios') {
+          await check(PERMISSIONS.IOS.LOCATION_WHEN_IN_USE)
+            .then(result => {
+              console.log('-------------------result 1', result)
+                switch (result) {
+                    case RESULTS.GRANTED:
+                      permissionGranted = true
+                      // console.log('The permission is granted');
+                      break;
+                  }
+              })
+          .catch(error => {
+            // …
+          });
+          await check(PERMISSIONS.IOS.LOCATION_ALWAYS)
+            .then(result => {
+              console.log('-------------------result 2', result)
+                switch (result) {
+                  case RESULTS.GRANTED:
+                    permissionGranted = true
+                    // console.log('The permission is granted');
+                    break;
+                }
+              })
+          .catch(error => {
+            // …
+          });
+        } else {
+          await check(PERMISSIONS.ANDROID.ACCESS_FINE_LOCATION)
+            .then(result => {
+              console.log('-------------------result android', result)
+              switch (result) {
+                case RESULTS.GRANTED:
+                  permissionGranted = true
+                  // console.log('The permission is granted');
+                  break;
+              }
+            })
+          .catch(error => {
+            // …
+          });
+        }
+        console.log('-------------------result permissionGranted 1111', permissionGranted)
+        if(permissionGranted) {
+          this.setState({
+            permissionNotGranted: false
+          })
+          const userId = this.props.user && this.props.user.pk;
+          const {profile: allProfiles, navigation, nearbyUsers} = this.props;
+          const profile = allProfiles && allProfiles[`${userId}`];
+          const latitude = get(profile, 'user.meta_data.live_location_lat', 0);
+          const longitude = get(profile, 'user.meta_data.live_location_long', 0);
+          console.log('-------------------result android latitude', latitude)
+          console.log('-------------------result android longitude', longitude)
+
+          if(!latitude || !longitude) {
+            Geolocation.getCurrentPosition(
+              async position => {
+                const location = JSON.stringify(position);
+                if(position && position.coords && position.coords.latitude && position.coords.longitude){
+                  await updateCurrentLocation(accessToken, position.coords.latitude.toFixed(4), position.coords.longitude.toFixed(4));
+                  // await findNearbyUsers(accessToken, this.state.user_types, this.state.distance, this.state.term);
+                }
+                this.setState({location});
+              },
+              error => console.log('Error', JSON.stringify(error)),
+              {enableHighAccuracy: true, timeout: 20000, maximumAge: 1000},
+            );
+          }
+        } else {
+          this.setState({
+            permissionNotGranted: true
+          })
+        }
+      }
+    }
   }
 
   searchLocation = text => {
@@ -354,6 +512,18 @@ class Location extends Component {
     }
     }, 1000);
   }
+
+  onClose = () => {
+    this.setState({permissionNotGranted: false}, () => {
+      this.props.navigation.navigate('HomePage', {userId: ''})
+    })
+  };
+
+  goToSettings = () => {
+    this.setState({permissionNotGranted: false}, () => {
+      openSettings().catch(() => console.warn('cannot open settings'));
+    })
+  };
 
   render() {
   const userId = this.props.user && this.props.user.pk;
@@ -671,6 +841,21 @@ class Location extends Component {
           </View>
           </>
         }
+        <Modal
+          isOpen={this.state.permissionNotGranted}
+          onClosed={() => this.onClose()}
+          style={[styles.modal]}
+          position={'center'}
+          backdropPressToClose={false}>
+          <View style={styles.modalTextContainer}>
+            <Text style={styles.modalText}>Location access is denied. Please go to Settings to change permission</Text>
+          </View>
+          <TouchableOpacity
+            style={styles.okTextContainer}
+            onPress={() => this.goToSettings()}>
+            <Text style={styles.okText}>Go to Settings</Text>
+          </TouchableOpacity>
+        </Modal>
 
       </ScrollView>
     );
@@ -683,13 +868,20 @@ const mapStateToProps = state => ({
   accessToken: state.EmailAuth.accessToken,
   nearbyUsers: state.Posts.nearbyUsers,
   isNearbyUsersLoading: state.Posts.isNearbyUsersLoading,
+  updateLocationLoading: state.Posts.updateLocationLoading,
 });
 
 const mapDispatchToProps = dispatch => ({
   actions: {
     findNearbyUsers: (token, user_types, distance, term) => {
       dispatch(homeActions.findNearbyUsers(token, user_types, distance, term));
-    }
+    },
+    updateCurrentLocation: (token, location_lat, location_long) => {
+      dispatch(homeActions.updateCurrentLocation(token, location_lat, location_long));
+    },
+    userDetails: (userId, token) => {
+      dispatch(profileActions.userDetails(userId, token));
+    },
   },
 });
 
@@ -697,7 +889,7 @@ Location.navigationOptions = {
   header: null,
 };
 
-export default connect(
+export default withNavigationFocus(connect(
   mapStateToProps,
   mapDispatchToProps,
-)(Location);
+)(Location));

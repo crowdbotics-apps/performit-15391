@@ -205,7 +205,7 @@ export const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     width: scaleModerate(252),
-    height: scaleModerate(140),
+    height: scaleModerate(210),
     borderRadius: scaleModerate(10),
   },
 

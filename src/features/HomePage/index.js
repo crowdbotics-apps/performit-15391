@@ -101,7 +101,7 @@ class Home extends Component {
     const userId = this.props.navigation.getParam('userId', '');
     const accessToken = this.props.accessToken;
     const {
-      actions: {userDetails, followersConnectionsList, userPosts},
+      actions: {userDetails, followersConnectionsList, userPosts, updateCurrentLocation},
     } = this.props;
     if (accessToken && userId && prevUserId !== userId) {
       this.setState({

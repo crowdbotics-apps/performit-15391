@@ -83,10 +83,13 @@ export default (ProfilePageReducer = (state = initialState, action) => {
         'followingConnectionsList.data',
         [],
       );
+      console.log('------------------------loggedInUserId', loggedInUserId)
+      console.log('------------------------newFollowingData', newFollowingData)
       newFollowingData.push({
         following: action.user,
         meta_data: action.meta_data,
       });
+      console.log('------------------------newFollowingData--11111', newFollowingData)
       const followersData = get(
         state.profile[`${loggedInUserId}`],
         'followersConnectionsList.data',
@@ -194,6 +197,7 @@ export default (ProfilePageReducer = (state = initialState, action) => {
         [],
       );
       const data = [];
+
       followingData &&
         followingData.length > 0 &&
         followingData.forEach(item => {
@@ -201,7 +205,8 @@ export default (ProfilePageReducer = (state = initialState, action) => {
             data.push(item);
           }
         });
-
+      console.log('------------------------loggedInUserId', loggedInUserId)
+      console.log('------------------------data', data)
       const followersData2 = get(
         state && state.profile[`${loggedInUserId_unfollow}`],
         'followersConnectionsList.data',

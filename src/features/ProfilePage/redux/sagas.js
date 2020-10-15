@@ -394,6 +394,7 @@ function* handleFollowUser(action) {
       });
     }
   } catch (error) {
+    console.dir(error)
     yield put({
       type: FOLLOW_USER_ERROR,
       error: 'Something went wrong',

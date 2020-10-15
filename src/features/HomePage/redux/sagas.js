@@ -31,6 +31,7 @@ import {
   UPDATE_LOCATION_ERROR,
   NEARBY_USERS_LOADING,
   SEARCH_DAHSBOARD_LOADING,
+  UPDATE_LOCATION_LOADING,
 } from './constants';
 import {request} from '../../../utils/http';
 import {
@@ -398,7 +399,7 @@ function* handleCreatePost(action) {
 
     formData.append('caption', caption);
     if(groupId) formData.append('group_id', groupId);
-    // console.log('------------------formData--0000', formData)
+    console.log('------------------formData--0000', formData)
     const {status, data, success} = yield call(sendCreatePost, formData, token, groupId);
 
     if (status === 200) {
@@ -426,7 +427,7 @@ function* handleCreatePost(action) {
       });
     }
   } catch (error) {
-    // console.dir(error);
+    console.dir(error);
     yield put({
       type: CREATE_POST_ERROR,
       error: 'Not able to create post',
@@ -476,6 +477,10 @@ function* handleFindNearbyUsers(action) {
 }
 
 function* handleUpdateUserLocation(action) {
+  yield put({
+    type: UPDATE_LOCATION_LOADING,
+  });
+  
   const {token, location_lat, location_long} = action;
   try {
     const formData = new FormData();
@@ -488,10 +493,10 @@ function* handleUpdateUserLocation(action) {
       yield put({
         type: UPDATE_LOCATION_SUCCESS,
       });
-      yield put({
-        type: UPDATE_LOCATION_SUCCESS,
-        data,
-      });
+      // yield put({
+      //   type: UPDATE_LOCATION_SUCCESS,
+      //   data,
+      // });
     } else {
       yield put({
         type: UPDATE_LOCATION_ERROR,

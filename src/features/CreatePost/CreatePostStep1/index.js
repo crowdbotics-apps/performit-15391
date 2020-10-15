@@ -386,7 +386,7 @@ class CreatePostStep1 extends Component {
       RNImagePicker.launchImageLibrary(options, response => {
         let updatedResponse = cloneDeep(response);
         const filename = Date.now().toString();
-
+        console.log('---------------updatedResponse video file', updatedResponse)
         const videoData = {
           uri: updatedResponse && updatedResponse.uri,
           name: filename + '.mp4',
@@ -407,6 +407,7 @@ class CreatePostStep1 extends Component {
         });
         //Setting the state to show single file attributes
         this.setState({singleFile: res});
+        console.log('---------------res audio file', res)
         const filename = Date.now().toString();
         videoData.type = 'audio';
         videoData.name = filename + '.mp3';

@@ -12,6 +12,7 @@ const initialState = {
   isNearbyUsersLoading: false,
   isSearchDashboardLoading: false,
   createPostSuccess: false,
+  updateLocationLoading: false,
   errors: {
     UserPosts: null,
     UserPostsCommentList: null,
@@ -136,8 +137,12 @@ export default (HomePageReducer = (state = initialState, action) => {
       };
     case actions.UPDATE_LOCATION_ERROR:
       return {...state, 
-        isNearbyUsersLoading: false,
+        updateLocationLoading: false,
         errors: {UpdateLocation: action.error}};
+    case actions.UPDATE_LOCATION_SUCCESS:
+      return {...state, 
+        updateLocationLoading: false,
+      };
     case actions.NEARBY_USERS_LOADING:
       return {
         ...state,
@@ -147,6 +152,11 @@ export default (HomePageReducer = (state = initialState, action) => {
       return {
         ...state,
         isSearchDashboardLoading: true,
+      }
+    case actions.UPDATE_LOCATION_LOADING:
+      return {
+        ...state,
+        updateLocationLoading: true,
       }
     default:
       return state;

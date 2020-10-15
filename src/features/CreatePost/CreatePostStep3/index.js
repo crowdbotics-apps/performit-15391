@@ -168,7 +168,9 @@ class CreatePostStep3 extends Component {
       accessToken,
     } = this.props;
 
-    if (this.props.createPostSuccess === 'success') {
+    console.log('-----------this.props.createPostSuccess', this.props.createPostSuccess);
+    console.log('-----------this.props.createPostError', this.props.createPostError);
+    if (this.props.createPostSuccess) {
       clearInterval(this.state.timer);
       if (userId && accessToken) {
         await userDetails(userId, accessToken);

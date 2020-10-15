@@ -23,6 +23,7 @@
     "@fortawesome/react-native-fontawesome": "0.1.0",
     "@react-native-community/async-storage": "^1.11.0",
     "@react-native-community/cameraroll": "^4.0.1",
+    "@react-native-community/clipboard": "^1.4.0",
     "@react-native-community/cookies": "^3.0.0",
     "@react-native-community/geolocation": "^2.0.2",
     "@react-native-community/google-signin": "^4.0.3",

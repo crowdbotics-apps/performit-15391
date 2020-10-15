@@ -121,6 +121,7 @@ function* handleSignUp(action) {
   const {user} = action;
   try {
     const {status, data} = yield call(sendSignUp, user);
+    console.log('-----------status sign up', status)
     if (status === 200) {
       yield put({
         type: EMAIL_AUTH_SIGNUP_SUCCESS,
@@ -139,6 +140,7 @@ function* handleSignUp(action) {
       });
     }
   } catch (error) {
+    console.dir(error)
     yield put({
       type: EMAIL_AUTH_SIGNUP_ERROR,
       error: 'Something went wrong',
@@ -210,6 +212,7 @@ function* handleForgotPassword(action) {
   const {data} = action;
   try {
     const {status} = yield call(sendForgotPassword, data);
+    console.log('-------------status', status);
 
     if (status === 200) {
       yield put({
@@ -228,6 +231,7 @@ function* handleForgotPassword(action) {
       });
     }
   } catch (error) {
+    console.dir(error);
     const {data} = error && error.response;
     if (data && data.message) {
       yield put({
