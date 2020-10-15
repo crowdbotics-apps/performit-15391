@@ -320,10 +320,14 @@ class GetUserDetail(APIView):
         can_edit = False
         if int(user_id) == int(request.user.id):
             can_edit = True
+        is_logged_in_user_following = False
+        logged_in_following = UserRelationship.objects.filter(follower=request.user.id, following=user)
+        if logged_in_following.exists():
+            is_logged_in_user_following = True
         data = {"user": user_serializer.data, "user_details": user_details_serializer.data, "user_types":user_types,
                 "posts": post_serializer.data,
                 "followers_count": user_follower_qs.count(), "user_following_count": user_following_qs.count(),
-                "can_edit": can_edit, "total": paginated_data.count,
+                "can_edit": can_edit, "total": paginated_data.count, "is_logged_in_user_following": is_logged_in_user_following,
                          "pages": paginated_data.num_pages, "current_page": int(page) }
         return Response({"success": True, "data": data })
 
