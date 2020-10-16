@@ -185,6 +185,7 @@ export default (ProfilePageReducer = (state = initialState, action) => {
             followingConnectionsList: {
               ...state.profile[`${loggedInUserId}`].followingConnectionsList,
               total:
+                state.profile[`${loggedInUserId}`].followingConnectionsList && 
                 state.profile[`${loggedInUserId}`].followingConnectionsList
                   .total + 1,
               data: newFollowingData,
