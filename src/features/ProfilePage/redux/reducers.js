@@ -30,6 +30,7 @@ const initialState = {
 export default (ProfilePageReducer = (state = initialState, action) => {
   switch (action.type) {
     case actions.PROFILE_USER_DETAIL_SUCCESS:
+    console.log('-------------------------action.profile', action.profile)
       return {
         ...state,
         profile: {
@@ -40,6 +41,13 @@ export default (ProfilePageReducer = (state = initialState, action) => {
             user_details: action.profile && action.profile.user_details,
             user_types: action.profile && action.profile.user_types,
             posts: action.profile && action.profile.posts,
+            followers_count: action.profile && action.profile.followers_count,
+            user_following_count: action.profile && action.profile.user_following_count,
+            can_edit: action.profile && action.profile.can_edit,
+            total: action.profile && action.profile.total,
+            is_logged_in_user_following: action.profile && action.profile.is_logged_in_user_following,
+            pages: action.profile && action.profile.pages,
+            current_page: action.profile && action.profile.current_page,
           },
         },
         editProfileSuccess: '',
@@ -78,12 +86,14 @@ export default (ProfilePageReducer = (state = initialState, action) => {
       return {...state, errors: {FollowingConnectionsList: action.error}};
     case actions.FOLLOW_USER_SUCCESS:
       const loggedInUserId = action.loggedInUser && action.loggedInUser.pk;
+      const followedUserId = action.userId
       const newFollowingData = get(
         state.profile[`${loggedInUserId}`],
         'followingConnectionsList.data',
         [],
       );
       console.log('------------------------loggedInUserId', loggedInUserId)
+      console.log('------------------------followedUserId', followedUserId)
       console.log('------------------------newFollowingData', newFollowingData)
       newFollowingData.push({
         following: action.user,
@@ -183,6 +193,12 @@ export default (ProfilePageReducer = (state = initialState, action) => {
               ...state.profile[`${loggedInUserId}`].followersConnectionsList,
               data: newFollowersData,
             },
+            user_following_count: state.profile[`${loggedInUserId}`].user_following_count + 1,
+          },
+          [`${followedUserId}`]: {
+            ...state.profile[`${followedUserId}`],
+            followers_count: state.profile[`${followedUserId}`].followers_count + 1,
+            is_logged_in_user_following: true,
           },
         },
       };
@@ -191,6 +207,7 @@ export default (ProfilePageReducer = (state = initialState, action) => {
     case actions.UNFOLLOW_USER_SUCCESS:
       const loggedInUserId_unfollow =
         action.loggedInUser && action.loggedInUser.pk;
+      const unFollowedUserId = action.userId
       const followingData = get(
         state.profile[`${loggedInUserId_unfollow}`],
         'followingConnectionsList.data',
@@ -302,7 +319,13 @@ export default (ProfilePageReducer = (state = initialState, action) => {
                 .followersConnectionsList,
               data: newFollowersData2,
             },
+            user_following_count: state.profile[`${loggedInUserId_unfollow}`].user_following_count - 1,
           },
+          [`${unFollowedUserId}`]: {
+            ...state.profile[`${unFollowedUserId}`],
+            followers_count: state.profile[`${unFollowedUserId}`].followers_count - 1,
+            is_logged_in_user_following: false,
+          }, 
         },
       };
     case actions.UNFOLLOW_USER_ERROR:

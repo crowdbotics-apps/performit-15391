@@ -262,8 +262,8 @@ class Profile extends Component {
       });
       userTypes = userTypes.replace(/,\s*$/, '');
     }
-    const followersCount = get(profile, 'followersConnectionsList.total', 0);
-    const followingCount = get(profile, 'followingConnectionsList.total', 0);
+    const followersCount = get(profile, 'followers_count', 0);
+    const followingCount = get(profile, 'user_following_count', 0);
     if (user && userId !== user.pk) {
       isOtherProfilePage = true;
       // const followers = get(profile, 'followersConnectionsList.data', []);
@@ -296,13 +296,9 @@ class Profile extends Component {
         'followingConnectionsList.data',
         [],
       );
-      loggedInProfileFollowing &&
-        loggedInProfileFollowing.length > 0 &&
-        loggedInProfileFollowing.forEach(item => {
-          if (item.following && item.following.pk === userId) {
-            shouldShowFollowButton = false;
-          }
-        });
+
+      const is_logged_in_user_following = get(profile, 'is_logged_in_user_following', false);
+      if(is_logged_in_user_following) shouldShowFollowButton = false
     }
     console.log('---------------------profile.posts', profile && profile.posts)
 

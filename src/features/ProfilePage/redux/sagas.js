@@ -312,6 +312,8 @@ function* handleGetFollowersConnectionsList(action) {
       });
     }
   } catch (error) {
+    console.log('followers connection list')
+    console.dir(error)
     yield put({
       type: PROFILE_FOLLOWERS_CONNECTIONS_LIST_ERROR,
       error: 'Something went wrong',
@@ -356,6 +358,8 @@ function* handleGetFollowingConnectionsList(action) {
       });
     }
   } catch (error) {
+    console.log('following connection list')
+    console.dir(error)
     yield put({
       type: PROFILE_FOLLOWING_CONNECTIONS_LIST_ERROR,
       error: 'Something went wrong',
@@ -431,6 +435,7 @@ function* handleUnfollowUser(action) {
       });
     }
   } catch (error) {
+    console.dir(error)
     if (error && error.response) {
       const {data} = error && error.response;
     }
