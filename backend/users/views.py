@@ -23,6 +23,7 @@ from users.serializers import SignupWithEmailSerializer, SignUpWithPhoneSerializ
 from users.verification_code_generator import VerificationCodeGenerator
 from fcm_django.api.rest_framework import FCMDeviceSerializer
 from fcm_django.models import FCMDevice
+from groups.models import GroupPost
 
 User = get_user_model()
 
@@ -307,7 +308,8 @@ class GetUserDetail(APIView):
         user_types = []
         for type in user_types_serializer.data:
             user_types.append(type['user_type'])
-        posts = Post.objects.filter(user=user).order_by("-created_at")
+        group_posts = GroupPost.objects.values_list('post', flat=True)
+        posts = Post.objects.filter(user=user).exclude(pk__in=group_posts).order_by("-created_at")
         try:
             paginated_data = Paginator(posts, size)
         except (EmptyPage, InvalidPage):
