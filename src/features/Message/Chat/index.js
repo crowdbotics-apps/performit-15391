@@ -9,6 +9,9 @@ import {
   SafeAreaView,
   TextInput,
   KeyboardAvoidingView,
+  Platform,
+  Keyboard,
+  TouchableWithoutFeedback,
 } from 'react-native';
 import {Text, Button} from 'react-native-ui-kitten';
 import {styles} from './styles';
@@ -277,8 +280,7 @@ class Chat extends Component {
     );
 
     return (
-      <View
-        style={{
+      <View style={{
           height: '100%',
           width: '100%',
           backgroundColor: 'black',
@@ -286,10 +288,13 @@ class Chat extends Component {
           justifyContent: 'flex-start',
           alignItems: 'center',
         }}>
+      <TouchableWithoutFeedback
+        onPress={() => Keyboard.dismiss()}
+        >
         <KeyboardAvoidingView
-          behavior="padding"
           enabled
-          keyboardVerticalOffset={10}
+          keyboardVerticalOffset={ Platform.OS === 'ios' ? 50 : -180 }
+          behavior='padding'
           style={{
             width: '100%',
             flexDirection: 'column',
@@ -363,6 +368,7 @@ class Chat extends Component {
                 ref={ref => {
                   this.scrollView = ref;
                 }}
+                keyboardShouldPersistTaps='handled'
                 onContentSizeChange={() =>
                   this.scrollView.scrollToEnd({animated: true})
                 }
@@ -657,6 +663,7 @@ class Chat extends Component {
             )}
           </View>
         </KeyboardAvoidingView>
+      </TouchableWithoutFeedback>
       </View>
     );
   }

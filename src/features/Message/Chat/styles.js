@@ -449,7 +449,7 @@ export const styles = StyleSheet.create({
 
   commentInput: {
     width: '80%',
-    height: scaleVertical(30),
+    height: scaleVertical(45),
     color: '#989ba5',
     fontSize: scaleVertical(16),
     fontFamily: 'Nunito-Regular',
