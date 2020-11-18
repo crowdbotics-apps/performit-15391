@@ -4,8 +4,6 @@ import {scaleVertical, scaleModerate, scale} from '../../../utils/scale';
 
 export const styles = StyleSheet.create({
   screen: {
-    flex: 0,
-    minHeight: '100%',
     flexDirection: 'column',
     justifyContent: 'flex-start',
     alignItems: 'flex-start',
@@ -67,11 +65,11 @@ export const styles = StyleSheet.create({
 
   bodyContainer: {
     width: '100%',
-    height: '100%',
     flexDirection: 'column',
     justifyContent: 'flex-start',
     alignItems: 'flex-start',
     padding: scaleModerate(20),
+    marginBottom: scaleModerate(50)
   },
 
   bulletTextContainer: {

@@ -228,4 +228,13 @@ export const styles = StyleSheet.create({
   underlineStyleHighLighted: {
     borderColor: '#c08637',
   },
+
+  loaderContainer: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
+    width: scaleVertical(19),
+    height: scaleVertical(19),
+    marginLeft: scaleVertical(18),
+  },
 });

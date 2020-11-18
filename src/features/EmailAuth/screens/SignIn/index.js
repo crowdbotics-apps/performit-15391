@@ -9,13 +9,13 @@ import {
   ScrollView,
   ImageBackground,
   Text,
+  ActivityIndicator
 } from 'react-native';
 
 import {scaleModerate, scaleVertical} from '../../../../utils/scale';
 import {styles} from '../styles';
 import * as emailAuthActions from '../../redux/actions';
 import ErrorBox from '../../../../components/ErrorBox';
-import Icon from 'react-native-vector-icons/FontAwesome';
 
 class SignIn extends Component {
   constructor(props) {
@@ -28,6 +28,7 @@ class SignIn extends Component {
       error: '',
       showError: true,
       updateForm: false,
+      isLoading: false
     };
 
     this.handleUsernameChange = this.handleUsernameChange.bind(this);
@@ -41,6 +42,7 @@ class SignIn extends Component {
     if (this.props.signInErrors !== prevProps.signInErrors) {
       this.setState({
         showError: true,
+        isLoading: false
       });
       if (!this.props.signInErrors) {
         this.setState({
@@ -51,6 +53,12 @@ class SignIn extends Component {
           updateForm: false,
         });
       }
+    }
+
+    if(this.props.accessToken){
+       this.setState({
+          isLoading: false,
+        });
     }
   }
 
@@ -107,7 +115,7 @@ class SignIn extends Component {
 
   async submitLogin() {
     let validation = true;
-    this.setState({error: ''});
+    this.setState({error: '', isLoading: true});
     const {
       actions: {login},
     } = this.props;
@@ -139,6 +147,9 @@ class SignIn extends Component {
         });
       }, 4000);
     } else {
+      this.setState({
+        isLoading: false
+      })
       setTimeout(() => {
         this.setState({
           showError: false,
@@ -241,6 +252,9 @@ class SignIn extends Component {
                 this.submitLogin();
               }}>
               <Text style={styles.signUpButtonText}>LOGIN</Text>
+              {!!this.state.isLoading && <View style={[styles.loaderContainer]}>
+                <ActivityIndicator animating />
+              </View>}
             </TouchableOpacity>
           </View>
 
@@ -268,6 +282,7 @@ class SignIn extends Component {
 
 const mapStateToProps = state => ({
   signInErrors: state.EmailAuth.errors.SignIn,
+  accessToken: state.EmailAuth.accessToken,
 });
 
 const mapDispatchToProps = dispatch => ({
@@ -280,6 +295,7 @@ const mapDispatchToProps = dispatch => ({
 
 SignIn.navigationOptions = {
   header: null,
+  tabBarVisible: false,
 };
 
 export default connect(

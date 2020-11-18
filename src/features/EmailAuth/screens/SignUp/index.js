@@ -9,6 +9,7 @@ import {
   TextInput,
   TouchableOpacity,
   ScrollView,
+  ActivityIndicator
 } from 'react-native';
 import {Button, Input} from 'react-native-ui-kitten';
 
@@ -32,6 +33,7 @@ class SignUp extends Component {
       error: '',
       showError: true,
       updateForm: false,
+      isLoading: false
     };
 
     this.handleEmailChange = this.handleEmailChange.bind(this);
@@ -47,6 +49,7 @@ class SignUp extends Component {
     if (this.props.signUpErrors !== prevProps.signUpErrors) {
       this.setState({
         showError: true,
+        isLoading: false
       });
       if (!this.props.signUpErrors) {
         this.setState({
@@ -57,6 +60,12 @@ class SignUp extends Component {
           updateForm: false,
         });
       }
+    }
+
+    if(this.props.accessToken){
+       this.setState({
+          isLoading: false,
+        });
     }
   }
 
@@ -122,7 +131,7 @@ class SignUp extends Component {
 
   async submitSignUp() {
     let validation = true;
-    this.setState({error: ''});
+    this.setState({error: '', isLoading: true});
     const {
       actions: {signUp},
       signUpErrors,
@@ -192,6 +201,9 @@ class SignUp extends Component {
           }
         }, 4000);
       } else {
+        this.setState({
+          isLoading: false,
+        });
         this.setState({error: 'Please enter a valid email or phone number'});
         setTimeout(() => {
           this.setState({
@@ -200,6 +212,9 @@ class SignUp extends Component {
         }, 2000);
       }
     } else {
+      this.setState({
+          isLoading: false,
+        });
       setTimeout(() => {
         this.setState({
           showError: false,
@@ -352,6 +367,9 @@ class SignUp extends Component {
               style={[styles.signUpButtonContainer]}
               onPress={() => this.submitSignUp()}>
               <Text style={styles.signUpButtonText}>SIGN UP</Text>
+              {!!this.state.isLoading && <View style={[styles.loaderContainer]}>
+                <ActivityIndicator animating />
+              </View>}
             </TouchableOpacity>
           </View>
           <View
@@ -380,6 +398,7 @@ class SignUp extends Component {
 
 const mapStateToProps = state => ({
   signUpErrors: state.EmailAuth.errors.SignUp,
+  accessToken: state.EmailAuth.accessToken,
 });
 
 const mapDispatchToProps = dispatch => ({

@@ -27,12 +27,12 @@
 			<string>Editor</string>
 			<key>CFBundleURLSchemes</key>
 			<array>
-				<string>com.googleusercontent.apps.151121818515-8gker8ol2cbv66m0dclfseflpsrd45jc</string>
+				<string>com.googleusercontent.apps.681043818459-kf18uq7r4uca7junlrufbcnuvjuprqvq</string>
 			</array>
 		</dict>
 	</array>
 	<key>CFBundleVersion</key>
-	<string>1</string>
+	<string>$(CURRENT_PROJECT_VERSION)</string>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
 	<key>NSAppTransportSecurity</key>
@@ -49,15 +49,20 @@
 		</dict>
 	</dict>
 	<key>NSCameraUsageDescription</key>
-	<string>Your message to user when the camera is accessed for the first time</string>
+	<string>Allow to use camera</string>
+	<key>NSLocationAlwaysAndWhenInUsageDescription</key>
+	<string>Performit needs permission to access location</string>
+	<key>NSLocationAlwaysUsageDescription</key>
+	<string>Performit needs permission to access location</string>
 	<key>NSLocationWhenInUseUsageDescription</key>
-	<string/>
+	<string>Performit needs permission to access location</string>
+
 	<key>NSMicrophoneUsageDescription</key>
-	<string>Your message to user when the microphone is accessed for the first time</string>
+	<string>Allow to use microphone</string>
 	<key>NSPhotoLibraryAddUsageDescription</key>
-	<string>$(PRODUCT_NAME) would like to save photos to your photo gallery</string>
+	<string>Performit needs permission to access photo library</string>
 	<key>NSPhotoLibraryUsageDescription</key>
-	<string>Your message to user when the photo library is accessed for the first time</string>
+	<string>Performit needs permission to access photo library</string>
 	<key>UIAppFonts</key>
 	<array>
 		<string>AntDesign.ttf</string>

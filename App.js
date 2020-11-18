@@ -31,7 +31,6 @@ export default class App extends React.Component {
     /**
      * Read above commments above adding async requests here
      */
-    NavigationService.setNavigator(this.navigator);
     SplashScreen && SplashScreen.hide();
   }
 
@@ -51,10 +50,7 @@ export default class App extends React.Component {
       <IconRegistry icons={EvaIconsPack}/>
       <ApplicationProvider mapping={mapping} theme={crowdboticsTheme}>
         <NavigatorProvider
-          style={[styles.flex]}
-          ref={nav => {
-            this.navigator = nav;
-          }}>
+          style={[styles.flex]}>
           <Layout style={[styles.flex]}>
             <MainScreen />
           </Layout>

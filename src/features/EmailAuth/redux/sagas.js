@@ -1,5 +1,6 @@
 import {all, takeLatest, put, call} from 'redux-saga/effects';
 import * as NavigationService from '../../../navigator/NavigationService';
+import AsyncStorage from '@react-native-community/async-storage';
 
 import {
   EMAIL_AUTH_LOGIN_REQUEST,
@@ -23,6 +24,9 @@ import {
   EMAIL_AUTH_CONFIRM_CODE_ERROR,
   EMAIL_AUTH_RESEND_CODE_SUCCESS,
   EMAIL_AUTH_RESEND_CODE_ERROR,
+  EMAIL_AUTH_LOGOUT_REQUEST,
+  EMAIL_AUTH_LOGOUT_SUCCESS,
+  EMAIL_AUTH_LOGOUT_ERROR
 } from './constants';
 import {request} from '../../../utils/http';
 
@@ -93,7 +97,7 @@ function* handleLogin(action) {
       });
 
       // you can change the navigate for navigateAndResetStack to go to a protected route
-      NavigationService.navigate('ProtectedRoute');
+      NavigationService.navigate('HomePage', {userId: ''});
     } else {
       yield put({
         type: EMAIL_AUTH_LOGIN_ERROR,
@@ -117,6 +121,7 @@ function* handleSignUp(action) {
   const {user} = action;
   try {
     const {status, data} = yield call(sendSignUp, user);
+    console.log('-----------status sign up', status)
     if (status === 200) {
       yield put({
         type: EMAIL_AUTH_SIGNUP_SUCCESS,
@@ -135,6 +140,7 @@ function* handleSignUp(action) {
       });
     }
   } catch (error) {
+    console.dir(error)
     yield put({
       type: EMAIL_AUTH_SIGNUP_ERROR,
       error: 'Something went wrong',
@@ -206,6 +212,7 @@ function* handleForgotPassword(action) {
   const {data} = action;
   try {
     const {status} = yield call(sendForgotPassword, data);
+    console.log('-------------status', status);
 
     if (status === 200) {
       yield put({
@@ -224,6 +231,7 @@ function* handleForgotPassword(action) {
       });
     }
   } catch (error) {
+    console.dir(error);
     const {data} = error && error.response;
     if (data && data.message) {
       yield put({
@@ -288,7 +296,7 @@ function* handleConfirmCode(action) {
       });
       if (data.origin === 'signup') {
         // you can change the navigate for navigateAndResetStack to go to a protected route
-        NavigationService.navigate('ProtectedRoute');
+        NavigationService.navigate('Profile', {userId: ''});
       } else {
         NavigationService.navigate('ResetPassword', {data});
       }
@@ -336,6 +344,16 @@ function* handleResendCode(action) {
   }
 }
 
+function* handleLogout(action) {
+  try {
+    yield put({
+        type: EMAIL_AUTH_LOGOUT_SUCCESS,
+      });
+  } catch (error) {
+    //do nothing
+  }
+}
+
 export default all([
   takeLatest(EMAIL_AUTH_LOGIN_REQUEST, handleLogin),
   takeLatest(EMAIL_AUTH_SIGNUP_REQUEST, handleSignUp),
@@ -344,4 +362,5 @@ export default all([
   takeLatest(EMAIL_AUTH_RESET_PASSWORD_REQUEST, handleResetPassword),
   takeLatest(EMAIL_AUTH_CONFIRM_CODE_REQUEST, handleConfirmCode),
   takeLatest(EMAIL_AUTH_RESEND_CODE_REQUEST, handleResendCode),
+  takeLatest(EMAIL_AUTH_LOGOUT_REQUEST, handleLogout),
 ]);
