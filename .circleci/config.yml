@@ -201,6 +201,11 @@ jobs:
           command: bundle exec fastlane deploy_appetize
           working_directory: ios
 
+      - run:
+          name: Produce
+          command: bundle exec fastlane ios beta
+          working_directory: ios
+
       - store_artifacts:
           path: /tmp/fastlane_build/app.zip
 
