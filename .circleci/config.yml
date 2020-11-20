@@ -45,11 +45,6 @@ jobs:
       #    path: test-results
 
       - run:
-          name: Webhook Success
-          command: bash .circleci/webhook_callback.sh "success"
-          when: on_success
-
-      - run:
           name: Webhook Failed
           command: bash .circleci/webhook_callback.sh "failure"
           when: on_fail
@@ -90,13 +85,13 @@ jobs:
       #- store_artifacts:
       #    path: test-results
 
-      - run:
-          name: Build and upload to appetize.io
-          command: bundle exec fastlane deploy_appetize
-          working_directory: android
+      # - run:
+      #     name: Build and upload to appetize.io
+      #     command: bundle exec fastlane deploy_appetize
+      #     working_directory: android
 
-      - store_artifacts:
-          path: android/app/build/outputs/apk/release/app-release.apk
+      # - store_artifacts:
+      #     path: android/app/build/outputs/apk/release/app-release.apk
 
       - run:
           name: Webhook Success
@@ -182,10 +177,10 @@ jobs:
           paths:
             - ios/Pods
 
-      - run:
-          name: Run tests
-          command: bundle exec fastlane tests
-          working_directory: ios
+      # - run:
+      #     name: Run tests
+      #     command: bundle exec fastlane tests
+      #     working_directory: ios
 
       - run:
           name: Set up test results
@@ -201,10 +196,10 @@ jobs:
       #- store_artifacts:
       #    path: ios/test-results
 
-      - run:
-          name: Build and upload to appetize.io
-          command: bundle exec fastlane deploy_appetize
-          working_directory: ios
+      # - run:
+      #     name: Build and upload to appetize.io
+      #     command: bundle exec fastlane deploy_appetize
+      #     working_directory: ios
 
       - store_artifacts:
           path: /tmp/fastlane_build/app.zip
@@ -224,3 +219,9 @@ workflows:
   node-android-ios:
     jobs:
       - node
+      - android:
+          requires:
+            - node
+      - ios:
+          requires:
+            - node
