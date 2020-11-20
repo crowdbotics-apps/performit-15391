@@ -85,13 +85,13 @@ jobs:
       #- store_artifacts:
       #    path: test-results
 
-      - run:
-          name: Build and upload to appetize.io
-          command: bundle exec fastlane deploy_appetize
-          working_directory: android
+      # - run:
+      #     name: Build and upload to appetize.io
+      #     command: bundle exec fastlane deploy_appetize
+      #     working_directory: android
 
-      - store_artifacts:
-          path: android/app/build/outputs/apk/release/app-release.apk
+      # - store_artifacts:
+      #     path: android/app/build/outputs/apk/release/app-release.apk
 
       - run:
           name: Webhook Success
@@ -105,7 +105,7 @@ jobs:
 
   ios:
     macos:
-      xcode: "11.1.0"
+      xcode: '11.1.0'
     working_directory: ~/build
 
     # use a --login shell so our "set Ruby version" command gets picked up for later steps
@@ -114,7 +114,7 @@ jobs:
     steps:
       - add_ssh_keys:
           fingerprints:
-            - "c5:bd:6d:0b:a1:39:97:83:ca:b5:13:59:14:ff:49:40"
+            - 'c5:bd:6d:0b:a1:39:97:83:ca:b5:13:59:14:ff:49:40'
 
       - checkout
 
@@ -177,10 +177,10 @@ jobs:
           paths:
             - ios/Pods
 
-      - run:
-          name: Run tests
-          command: bundle exec fastlane tests
-          working_directory: ios
+      # - run:
+      #     name: Run tests
+      #     command: bundle exec fastlane tests
+      #     working_directory: ios
 
       - run:
           name: Set up test results
@@ -196,10 +196,10 @@ jobs:
       #- store_artifacts:
       #    path: ios/test-results
 
-      - run:
-          name: Build and upload to appetize.io
-          command: bundle exec fastlane deploy_appetize
-          working_directory: ios
+      # - run:
+      #     name: Build and upload to appetize.io
+      #     command: bundle exec fastlane deploy_appetize
+      #     working_directory: ios
 
       - run:
           name: Produce
