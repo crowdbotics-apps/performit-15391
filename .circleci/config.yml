@@ -45,6 +45,11 @@ jobs:
       #    path: test-results
 
       - run:
+          name: Webhook Success
+          command: bash .circleci/webhook_callback.sh "success"
+          when: on_success
+
+      - run:
           name: Webhook Failed
           command: bash .circleci/webhook_callback.sh "failure"
           when: on_fail
@@ -105,7 +110,7 @@ jobs:
 
   ios:
     macos:
-      xcode: "11.1.0"
+      xcode: '11.1.0'
     working_directory: ~/build
 
     # use a --login shell so our "set Ruby version" command gets picked up for later steps
@@ -114,7 +119,7 @@ jobs:
     steps:
       - add_ssh_keys:
           fingerprints:
-            - "c5:bd:6d:0b:a1:39:97:83:ca:b5:13:59:14:ff:49:40"
+            - 'c5:bd:6d:0b:a1:39:97:83:ca:b5:13:59:14:ff:49:40'
 
       - checkout
 
@@ -219,9 +224,3 @@ workflows:
   node-android-ios:
     jobs:
       - node
-      - android:
-          requires:
-            - node
-      - ios:
-          requires:
-            - node
