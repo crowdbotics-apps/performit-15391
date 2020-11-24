@@ -17,7 +17,7 @@ export default class App extends React.Component {
     isLoaded: false,
   };
 
-  async componentWillMount() {
+  async UNSAFE_componentWillMount() {
     /**
      * add any aditional app config here,
      * don't use blocking requests here like HTTP requests since they block UI feedback

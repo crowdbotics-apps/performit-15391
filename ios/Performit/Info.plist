@@ -32,7 +32,7 @@
 		</dict>
 	</array>
 	<key>CFBundleVersion</key>
-	<string>35</string>
+	<string>37</string>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
 	<key>NSAppTransportSecurity</key>
@@ -56,7 +56,6 @@
 	<string>Performit needs permission to access location</string>
 	<key>NSLocationWhenInUseUsageDescription</key>
 	<string>Performit needs permission to access location</string>
-
 	<key>NSMicrophoneUsageDescription</key>
 	<string>Allow to use microphone</string>
 	<key>NSPhotoLibraryAddUsageDescription</key>
@@ -81,13 +80,13 @@
 		<string>Octicons.ttf</string>
 		<string>Zocial.ttf</string>
 		<string>Fontisto.ttf</string>
+		<string>Nunito-ExtraBold.ttf</string>
 		<string>fontawesome.ttf</string>
 		<string>icomoon.ttf</string>
 		<string>Nunito-Black.ttf</string>
 		<string>Nunito-BlackItalic.ttf</string>
 		<string>Nunito-Bold.ttf</string>
 		<string>Nunito-BoldItalic.ttf</string>
-		<string>Nunito-ExtraBold.ttf</string>
 		<string>Nunito-ExtraBoldItalic.ttf</string>
 		<string>Nunito-ExtraLight.ttf</string>
 		<string>Nunito-ExtraLightItalic.ttf</string>

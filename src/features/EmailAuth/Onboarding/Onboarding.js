@@ -63,7 +63,7 @@ export default class Onboarding extends Component {
     return (
       <>
         <AppIntroSlider
-          slides={slides}
+          data={slides}
           onSlideChange={i => {
             this.setState({slide: i});
           }}
