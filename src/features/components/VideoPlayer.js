@@ -748,7 +748,7 @@ export default class VideoPlayer extends Component {
    * Before mounting, init our seekbar and volume bar
    * pan responders.
    */
-  componentWillMount() {
+  UNSAFE_componentWillMount() {
     // adding event to unmount video when user navigates to other page
     this.blurSubscription = this.state.navigation.addListener(
       'willBlur',
