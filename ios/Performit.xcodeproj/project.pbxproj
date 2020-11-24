@@ -910,7 +910,7 @@
 				CODE_SIGN_IDENTITY = "Apple Distribution: Crowdbotics Corporation (6YKR59QXKM)";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "Apple Distribution: Crowdbotics Corporation (6YKR59QXKM)";
 				CODE_SIGN_STYLE = Manual;
-				CURRENT_PROJECT_VERSION = 35;
+				CURRENT_PROJECT_VERSION = 37;
 				DEAD_CODE_STRIPPING = NO;
 				DEVELOPMENT_TEAM = 6YKR59QXKM;
 				"EXCLUDED_ARCHS[sdk=iphonesimulator*]" = arm64;
@@ -924,7 +924,7 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = "com.crowdbotics.performit-15391";
 				PRODUCT_NAME = Performit;
-				PROVISIONING_PROFILE_SPECIFIER = "";
+				PROVISIONING_PROFILE_SPECIFIER = "match AppStore com.crowdbotics.performit-15391";
 				SWIFT_OBJC_BRIDGING_HEADER = "Performit-Bridging-Header.h";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;
@@ -941,7 +941,7 @@
 				CODE_SIGN_IDENTITY = "Apple Distribution: Crowdbotics Corporation (6YKR59QXKM)";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "Apple Distribution: Crowdbotics Corporation (6YKR59QXKM)";
 				CODE_SIGN_STYLE = Manual;
-				CURRENT_PROJECT_VERSION = 35;
+				CURRENT_PROJECT_VERSION = 37;
 				DEVELOPMENT_TEAM = 6YKR59QXKM;
 				"EXCLUDED_ARCHS[sdk=iphonesimulator*]" = arm64;
 				INFOPLIST_FILE = Performit/Info.plist;
@@ -955,7 +955,7 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = "com.crowdbotics.performit-15391";
 				PRODUCT_NAME = Performit;
-				PROVISIONING_PROFILE_SPECIFIER = "";
+				PROVISIONING_PROFILE_SPECIFIER = "match AppStore com.crowdbotics.performit-15391";
 				SWIFT_OBJC_BRIDGING_HEADER = "Performit-Bridging-Header.h";
 				SWIFT_VERSION = 5.0;
 				VERSIONING_SYSTEM = "apple-generic";
