@@ -60,10 +60,14 @@ class NearbyUsers(APIView):
             i = 0
             for el in elements:
                 if el['status'] == "OK":
-                    # distance_in_m = float(el['distance']['value'])
-                    # distance_in_miles = distance_in_m / 1609
+                    distance_in_m = float(el['distance']['value'])
+                    distance_in_miles = distance_in_m / 1609
                     # print(distance_in_miles)
-                    distance_at = float(el['distance']['text'][:-3])
+                    distance_at = "{:.2f}".format(distance_in_miles)
+                    distance_at = float(distance_at)
+                    # print(distance_at)
+                    # distance_at = float(el['distance']['text'][:-3])
+                    # print(distance_at)
                     if distance_at < float(distance):
                         nearby_users.append(user_ids[i])
                 i += 1
