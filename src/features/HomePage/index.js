@@ -1,4 +1,4 @@
-import React, {Component} from 'react';
+import React, { Component } from 'react';
 import {
   StyleSheet,
   Image,
@@ -15,15 +15,15 @@ import {
   Platform
 } from 'react-native';
 import Geolocation from '@react-native-community/geolocation';
-import {styles} from './styles';
+import { styles } from './styles';
 import * as homeActions from '../HomePage/redux/actions';
-import {connect} from 'react-redux';
-import {scaleModerate} from '../../utils/scale';
+import { connect } from 'react-redux';
+import { scaleModerate } from '../../utils/scale';
 import * as profileActions from '../ProfilePage/redux/actions';
-import {cloneDeep, get} from 'lodash';
+import { cloneDeep, get } from 'lodash';
 import VideoPlayer from '../components/VideoPlayer';
 import Chat from '../Message/Inbox';
-import {login} from '../../utils/firebase';
+import { login } from '../../utils/firebase';
 import Toast from 'react-native-simple-toast';
 import Share from 'react-native-share';
 import RNFetchBlob from 'rn-fetch-blob';
@@ -66,19 +66,19 @@ class Home extends Component {
     const accessToken = this.props.accessToken;
 
     const {
-      actions: {userDetails, followersConnectionsList, userPosts, updateCurrentLocation, getNotificationsList},
+      actions: { userDetails, followersConnectionsList, userPosts, updateCurrentLocation, getNotificationsList },
     } = this.props;
     if (userId && accessToken) {
       Geolocation.getCurrentPosition(
         async position => {
           const location = JSON.stringify(position);
-          if(position && position.coords && position.coords.latitude && position.coords.longitude){
+          if (position && position.coords && position.coords.latitude && position.coords.longitude) {
             await updateCurrentLocation(accessToken, position.coords.latitude.toFixed(4), position.coords.longitude.toFixed(4));
           }
-          this.setState({location});
+          this.setState({ location });
         },
         error => console.log('Error', JSON.stringify(error)),
-        {enableHighAccuracy: true, timeout: 20000, maximumAge: 1000},
+        { enableHighAccuracy: true, timeout: 20000, maximumAge: 1000 },
       );
       await userDetails(userId, accessToken);
       await followersConnectionsList(userId, accessToken);
@@ -86,7 +86,7 @@ class Home extends Component {
       await getNotificationsList(accessToken);
     }
 
-    const {pk, email} = this.props.user;
+    const { pk, email } = this.props.user;
     const user = await login(email, pk + 'password' + pk);
 
     this.setState({
@@ -101,7 +101,7 @@ class Home extends Component {
     const userId = this.props.navigation.getParam('userId', '');
     const accessToken = this.props.accessToken;
     const {
-      actions: {userDetails, followersConnectionsList, userPosts, updateCurrentLocation},
+      actions: { userDetails, followersConnectionsList, userPosts, updateCurrentLocation },
     } = this.props;
     if (accessToken && userId && prevUserId !== userId) {
       this.setState({
@@ -110,13 +110,13 @@ class Home extends Component {
       Geolocation.getCurrentPosition(
         async position => {
           const location = JSON.stringify(position);
-          if(position && position.coords && position.coords.latitude && position.coords.longitude){
+          if (position && position.coords && position.coords.latitude && position.coords.longitude) {
             await updateCurrentLocation(accessToken, position.coords.latitude.toFixed(4), position.coords.longitude.toFixed(4));
           }
-          this.setState({location});
+          this.setState({ location });
         },
         error => console.log('Error', JSON.stringify(error)),
-        {enableHighAccuracy: true, timeout: 20000, maximumAge: 1000},
+        { enableHighAccuracy: true, timeout: 20000, maximumAge: 1000 },
       );
       await userDetails(userId, accessToken);
       await followersConnectionsList(userId, accessToken);
@@ -130,7 +130,7 @@ class Home extends Component {
     }
 
     if (this.props.posts !== prevProps.posts) {
-      const {activeTab} = this.state;
+      const { activeTab } = this.state;
       let postsToShow =
         this.props.posts && this.props.posts[`${this.state.userId}`];
 
@@ -188,12 +188,12 @@ class Home extends Component {
 
   hasAndroidPermission = async () => {
     const permission = PermissionsAndroid.PERMISSIONS.WRITE_EXTERNAL_STORAGE;
-   
+
     const hasPermission = await PermissionsAndroid.check(permission);
     if (hasPermission) {
       return true;
     }
-   
+
     const status = await PermissionsAndroid.request(permission);
     return status === 'granted';
   }
@@ -206,19 +206,19 @@ class Home extends Component {
     this.setState({ uploadingStatus: 0.01 });
 
     const cache = await RNFetchBlob.config({
-                fileCache: true,
-                appendExt: 'mp4',
-              }).fetch('GET', video.content, {}).progress((received, total) => {
-                    this.setState({ uploadingStatus: (received / total) * 100 })
-                    // console.log('Progress', (received / total) * 100);
-                });
+      fileCache: true,
+      appendExt: 'mp4',
+    }).fetch('GET', video.content, {}).progress((received, total) => {
+      this.setState({ uploadingStatus: (received / total) * 100 })
+      // console.log('Progress', (received / total) * 100);
+    });
     const gallery = await CameraRoll.save(cache.path(), 'video');
     cache.flush();
     this.setState({ uploadingStatus: 0 }, async () => {
       await Share.shareSingle({
-          title: (video && video.caption) ? video.caption : 'Performit Video',
-          social: Share.Social.INSTAGRAM,
-          url: gallery,
+        title: (video && video.caption) ? video.caption : 'Performit Video',
+        social: Share.Social.INSTAGRAM,
+        url: gallery,
       });
     })
   }
@@ -226,7 +226,7 @@ class Home extends Component {
   handleCommentChange = (postId, text) => {
     // write code here
     this.setState({
-      [`newComment${postId}`]: text,sharePost
+      [`newComment${postId}`]: text,
     });
   };
 
@@ -248,7 +248,7 @@ class Home extends Component {
     const accessToken = this.props.accessToken;
     const userId = this.state.userId;
     const {
-      actions: {userPosts, addCommentToPost},
+      actions: { userPosts, addCommentToPost },
     } = this.props;
 
     await addCommentToPost(
@@ -269,7 +269,7 @@ class Home extends Component {
     const accessToken = this.props.accessToken;
     const userId = this.state.userId;
     const {
-      actions: {userPosts},
+      actions: { userPosts },
     } = this.props;
 
     await userPosts(tab, accessToken, userId);
@@ -287,7 +287,7 @@ class Home extends Component {
     const accessToken = this.props.accessToken;
     const userId = this.state.userId;
     const {
-      actions: {userPosts, addEditPostRank},
+      actions: { userPosts, addEditPostRank },
     } = this.props;
     let postsData = cloneDeep(this.state.postsData);
     postsData.length > 0 &&
@@ -305,7 +305,7 @@ class Home extends Component {
 
   callPostViewed = (postId, isViewed) => {
     const {
-      actions: {addPostView},
+      actions: { addPostView },
     } = this.props;
     const accessToken = this.props.accessToken;
     !isViewed && addPostView(postId, accessToken);
@@ -336,22 +336,22 @@ class Home extends Component {
   };
 
   render() {
-    const {profile: allProfiles, posts, navigation, commentsList} = this.props;
-    const {activeTab, postsData} = this.state;
+    const { profile: allProfiles, posts, navigation, commentsList } = this.props;
+    const { activeTab, postsData } = this.state;
     const profile = allProfiles && allProfiles[`${this.state.userId}`];
-
-    let followers = cloneDeep(
+    // console.log(this.state)
+    const followers = cloneDeep(
       get(profile, 'followersConnectionsList.data', []),
     );
 
     return (
       <KeyboardAvoidingView
         behavior={'position'}
-        style={{flex: 1, backgroundColor: 'black'}}>
+        style={{ flex: 1, backgroundColor: 'black' }}>
         <ScrollView
           contentContainerStyle={styles.screen}
           keyboardShouldPersistTaps={'handled'}
-          style={{backgroundColor: 'black'}}>
+          style={{ backgroundColor: 'black' }}>
           {!this.state.isLoading ? (
             <>
               <SafeAreaView style={styles.headerContainer}>
@@ -421,22 +421,21 @@ class Home extends Component {
                         </View>
                         <View style={styles.profileTextContainer}>
                           {follower &&
-                          follower.follower &&
-                          (follower.follower.first_name ||
-                            follower.follower.last_name) ? (
-                            <Text style={styles.profileText}>
-                              {this.trimText(
-                                `${follower.follower.first_name} ${
-                                  follower.follower.last_name
-                                }`,
-                                8,
-                              )}
-                            </Text>
-                          ) : (
-                            <Text style={styles.profileText}>
-                              {this.trimText(follower.follower.username, 8)}
-                            </Text>
-                          )}
+                            follower.follower &&
+                            (follower.follower.first_name ||
+                              follower.follower.last_name) ? (
+                              <Text style={styles.profileText}>
+                                {this.trimText(
+                                  `${follower.follower.first_name} ${follower.follower.last_name
+                                  }`,
+                                  8,
+                                )}
+                              </Text>
+                            ) : (
+                              <Text style={styles.profileText}>
+                                {this.trimText(follower.follower.username, 8)}
+                              </Text>
+                            )}
                         </View>
                       </TouchableOpacity>
                     ))}
@@ -453,7 +452,7 @@ class Home extends Component {
                       alignItems: 'center',
                     },
                     this.state.activeTab === 'following' &&
-                      styles.headerTabButton,
+                    styles.headerTabButton,
                   ]}>
                   <Text style={styles.homeHeaderText}>Following</Text>
                 </TouchableOpacity>
@@ -506,19 +505,18 @@ class Home extends Component {
                       </TouchableOpacity>
                       <View style={styles.postProfileTextContainer}>
                         {postData &&
-                        postData.user &&
-                        (postData.user.first_name ||
-                          postData.user.last_name) ? (
-                          <Text style={styles.postProfileText}>
-                            {`${postData.user.first_name} ${
-                              postData.user.last_name
-                            }`}
-                          </Text>
-                        ) : (
-                          <Text style={styles.postProfileText}>
-                            {postData.user.username}
-                          </Text>
-                        )}
+                          postData.user &&
+                          (postData.user.first_name ||
+                            postData.user.last_name) ? (
+                            <Text style={styles.postProfileText}>
+                              {`${postData.user.first_name} ${postData.user.last_name
+                                }`}
+                            </Text>
+                          ) : (
+                            <Text style={styles.postProfileText}>
+                              {postData.user.username}
+                            </Text>
+                          )}
                       </View>
                     </View>
                   </View>
@@ -528,6 +526,7 @@ class Home extends Component {
                       key={postData && postData.id}
                       showBottomcontrol={true}
                       videoHeight={350}
+                      repeat={true}
                       postId={postData && postData.id}
                       source={postData && postData.content}
                       poster={postData && postData.thumbnail}
@@ -546,6 +545,7 @@ class Home extends Component {
                         this.setState({
                           [`paused${postData && postData.id}`]: true,
                         });
+                        this.initializeSeekTime(postData && postData.id);
                       }}
                       onPause={() => {
                         this.setState({
@@ -572,6 +572,7 @@ class Home extends Component {
                           [`showControls${postData && postData.id}`]: value,
                         });
                       }}
+
                     />
                   </View>
                   <View style={styles.postStatsParentContainer}>
@@ -583,19 +584,19 @@ class Home extends Component {
                           }
                           style={[styles.starImage]}>
                           {postData &&
-                          postData.meta_data &&
-                          postData.meta_data.ratings &&
-                          postData.meta_data.ratings.rating_by_login >= 1 ? (
-                            <Image
-                              style={[styles.starImage]}
-                              source={require('../../assets/images/filled_star.png')}
-                            />
-                          ) : (
-                            <Image
-                              style={[styles.starImage]}
-                              source={require('../../assets/images/empty_star.png')}
-                            />
-                          )}
+                            postData.meta_data &&
+                            postData.meta_data.ratings &&
+                            postData.meta_data.ratings.rating_by_login >= 1 ? (
+                              <Image
+                                style={[styles.starImage]}
+                                source={require('../../assets/images/filled_star.png')}
+                              />
+                            ) : (
+                              <Image
+                                style={[styles.starImage]}
+                                source={require('../../assets/images/empty_star.png')}
+                              />
+                            )}
                         </TouchableOpacity>
                         <TouchableOpacity
                           onPress={() =>
@@ -603,19 +604,19 @@ class Home extends Component {
                           }
                           style={[styles.starImage]}>
                           {postData &&
-                          postData.meta_data &&
-                          postData.meta_data.ratings &&
-                          postData.meta_data.ratings.rating_by_login >= 2 ? (
-                            <Image
-                              style={[styles.starImage]}
-                              source={require('../../assets/images/filled_star.png')}
-                            />
-                          ) : (
-                            <Image
-                              style={[styles.starImage]}
-                              source={require('../../assets/images/empty_star.png')}
-                            />
-                          )}
+                            postData.meta_data &&
+                            postData.meta_data.ratings &&
+                            postData.meta_data.ratings.rating_by_login >= 2 ? (
+                              <Image
+                                style={[styles.starImage]}
+                                source={require('../../assets/images/filled_star.png')}
+                              />
+                            ) : (
+                              <Image
+                                style={[styles.starImage]}
+                                source={require('../../assets/images/empty_star.png')}
+                              />
+                            )}
                         </TouchableOpacity>
                         <TouchableOpacity
                           onPress={() =>
@@ -623,19 +624,19 @@ class Home extends Component {
                           }
                           style={[styles.starImage]}>
                           {postData &&
-                          postData.meta_data &&
-                          postData.meta_data.ratings &&
-                          postData.meta_data.ratings.rating_by_login >= 3 ? (
-                            <Image
-                              style={[styles.starImage]}
-                              source={require('../../assets/images/filled_star.png')}
-                            />
-                          ) : (
-                            <Image
-                              style={[styles.starImage]}
-                              source={require('../../assets/images/empty_star.png')}
-                            />
-                          )}
+                            postData.meta_data &&
+                            postData.meta_data.ratings &&
+                            postData.meta_data.ratings.rating_by_login >= 3 ? (
+                              <Image
+                                style={[styles.starImage]}
+                                source={require('../../assets/images/filled_star.png')}
+                              />
+                            ) : (
+                              <Image
+                                style={[styles.starImage]}
+                                source={require('../../assets/images/empty_star.png')}
+                              />
+                            )}
                         </TouchableOpacity>
                         <TouchableOpacity
                           onPress={() =>
@@ -643,19 +644,19 @@ class Home extends Component {
                           }
                           style={[styles.starImage]}>
                           {postData &&
-                          postData.meta_data &&
-                          postData.meta_data.ratings &&
-                          postData.meta_data.ratings.rating_by_login >= 4 ? (
-                            <Image
-                              style={[styles.starImage]}
-                              source={require('../../assets/images/filled_star.png')}
-                            />
-                          ) : (
-                            <Image
-                              style={[styles.starImage]}
-                              source={require('../../assets/images/empty_star.png')}
-                            />
-                          )}
+                            postData.meta_data &&
+                            postData.meta_data.ratings &&
+                            postData.meta_data.ratings.rating_by_login >= 4 ? (
+                              <Image
+                                style={[styles.starImage]}
+                                source={require('../../assets/images/filled_star.png')}
+                              />
+                            ) : (
+                              <Image
+                                style={[styles.starImage]}
+                                source={require('../../assets/images/empty_star.png')}
+                              />
+                            )}
                         </TouchableOpacity>
                         <TouchableOpacity
                           onPress={() =>
@@ -663,19 +664,19 @@ class Home extends Component {
                           }
                           style={[styles.starImage]}>
                           {postData &&
-                          postData.meta_data &&
-                          postData.meta_data.ratings &&
-                          postData.meta_data.ratings.rating_by_login >= 5 ? (
-                            <Image
-                              style={[styles.starImage]}
-                              source={require('../../assets/images/filled_star.png')}
-                            />
-                          ) : (
-                            <Image
-                              style={[styles.starImage]}
-                              source={require('../../assets/images/empty_star.png')}
-                            />
-                          )}
+                            postData.meta_data &&
+                            postData.meta_data.ratings &&
+                            postData.meta_data.ratings.rating_by_login >= 5 ? (
+                              <Image
+                                style={[styles.starImage]}
+                                source={require('../../assets/images/filled_star.png')}
+                              />
+                            ) : (
+                              <Image
+                                style={[styles.starImage]}
+                                source={require('../../assets/images/empty_star.png')}
+                              />
+                            )}
                         </TouchableOpacity>
                         <View style={styles.postStatsLeftTextContainer}>
                           <Text style={styles.postStatsLeftText}>
@@ -734,7 +735,7 @@ class Home extends Component {
                       </TouchableOpacity>
                       <TouchableOpacity
                         onPress={() => this.state.uploadingStatus === 0 && this.sharePost(postData)}
-                       style={[styles.shareImage]}>
+                        style={[styles.shareImage]}>
                         <Image
                           style={[styles.shareImage]}
                           source={require('../../assets/images/share_icon.png')}
@@ -744,75 +745,75 @@ class Home extends Component {
                   </View>
 
                   {postData &&
-                  postData.caption &&
-                  postData.caption.length > 0 ? (
-                    <View style={styles.captionParentContainer}>
-                      <View style={styles.captionContainer}>
-                        <View
-                          style={{
-                            flexDirection: 'row',
-                            justifyContent: 'flex-start',
-                            alignItems: 'center',
-                            width: '100%',
-                          }}>
-                          {postData.caption &&
-                            postData.caption.split(' ').map(elem =>
-                              elem.includes('#') || elem.includes('@') ? (
-                                <TouchableOpacity
-                                  style={{
-                                    flexDirection: 'row',
-                                    justifyContent: 'flex-start',
-                                    alignItems: 'center',
-                                    width: '100%',
-                                  }}
-                                  onPress={() =>
-                                    navigation.navigate('HashTagHomePage', {
-                                      hashtag: elem.replace('#', ''),
-                                    })
-                                  }>
-                                  <Text
-                                    style={[
-                                      styles.captionText,
-                                      {color: '#B88746'},
-                                    ]}>
-                                    {elem}
-                                  </Text>
-                                </TouchableOpacity>
-                              ) : (
-                                <Text style={[styles.captionText]}>
-                                  {elem}{' '}
-                                </Text>
-                              ),
-                            )}
+                    postData.caption &&
+                    postData.caption.length > 0 ? (
+                      <View style={styles.captionParentContainer}>
+                        <View style={styles.captionContainer}>
+                          <View
+                            style={{
+                              flexDirection: 'row',
+                              justifyContent: 'flex-start',
+                              alignItems: 'center',
+                              width: '100%',
+                            }}>
+                            {postData.caption &&
+                              postData.caption.split(' ').map(elem =>
+                                elem.includes('#') || elem.includes('@') ? (
+                                  <TouchableOpacity
+                                    style={{
+                                      flexDirection: 'row',
+                                      justifyContent: 'flex-start',
+                                      alignItems: 'center',
+                                      width: '100%',
+                                    }}
+                                    onPress={() =>
+                                      navigation.navigate('HashTagHomePage', {
+                                        hashtag: elem.replace('#', ''),
+                                      })
+                                    }>
+                                    <Text
+                                      style={[
+                                        styles.captionText,
+                                        { color: '#B88746' },
+                                      ]}>
+                                      {elem}
+                                    </Text>
+                                  </TouchableOpacity>
+                                ) : (
+                                    <Text style={[styles.captionText]}>
+                                      {elem}{' '}
+                                    </Text>
+                                  ),
+                              )}
+                          </View>
                         </View>
                       </View>
-                    </View>
-                  ) : (
-                    <></>
-                  )}
+                    ) : (
+                      <></>
+                    )}
 
                   {postData &&
-                  postData.meta_data &&
-                  postData.meta_data.counts &&
-                  postData.meta_data.counts.comments_count ? (
-                    <View style={styles.commentsParentContainer}>
-                      <View style={styles.commentsContainer}>
-                        <TouchableOpacity
-                          onPress={() =>
-                            this.viewAllComments(postData && postData.id)
-                          }>
-                          <Text style={styles.commentsText}>
-                            View all {postData.meta_data.counts.comments_count}{' '}
+                    postData.meta_data &&
+                    postData.meta_data.counts &&
+                    postData.meta_data.counts.comments_count ? (
+                      <View style={styles.commentsParentContainer}>
+                        <View style={styles.commentsContainer}>
+                          <TouchableOpacity
+                            onPress={() =>
+                              this.viewAllComments(postData && postData.id)
+                            }>
+                            <Text style={styles.commentsText}>
+                              View all {postData.meta_data.counts.comments_count}{' '}
                             comment
                             {postData.meta_data.counts.comments_count > 1 &&
-                              's'}
-                          </Text>
-                        </TouchableOpacity>
+                                's'}
+                            </Text>
+                          </TouchableOpacity>
+                        </View>
                       </View>
-                    </View>
-                  ) : (
-                    <></>
-                  )}
+                    ) : (
+                      <></>
+                    )}
                   {postData && postData.id && (
                     <View style={styles.enterCommentContainer}>
                       <TextInput
@@ -850,40 +851,40 @@ class Home extends Component {
               ))}
             </>
           ) : (
-            <View
-              style={{
-                flexDirection: 'row',
-                width: '100%',
-                height: '100%',
-                alignItems: 'center',
-                justifyContent: 'center',
-              }}>
-              <ActivityIndicator animating />
-            </View>
-          )}
+              <View
+                style={{
+                  flexDirection: 'row',
+                  width: '100%',
+                  height: '100%',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                }}>
+                <ActivityIndicator animating />
+              </View>
+            )}
         </ScrollView>
-        {this.state.uploadingStatus > 0 && this.state.uploadingStatus < 100  && 
-            <View style={styles.loaderContainer}>
-              <Text
-                style={{
-                  color: '#ffffff',
-                  fontSize: scaleModerate(14),
-                  fontFamily: 'Nunito',
-                  lineHeight: undefined,
-                }}>
-                Downloading file to share
+        {this.state.uploadingStatus > 0 && this.state.uploadingStatus < 100 &&
+          <View style={styles.loaderContainer}>
+            <Text
+              style={{
+                color: '#ffffff',
+                fontSize: scaleModerate(14),
+                fontFamily: 'Nunito',
+                lineHeight: undefined,
+              }}>
+              Downloading file to share
               </Text>
-              <Text
-                style={{
-                  color: '#ffffff',
-                  fontSize: scaleModerate(14),
-                  fontFamily: 'Nunito',
-                  lineHeight: undefined,
-                }}>
-                {` ${Math.floor(this.state.uploadingStatus)} %`}
-              </Text>
-            </View>
-          }
+            <Text
+              style={{
+                color: '#ffffff',
+                fontSize: scaleModerate(14),
+                fontFamily: 'Nunito',
+                lineHeight: undefined,
+              }}>
+              {` ${Math.floor(this.state.uploadingStatus)} %`}
+            </Text>
+          </View>
+        }
       </KeyboardAvoidingView>
     );
   }

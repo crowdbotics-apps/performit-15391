@@ -1,4 +1,4 @@
-import {all, takeLatest, put, call} from 'redux-saga/effects';
+import { all, takeLatest, put, call } from 'redux-saga/effects';
 import * as NavigationService from '../../../navigator/NavigationService';
 import AsyncStorage from '@react-native-community/async-storage';
 
@@ -28,9 +28,9 @@ import {
   EMAIL_AUTH_LOGOUT_SUCCESS,
   EMAIL_AUTH_LOGOUT_ERROR
 } from './constants';
-import {request} from '../../../utils/http';
+import { request } from '../../../utils/http';
 
-function sendLogin({username, password}) {
+function sendLogin({ username, password }) {
   return request.post('/rest-auth/login/', {
     username: username,
     password,
@@ -79,10 +79,11 @@ function sendResendCode(data) {
 
 function* handleLogin(action) {
   const {
-    user: {username, password},
+    user: { username, password },
   } = action;
   try {
-    const {status, data} = yield call(sendLogin, {username, password});
+    const { status, data } = yield call(sendLogin, { username, password });
+    console.log(status, data)
 
     if (status === 200) {
       yield put({
@@ -97,7 +98,7 @@ function* handleLogin(action) {
       });
 
       // you can change the navigate for navigateAndResetStack to go to a protected route
-      NavigationService.navigate('HomePage', {userId: ''});
+      NavigationService.navigate('HomePage', { userId: '' });
     } else {
       yield put({
         type: EMAIL_AUTH_LOGIN_ERROR,
@@ -118,9 +119,9 @@ function* handleLogin(action) {
 }
 
 function* handleSignUp(action) {
-  const {user} = action;
+  const { user } = action;
   try {
-    const {status, data} = yield call(sendSignUp, user);
+    const { status, data } = yield call(sendSignUp, user);
     console.log('-----------status sign up', status)
     if (status === 200) {
       yield put({
@@ -132,7 +133,7 @@ function* handleSignUp(action) {
         error: '',
       });
       // you can change the navigate for navigateAndResetStack to go to a protected route
-      NavigationService.navigate('ConfirmCode', {user, origin: 'signup'});
+      NavigationService.navigate('ConfirmCode', { user, origin: 'signup' });
     } else {
       yield put({
         type: EMAIL_AUTH_SIGNUP_ERROR,
@@ -146,7 +147,7 @@ function* handleSignUp(action) {
       error: 'Something went wrong',
     });
     if (error && error.response) {
-      const {data} = error.response;
+      const { data } = error.response;
       if (data && data.message) {
         if (data.message.email && data.message.email.length > 0) {
           yield put({
@@ -181,10 +182,10 @@ function* handleSignUp(action) {
 }
 
 function* handlePasswordRecovery(action) {
-  const {email} = action;
+  const { email } = action;
 
   try {
-    const {status} = yield call(sendPasswordRecovery, email);
+    const { status } = yield call(sendPasswordRecovery, email);
 
     if (status === 200) {
       yield put({
@@ -209,9 +210,9 @@ function* handlePasswordRecovery(action) {
 }
 
 function* handleForgotPassword(action) {
-  const {data} = action;
+  const { data } = action;
   try {
-    const {status} = yield call(sendForgotPassword, data);
+    const { status } = yield call(sendForgotPassword, data);
     console.log('-------------status', status);
 
     if (status === 200) {
@@ -232,7 +233,7 @@ function* handleForgotPassword(action) {
     }
   } catch (error) {
     console.dir(error);
-    const {data} = error && error.response;
+    const { data } = error && error.response;
     if (data && data.message) {
       yield put({
         type: EMAIL_AUTH_FORGOT_PASSWORD_ERROR,
@@ -248,9 +249,9 @@ function* handleForgotPassword(action) {
 }
 
 function* handleResetPassword(action) {
-  const {password, token} = action;
+  const { password, token } = action;
   try {
-    const {status} = yield call(sendResetPassword, password, token);
+    const { status } = yield call(sendResetPassword, password, token);
 
     if (status === 200) {
       yield put({
@@ -267,7 +268,7 @@ function* handleResetPassword(action) {
     }
   } catch (error) {
     if (error && error.response) {
-      const {data} = error && error.response;
+      const { data } = error && error.response;
     }
     yield put({
       type: EMAIL_AUTH_RESET_PASSWORD_ERROR,
@@ -277,9 +278,9 @@ function* handleResetPassword(action) {
 }
 
 function* handleConfirmCode(action) {
-  const {data} = action;
+  const { data } = action;
   try {
-    const {status, data: backendData} = yield call(sendConfirmCode, data);
+    const { status, data: backendData } = yield call(sendConfirmCode, data);
 
     if (status === 200) {
       yield put({
@@ -296,9 +297,9 @@ function* handleConfirmCode(action) {
       });
       if (data.origin === 'signup') {
         // you can change the navigate for navigateAndResetStack to go to a protected route
-        NavigationService.navigate('Profile', {userId: ''});
+        NavigationService.navigate('Profile', { userId: '' });
       } else {
-        NavigationService.navigate('ResetPassword', {data});
+        NavigationService.navigate('ResetPassword', { data });
       }
     } else {
       yield put({
@@ -319,9 +320,9 @@ function* handleConfirmCode(action) {
 }
 
 function* handleResendCode(action) {
-  const {data} = action;
+  const { data } = action;
   try {
-    const {status, data: backendData} = yield call(sendResendCode, data);
+    const { status, data: backendData } = yield call(sendResendCode, data);
 
     if (status === 200) {
       yield put({
@@ -335,7 +336,7 @@ function* handleResendCode(action) {
     }
   } catch (error) {
     if (error && error.response) {
-      const {data} = error && error.response;
+      const { data } = error && error.response;
     }
     yield put({
       type: EMAIL_AUTH_RESEND_CODE_ERROR,
@@ -347,8 +348,8 @@ function* handleResendCode(action) {
 function* handleLogout(action) {
   try {
     yield put({
-        type: EMAIL_AUTH_LOGOUT_SUCCESS,
-      });
+      type: EMAIL_AUTH_LOGOUT_SUCCESS,
+    });
   } catch (error) {
     //do nothing
   }
