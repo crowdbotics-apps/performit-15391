@@ -1,5 +1,5 @@
-import {all, takeLatest, put, call} from 'redux-saga/effects';
-import {cloneDeep} from 'lodash';
+import { all, takeLatest, put, call } from 'redux-saga/effects';
+import { cloneDeep } from 'lodash';
 
 import {
   USER_POSTS_REQUEST,
@@ -33,7 +33,7 @@ import {
   SEARCH_DAHSBOARD_LOADING,
   UPDATE_LOCATION_LOADING,
 } from './constants';
-import {request} from '../../../utils/http';
+import { request } from '../../../utils/http';
 import {
   EDIT_PROFILE_ERROR,
   EDIT_PROFILE_SUCCESS,
@@ -127,7 +127,7 @@ function sendSearchDashBoard(tab, term, token) {
 }
 
 function sendCreatePost(data, token, groupId) {
-  if(groupId){
+  if (groupId) {
     // console.log('---------------------/groups/create-post/')
     return request.post('/groups/create-post/', data, {
       headers: {
@@ -149,6 +149,7 @@ function sendCreatePost(data, token, groupId) {
 }
 
 function sendFindNearbyUsers(token, data) {
+  console.log(token, JSON.stringify(data))
   return request.post('/nearby/users/', data, {
     headers: {
       Accept: 'application/json',
@@ -169,9 +170,9 @@ function sendUpdateUserCurrentLocation(token, data) {
 }
 
 function* handleGetUserPosts(action) {
-  const {tab, token, userId} = action;
+  const { tab, token, userId } = action;
   try {
-    const {status, data} = yield call(sendUserPosts, tab, token);
+    const { status, data } = yield call(sendUserPosts, tab, token);
 
     if (status === 200) {
       yield put({
@@ -202,9 +203,9 @@ function* handleGetUserPosts(action) {
 }
 
 function* handleGetUserPostComments(action) {
-  const {postId, token} = action;
+  const { postId, token } = action;
   try {
-    const {status, data} = yield call(sendUserPostComments, postId, token);
+    const { status, data } = yield call(sendUserPostComments, postId, token);
 
     if (status === 200) {
       yield put({
@@ -234,9 +235,9 @@ function* handleGetUserPostComments(action) {
 }
 
 function* handleEditPostRank(action) {
-  const {postId, rating, token} = action;
+  const { postId, rating, token } = action;
   try {
-    const {status, data} = yield call(
+    const { status, data } = yield call(
       sendEditUserPostRank,
       postId,
       rating,
@@ -272,9 +273,9 @@ function* handleEditPostRank(action) {
 }
 
 function* handleAddPostView(action) {
-  const {postId, token} = action;
+  const { postId, token } = action;
   try {
-    const {status, data} = yield call(sendAddPostView, postId, token);
+    const { status, data } = yield call(sendAddPostView, postId, token);
 
     if (status === 200) {
       yield put({
@@ -305,9 +306,9 @@ function* handleAddPostView(action) {
 }
 
 function* handleAddPostComment(action) {
-  const {postId, comment, token} = action;
+  const { postId, comment, token } = action;
   try {
-    const {status, data} = yield call(
+    const { status, data } = yield call(
       sendAddPostComment,
       postId,
       comment,
@@ -346,9 +347,9 @@ function* handleSearchPerformit(action) {
   yield put({
     type: SEARCH_DAHSBOARD_LOADING,
   });
-  const {tab, token, term} = action;
+  const { tab, token, term } = action;
   try {
-    const {status, data} = yield call(sendSearchDashBoard, tab, term, token);
+    const { status, data } = yield call(sendSearchDashBoard, tab, term, token);
 
     if (status === 200) {
       yield put({
@@ -382,25 +383,25 @@ function* handleCreatePost(action) {
     type: CREATE_POST_ERROR,
     error: '',
   });
-  
-  const {token, content, caption, groupId} = action;
+
+  const { token, content, caption, groupId } = action;
   let updatedContent = cloneDeep(content)
-  if(updatedContent && updatedContent.content && updatedContent.content.type === 'video'){
+  if (updatedContent && updatedContent.content && updatedContent.content.type === 'video') {
     updatedContent.content.type = 'video/*'
-  } else if(updatedContent && updatedContent.content && updatedContent.content.type === 'audio'){
+  } else if (updatedContent && updatedContent.content && updatedContent.content.type === 'audio') {
     updatedContent.content.type = 'audio/*'
   }
 
   try {
     const formData = new FormData();
     Object.keys(updatedContent).forEach(key => {
-      if(updatedContent[key] && updatedContent[key].uri) formData.append(key, updatedContent[key]);
+      if (updatedContent[key] && updatedContent[key].uri) formData.append(key, updatedContent[key]);
     });
 
     formData.append('caption', caption);
-    if(groupId) formData.append('group_id', groupId);
+    if (groupId) formData.append('group_id', groupId);
     console.log('------------------formData--0000', formData)
-    const {status, data, success} = yield call(sendCreatePost, formData, token, groupId);
+    const { status, data, success } = yield call(sendCreatePost, formData, token, groupId);
 
     if (status === 200) {
       yield put({
@@ -436,23 +437,23 @@ function* handleCreatePost(action) {
 }
 
 function* handleFindNearbyUsers(action) {
-  
+
   yield put({
     type: NEARBY_USERS_LOADING,
   });
 
-  const {token, user_types, distance, term} = action;
+  const { token, user_types, distance, term } = action;
   try {
     const formData = new FormData();
 
-    if(user_types && user_types.length > 0) {
+    if (user_types && user_types.length > 0) {
       user_types.forEach(userType => {
         formData.append('user_types', userType);
       });
     }
-    if(distance) formData.append('distance', distance);
-    if(term) formData.append('term', term);
-    const {status, data} = yield call(sendFindNearbyUsers, token, formData);
+    if (distance) formData.append('distance', distance);
+    if (term) formData.append('term', term);
+    const { status, data } = yield call(sendFindNearbyUsers, token, formData);
 
     if (status === 200) {
       yield put({
@@ -480,16 +481,17 @@ function* handleUpdateUserLocation(action) {
   yield put({
     type: UPDATE_LOCATION_LOADING,
   });
-  
-  const {token, location_lat, location_long} = action;
+
+  const { token, location_lat, location_long } = action;
   try {
     const formData = new FormData();
 
-    if(location_lat) formData.append('location_lat', location_lat);
-    if(location_long) formData.append('location_long', location_long);
-    const {status, data} = yield call(sendUpdateUserCurrentLocation, token, formData);
+    if (location_lat) formData.append('location_lat', location_lat);
+    if (location_long) formData.append('location_long', location_long);
+    const { status, data } = yield call(sendUpdateUserCurrentLocation, token, formData);
 
     if (status === 200) {
+      console.log('update location success', status, data)
       yield put({
         type: UPDATE_LOCATION_SUCCESS,
       });

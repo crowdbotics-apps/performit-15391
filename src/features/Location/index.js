@@ -1,4 +1,4 @@
-import React, {Component} from 'react';
+import React, { Component } from 'react';
 import {
   StyleSheet,
   Image,
@@ -14,15 +14,15 @@ import {
   ActivityIndicator,
 } from 'react-native';
 import MapView, { PROVIDER_GOOGLE, Marker } from 'react-native-maps';
-import {check, request, openSettings, PERMISSIONS, RESULTS} from 'react-native-permissions';
-import {cloneDeep, get} from 'lodash';
+import { check, request, openSettings, PERMISSIONS, RESULTS } from 'react-native-permissions';
+import { cloneDeep, get } from 'lodash';
 import * as homeActions from '../HomePage/redux/actions';
 import Modal from 'react-native-modalbox';
-import {styles} from './styles';
+import { styles } from './styles';
 import * as profileActions from '../ProfilePage/redux/actions';
-import {connect} from 'react-redux';
+import { connect } from 'react-redux';
 import CheckBox from 'react-native-check-box';
-import {scaleModerate, scaleVertical} from '../../utils/scale';
+import { scaleModerate, scaleVertical } from '../../utils/scale';
 import Slider from '@react-native-community/slider';
 import { withNavigationFocus } from "react-navigation";
 import Geolocation from '@react-native-community/geolocation';
@@ -249,7 +249,7 @@ class Location extends Component {
     const accessToken = this.props.accessToken;
 
     const {
-      actions: {findNearbyUsers},
+      actions: { findNearbyUsers },
     } = this.props;
     if (accessToken) {
       let permissionGranted = false
@@ -257,29 +257,29 @@ class Location extends Component {
         await check(PERMISSIONS.IOS.LOCATION_WHEN_IN_USE)
           .then(result => {
             console.log('-------------------result 1', result)
-              switch (result) {
-                  case RESULTS.GRANTED:
-                    permissionGranted = true
-                    // console.log('The permission is granted');
-                    break;
-                }
-            })
-        .catch(error => {
-          // …
-        });
+            switch (result) {
+              case RESULTS.GRANTED:
+                permissionGranted = true
+                // console.log('The permission is granted');
+                break;
+            }
+          })
+          .catch(error => {
+            // …
+          });
         await check(PERMISSIONS.IOS.LOCATION_ALWAYS)
           .then(result => {
             console.log('-------------------result 2', result)
-              switch (result) {
-                case RESULTS.GRANTED:
-                  permissionGranted = true
-                  // console.log('The permission is granted');
-                  break;
-              }
-            })
-        .catch(error => {
-          // …
-        });
+            switch (result) {
+              case RESULTS.GRANTED:
+                permissionGranted = true
+                // console.log('The permission is granted');
+                break;
+            }
+          })
+          .catch(error => {
+            // …
+          });
       } else {
         await check(PERMISSIONS.ANDROID.ACCESS_FINE_LOCATION)
           .then(result => {
@@ -291,13 +291,13 @@ class Location extends Component {
                 break;
             }
           })
-        .catch(error => {
-          // …
-        });
+          .catch(error => {
+            // …
+          });
       }
 
       console.log('-------------------result permissionGranted mount', permissionGranted)
-      if(permissionGranted) {
+      if (permissionGranted) {
         this.setState({
           permissionNotGranted: false
         })
@@ -314,64 +314,64 @@ class Location extends Component {
 
   async componentDidUpdate(prevProps, prevState) {
     // write code here
-    if( this.state.isArtistChecked !== prevState.isArtistChecked ||
-        this.state.isSingerChecked !== prevState.isSingerChecked ||
-        this.state.isRapperChecked !== prevState.isRapperChecked ||
-        this.state.isDancerChecked !== prevState.isDancerChecked ||
-        this.state.isProducerChecked !== prevState.isProducerChecked ||
-        this.state.isOtherChecked !== prevState.isOtherChecked
-      ){
-        const {
-          searchTerm,
-          distance,
-          isArtistChecked,
-          isSingerChecked,
-          isRapperChecked,
-          isDancerChecked,
-          isProducerChecked,
-          isOtherChecked,
-        } = this.state;
-        const user_types = []
-        if (isArtistChecked) {
-          user_types.push('Artist');
-        }
+    if (this.state.isArtistChecked !== prevState.isArtistChecked ||
+      this.state.isSingerChecked !== prevState.isSingerChecked ||
+      this.state.isRapperChecked !== prevState.isRapperChecked ||
+      this.state.isDancerChecked !== prevState.isDancerChecked ||
+      this.state.isProducerChecked !== prevState.isProducerChecked ||
+      this.state.isOtherChecked !== prevState.isOtherChecked
+    ) {
+      const {
+        searchTerm,
+        distance,
+        isArtistChecked,
+        isSingerChecked,
+        isRapperChecked,
+        isDancerChecked,
+        isProducerChecked,
+        isOtherChecked,
+      } = this.state;
+      const user_types = []
+      if (isArtistChecked) {
+        user_types.push('Artist');
+      }
 
-        if (isSingerChecked) {
-          user_types.push('DJ');
-        }
+      if (isSingerChecked) {
+        user_types.push('DJ');
+      }
 
-        if (isRapperChecked) {
-          user_types.push('Videographer');
-        }
+      if (isRapperChecked) {
+        user_types.push('Videographer');
+      }
 
-        if (isDancerChecked) {
-          user_types.push('Dancer');
-        }
+      if (isDancerChecked) {
+        user_types.push('Dancer');
+      }
 
-        if (isProducerChecked) {
-          user_types.push('Producer');
-        }
+      if (isProducerChecked) {
+        user_types.push('Producer');
+      }
 
-        if (isOtherChecked) {
-          user_types.push('Engineer');
-        }
+      if (isOtherChecked) {
+        user_types.push('Engineer');
+      }
 
-        this.setState({
-          user_types
-        })
+      this.setState({
+        user_types
+      })
 
-        const accessToken = this.props.accessToken;
-        const {
-          actions: {findNearbyUsers},
-        } = this.props;
-        if (accessToken) {
-          await findNearbyUsers(accessToken, user_types, distance, searchTerm);
-        }
+      const accessToken = this.props.accessToken;
+      const {
+        actions: { findNearbyUsers },
+      } = this.props;
+      if (accessToken) {
+        await findNearbyUsers(accessToken, user_types, distance, searchTerm);
+      }
 
     }
 
-    if(this.props.isNearbyUsersLoading !== prevProps.isNearbyUsersLoading){
-      if(this.props.isNearbyUsersLoading){
+    if (this.props.isNearbyUsersLoading !== prevProps.isNearbyUsersLoading) {
+      if (this.props.isNearbyUsersLoading) {
         this.setState({
           isLoading: true
         })
@@ -382,10 +382,10 @@ class Location extends Component {
       }
     }
 
-    if(this.props.updateLocationLoading !== prevProps.updateLocationLoading && !this.props.updateLocationLoading){
+    if (this.props.updateLocationLoading !== prevProps.updateLocationLoading && !this.props.updateLocationLoading) {
       const accessToken = this.props.accessToken;
       const {
-        actions: {userDetails, findNearbyUsers},
+        actions: { userDetails, findNearbyUsers },
       } = this.props;
       const userId = this.props.user && this.props.user.pk;
       if (accessToken) {
@@ -399,7 +399,7 @@ class Location extends Component {
       const accessToken = this.props.accessToken;
 
       const {
-        actions: {findNearbyUsers, updateCurrentLocation},
+        actions: { findNearbyUsers, updateCurrentLocation },
       } = this.props;
       if (accessToken) {
         let permissionGranted = false
@@ -407,29 +407,29 @@ class Location extends Component {
           await check(PERMISSIONS.IOS.LOCATION_WHEN_IN_USE)
             .then(result => {
               console.log('-------------------result 1', result)
-                switch (result) {
-                    case RESULTS.GRANTED:
-                      permissionGranted = true
-                      // console.log('The permission is granted');
-                      break;
-                  }
-              })
-          .catch(error => {
-            // …
-          });
+              switch (result) {
+                case RESULTS.GRANTED:
+                  permissionGranted = true
+                  // console.log('The permission is granted');
+                  break;
+              }
+            })
+            .catch(error => {
+              // …
+            });
           await check(PERMISSIONS.IOS.LOCATION_ALWAYS)
             .then(result => {
               console.log('-------------------result 2', result)
-                switch (result) {
-                  case RESULTS.GRANTED:
-                    permissionGranted = true
-                    // console.log('The permission is granted');
-                    break;
-                }
-              })
-          .catch(error => {
-            // …
-          });
+              switch (result) {
+                case RESULTS.GRANTED:
+                  permissionGranted = true
+                  // console.log('The permission is granted');
+                  break;
+              }
+            })
+            .catch(error => {
+              // …
+            });
         } else {
           await check(PERMISSIONS.ANDROID.ACCESS_FINE_LOCATION)
             .then(result => {
@@ -441,35 +441,35 @@ class Location extends Component {
                   break;
               }
             })
-          .catch(error => {
-            // …
-          });
+            .catch(error => {
+              // …
+            });
         }
         console.log('-------------------result permissionGranted 1111', permissionGranted)
-        if(permissionGranted) {
+        if (permissionGranted) {
           this.setState({
             permissionNotGranted: false
           })
           const userId = this.props.user && this.props.user.pk;
-          const {profile: allProfiles, navigation, nearbyUsers} = this.props;
+          const { profile: allProfiles, navigation, nearbyUsers } = this.props;
           const profile = allProfiles && allProfiles[`${userId}`];
           const latitude = get(profile, 'user.meta_data.live_location_lat', 0);
           const longitude = get(profile, 'user.meta_data.live_location_long', 0);
           console.log('-------------------result android latitude', latitude)
           console.log('-------------------result android longitude', longitude)
 
-          if(!latitude || !longitude) {
+          if (!latitude || !longitude) {
             Geolocation.getCurrentPosition(
               async position => {
                 const location = JSON.stringify(position);
-                if(position && position.coords && position.coords.latitude && position.coords.longitude){
+                if (position && position.coords && position.coords.latitude && position.coords.longitude) {
                   await updateCurrentLocation(accessToken, position.coords.latitude.toFixed(4), position.coords.longitude.toFixed(4));
-                  // await findNearbyUsers(accessToken, this.state.user_types, this.state.distance, this.state.term);
+                  await findNearbyUsers(accessToken, this.state.user_types, this.state.distance, this.state.term);
                 }
-                this.setState({location});
+                this.setState({ location });
               },
               error => console.log('Error', JSON.stringify(error)),
-              {enableHighAccuracy: true, timeout: 20000, maximumAge: 1000},
+              { enableHighAccuracy: true, timeout: 20000, maximumAge: 1000 },
             );
           }
         } else {
@@ -487,13 +487,13 @@ class Location extends Component {
     });
     clearTimeout(this.search.searchTimeOut);
     this.search.searchTimeOut = setTimeout(async () => {
-    const accessToken = this.props.accessToken;
-    const {
-      actions: {findNearbyUsers},
-    } = this.props;
-    if (accessToken) {
-      await findNearbyUsers(accessToken, this.state.user_types, this.state.distance, text);
-    }
+      const accessToken = this.props.accessToken;
+      const {
+        actions: { findNearbyUsers },
+      } = this.props;
+      if (accessToken) {
+        await findNearbyUsers(accessToken, this.state.user_types, this.state.distance, text);
+      }
     }, 500);
   };
 
@@ -503,52 +503,53 @@ class Location extends Component {
     });
     clearTimeout(this.search.searchTimeOut);
     this.search.searchTimeOut = setTimeout(async () => {
-    const accessToken = this.props.accessToken;
-    const {
-      actions: {findNearbyUsers},
-    } = this.props;
-    if (accessToken) {
-      await findNearbyUsers(accessToken, this.state.user_types, value, this.state.searchTerm);
-    }
+      const accessToken = this.props.accessToken;
+      const {
+        actions: { findNearbyUsers },
+      } = this.props;
+      if (accessToken) {
+        await findNearbyUsers(accessToken, this.state.user_types, value, this.state.searchTerm);
+      }
     }, 1000);
   }
 
   onClose = () => {
-    this.setState({permissionNotGranted: false}, () => {
-      this.props.navigation.navigate('HomePage', {userId: ''})
+    this.setState({ permissionNotGranted: false }, () => {
+      this.props.navigation.navigate('HomePage', { userId: '' })
     })
   };
 
   goToSettings = () => {
-    this.setState({permissionNotGranted: false}, () => {
+    this.setState({ permissionNotGranted: false }, () => {
       openSettings().catch(() => console.warn('cannot open settings'));
     })
   };
 
   render() {
-  const userId = this.props.user && this.props.user.pk;
-  const {profile: allProfiles, navigation, nearbyUsers} = this.props;
-  const profile = allProfiles && allProfiles[`${userId}`];
-  let nearbyUsersData =  []
-  if(nearbyUsers && nearbyUsers.data && nearbyUsers.data.length > 0) {
-    nearbyUsersData = nearbyUsers.data
-  }
-  let i = 1;
+    const userId = this.props.user && this.props.user.pk;
+    const { profile: allProfiles, navigation, nearbyUsers } = this.props;
+    const profile = allProfiles && allProfiles[`${userId}`];
+    let nearbyUsersData = []
+    if (nearbyUsers && nearbyUsers.data && nearbyUsers.data.length > 0) {
+      nearbyUsersData = nearbyUsers.data
+    }
+    console.log(nearbyUsers, 'nearbyUsers')
+    let i = 1;
 
     return (
       <ScrollView
         contentContainerStyle={styles.screen}
         keyboardShouldPersistTaps={'handled'}
-        style={{backgroundColor: 'black'}}>
+        style={{ backgroundColor: 'black' }}>
         <SafeAreaView style={styles.headerContainer}>
           <View style={styles.headerTextContainer}>
             <Text style={styles.headerText}>
-                Nearby
+              Nearby
               </Text>
           </View>
           <TouchableOpacity
             style={[styles.inputDrawerContainer]}
-            onPress={() => this.setState({showFilters: !this.state.showFilters})}>
+            onPress={() => this.setState({ showFilters: !this.state.showFilters })}>
             <View style={[styles.inputDrawer]}>
               <Image
                 style={[styles.inputDrawer]}
@@ -574,15 +575,17 @@ class Location extends Component {
               <Marker
                 key={index}
                 zIndex={i++}
-                coordinate = {{
+                coordinate={{
                   latitude: nearByUser.meta_data && nearByUser.meta_data.live_location_lat,
-                  longitude: nearByUser.meta_data && nearByUser.meta_data.live_location_long}}
-                trackViewChanges={ false }
-                onPress={(e) => {e.stopPropagation();
-                         navigation.navigate('ProfilePage', {
-                          userId: nearByUser.pk,
-                        });
-                       }}
+                  longitude: nearByUser.meta_data && nearByUser.meta_data.live_location_long
+                }}
+                trackViewChanges={false}
+                onPress={(e) => {
+                  e.stopPropagation();
+                  navigation.navigate('ProfilePage', {
+                    userId: nearByUser.pk,
+                  });
+                }}
               >
                 <View style={{
                   width: scaleModerate(81),
@@ -618,26 +621,23 @@ class Location extends Component {
                       />
                     </TouchableOpacity>
                     <View style={styles.locationTextContainer}>
-                    {(nearByUser.first_name ||
+                      {(nearByUser.first_name ||
                         nearByUser.last_name) ? (
-                        <Text style={styles.headerText}>
-                          { ((`${nearByUser.first_name} ${
-                              nearByUser.last_name
-                            }`).length > 7) ? 
-                          (((`${nearByUser.first_name} ${
-                              nearByUser.last_name
-                            }`).substring(0,7-3)) + '...') : 
-                          `${nearByUser.first_name} ${
-                              nearByUser.last_name
-                            }` }
-                        </Text>
-                      ) : (
-                        <Text style={styles.headerText}>
-                          { ((nearByUser.username).length > 7) ? 
-                          (((nearByUser.username).substring(0,7-3)) + '...') : 
-                          nearByUser.username }
-                        </Text>
-                      )}
+                          <Text style={styles.headerText}>
+                            { ((`${nearByUser.first_name} ${nearByUser.last_name
+                              }`).length > 7) ?
+                              (((`${nearByUser.first_name} ${nearByUser.last_name
+                                }`).substring(0, 7 - 3)) + '...') :
+                              `${nearByUser.first_name} ${nearByUser.last_name
+                              }`}
+                          </Text>
+                        ) : (
+                          <Text style={styles.headerText}>
+                            { ((nearByUser.username).length > 7) ?
+                              (((nearByUser.username).substring(0, 7 - 3)) + '...') :
+                              nearByUser.username}
+                          </Text>
+                        )}
                     </View>
                   </View>
 
@@ -670,14 +670,15 @@ class Location extends Component {
             <Marker
               index={9999}
               zIndex={9999}
-              trackViewChanges={ false }
-              coordinate = {{
+              trackViewChanges={false}
+              coordinate={{
                 latitude: (profile && profile.user && profile.user.meta_data && profile.user.meta_data.live_location_lat) ? profile.user.meta_data.live_location_lat : 0,
-                longitude: (profile && profile.user && profile.user.meta_data && profile.user.meta_data.live_location_long) ? profile.user.meta_data.live_location_long : 0}}
+                longitude: (profile && profile.user && profile.user.meta_data && profile.user.meta_data.live_location_long) ? profile.user.meta_data.live_location_long : 0
+              }}
             >
               <View>
-                <Image source={require('../../assets/images/current-location.png')} 
-                  style={{width: scaleModerate(70), height: scaleModerate(70)}} 
+                <Image source={require('../../assets/images/current-location.png')}
+                  style={{ width: scaleModerate(70), height: scaleModerate(70) }}
                 />
               </View>
             </Marker>
@@ -709,7 +710,7 @@ class Location extends Component {
           </View>
         </View>
 
-        {!!this.state.isLoading && 
+        {!!this.state.isLoading &&
           <View style={styles.loaderContainer}>
             <ActivityIndicator animating />
           </View>
@@ -718,7 +719,7 @@ class Location extends Component {
           <View
             style={[
               styles.genderTitle,
-              {marginBottom: scaleModerate(12), marginTop: scaleModerate(12)},
+              { marginBottom: scaleModerate(12), marginTop: scaleModerate(12) },
             ]}>
             <Text style={styles.genderText}>User Type</Text>
           </View>
@@ -732,7 +733,7 @@ class Location extends Component {
                     isArtistChecked: !this.state.isArtistChecked,
                   })
                 }
-                style={{marginRight: 20}}
+                style={{ marginRight: 20 }}
                 checkBoxColor={'#b88746'}
                 uncheckedCheckBoxColor={'#989ba5'}
               />
@@ -747,7 +748,7 @@ class Location extends Component {
                     isSingerChecked: !this.state.isSingerChecked,
                   })
                 }
-                style={{marginRight: 20}}
+                style={{ marginRight: 20 }}
                 checkBoxColor={'#b88746'}
                 uncheckedCheckBoxColor={'#989ba5'}
               />
@@ -762,7 +763,7 @@ class Location extends Component {
                     isRapperChecked: !this.state.isRapperChecked,
                   })
                 }
-                style={{marginRight: 20}}
+                style={{ marginRight: 20 }}
                 checkBoxColor={'#b88746'}
                 uncheckedCheckBoxColor={'#989ba5'}
               />
@@ -777,7 +778,7 @@ class Location extends Component {
                     isDancerChecked: !this.state.isDancerChecked,
                   })
                 }
-                style={{marginRight: 20}}
+                style={{ marginRight: 20 }}
                 checkBoxColor={'#b88746'}
                 uncheckedCheckBoxColor={'#989ba5'}
               />
@@ -792,7 +793,7 @@ class Location extends Component {
                     isProducerChecked: !this.state.isProducerChecked,
                   })
                 }
-                style={{marginRight: 20}}
+                style={{ marginRight: 20 }}
                 checkBoxColor={'#b88746'}
                 uncheckedCheckBoxColor={'#989ba5'}
               />
@@ -807,7 +808,7 @@ class Location extends Component {
                     isOtherChecked: !this.state.isOtherChecked,
                   })
                 }
-                style={{marginRight: 20}}
+                style={{ marginRight: 20 }}
                 checkBoxColor={'#b88746'}
                 uncheckedCheckBoxColor={'#989ba5'}
               />
@@ -815,15 +816,15 @@ class Location extends Component {
             </View>
           </View>
         </View>}
-        {this.state.showFilters && 
+        {this.state.showFilters &&
           <View style={styles.distanceTextContainer}>
             <Text style={styles.genderText}>Distance (miles)</Text>
           </View>
         }
-        {this.state.showFilters && 
+        {this.state.showFilters &&
           <><View style={styles.sliderContainer}>
             <Slider
-              style={{width: '95%', height: scaleModerate(50)}}
+              style={{ width: '95%', height: scaleModerate(50) }}
               minimumValue={1}
               maximumValue={50}
               step={1}
@@ -831,14 +832,14 @@ class Location extends Component {
               thumbTintColor="#B88746"
               minimumTrackTintColor="#B88746"
               maximumTrackTintColor="#989BA5"
-              onValueChange={ val  => this.searchLocationOnDistanceChange(val) }
+              onValueChange={val => this.searchLocationOnDistanceChange(val)}
             />
           </View>
-          <View style={styles.textCon}>
+            <View style={styles.textCon}>
               <Text style={styles.colorPerformit}>
-                  {this.state.distance + ' miles'}
+                {this.state.distance + ' miles'}
               </Text>
-          </View>
+            </View>
           </>
         }
         <Modal

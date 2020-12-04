@@ -32,7 +32,7 @@
 		</dict>
 	</array>
 	<key>CFBundleVersion</key>
-	<string>35</string>
+	<string>$(CURRENT_PROJECT_VERSION)</string>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
 	<key>NSAppTransportSecurity</key>
@@ -52,11 +52,12 @@
 	<string>Allow to use camera</string>
 	<key>NSLocationAlwaysAndWhenInUsageDescription</key>
 	<string>Performit needs permission to access location</string>
+	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
+	<string>Performit needs permission to access location</string>
 	<key>NSLocationAlwaysUsageDescription</key>
 	<string>Performit needs permission to access location</string>
 	<key>NSLocationWhenInUseUsageDescription</key>
 	<string>Performit needs permission to access location</string>
-
 	<key>NSMicrophoneUsageDescription</key>
 	<string>Allow to use microphone</string>
 	<key>NSPhotoLibraryAddUsageDescription</key>

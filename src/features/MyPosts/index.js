@@ -1,4 +1,4 @@
-import React, {Component} from 'react';
+import React, { Component } from 'react';
 import {
   StyleSheet,
   Image,
@@ -14,12 +14,12 @@ import {
   Alert,
   Platform
 } from 'react-native';
-import {styles} from './styles';
+import { styles } from './styles';
 import * as homeActions from '../HomePage/redux/actions';
-import {connect} from 'react-redux';
-import {scaleModerate} from '../../utils/scale';
+import { connect } from 'react-redux';
+import { scaleModerate } from '../../utils/scale';
 import * as profileActions from '../ProfilePage/redux/actions';
-import {cloneDeep, get} from 'lodash';
+import { cloneDeep, get } from 'lodash';
 import VideoPlayer from '../components/VideoPlayer';
 import Toast from 'react-native-simple-toast';
 import Share from 'react-native-share';
@@ -42,7 +42,7 @@ class MyPosts extends Component {
       seekTime: -1,
       showControls: false,
       postsData: [],
-      uploadingStatus: 0, 
+      uploadingStatus: 0,
       postId: '',
       myPostLoading: false
     };
@@ -67,13 +67,13 @@ class MyPosts extends Component {
     const accessToken = this.props.accessToken;
 
     const {
-      actions: {userDetails},
+      actions: { userDetails },
     } = this.props;
 
-    const {profile: allProfiles} = this.props;
+    const { profile: allProfiles } = this.props;
     const profile = allProfiles && allProfiles[`${userId}`];
     if (userId && accessToken && userId !== loggedInUserId) {
-      if(profile && profile.user && profile.user.pk){
+      if (profile && profile.user && profile.user.pk) {
         //do nothing
       } else {
         await userDetails(userId, accessToken);
@@ -86,14 +86,14 @@ class MyPosts extends Component {
     this.setState({
       postsData,
     });
-    if(postId && !this.props.myPostLoading){
+    if (postId && !this.props.myPostLoading) {
       setTimeout(() => {
-        let index = 0 
-        if(postsData && postsData.length > 0) {
+        let index = 0
+        if (postsData && postsData.length > 0) {
           index = postsData.findIndex(elem => elem.id === postId);
         }
         let yPos = scaleModerate(index * 659);
-        this.scroller && this.scroller.scrollTo({x: 0, y: yPos, animated: true})
+        this.scroller && this.scroller.scrollTo({ x: 0, y: yPos, animated: true })
       }, 1500);
     }
 
@@ -112,19 +112,19 @@ class MyPosts extends Component {
     const postId = this.props.navigation.getParam('postId', '');
 
     const loggedInUserId = this.props.user && this.props.user.pk
-    
+
     const accessToken = this.props.accessToken;
     const {
-      actions: {userDetails},
+      actions: { userDetails },
     } = this.props;
     if (userId && prevUserId !== userId) {
       this.setState({
         isLoading: true,
       });
-      const {profile: allProfiles} = this.props;
+      const { profile: allProfiles } = this.props;
       const profile = allProfiles && allProfiles[`${userId}`];
 
-      if(profile && profile.user && profile.user.pk){
+      if (profile && profile.user && profile.user.pk) {
         //do nothing
       } else {
         await userDetails(userId, accessToken);
@@ -140,8 +140,8 @@ class MyPosts extends Component {
       });
     }
 
-    if(this.props.myPostLoading !== prevProps.myPostLoading){
-      if(this.props.myPostLoading){
+    if (this.props.myPostLoading !== prevProps.myPostLoading) {
+      if (this.props.myPostLoading) {
         this.setState({
           myPostLoading: true
         })
@@ -157,8 +157,8 @@ class MyPosts extends Component {
         postId,
       });
       const postsData = cloneDeep(this.state.postsData);
-      if(postsData && postId && !this.props.myPostLoading){
-        let index = 0 
+      if (postsData && postId && !this.props.myPostLoading) {
+        let index = 0
         // if(postsData && postsData.length > 0) {
         //   index = postsData.findIndex(elem => elem.id === postId);
         // }
@@ -169,7 +169,7 @@ class MyPosts extends Component {
 
 
     if (this.props.profile !== prevProps.profile) {
-      const {profile: allProfiles} = this.props;
+      const { profile: allProfiles } = this.props;
       const profile = allProfiles && allProfiles[`${userId}`];
       let postsData = [];
       postsData = cloneDeep(get(profile, 'posts', []));
@@ -180,29 +180,29 @@ class MyPosts extends Component {
     }
 
     if (prevProps.isFocused !== this.props.isFocused) {
-        const {profile: allProfiles} = this.props;
-        const profile = allProfiles && allProfiles[`${userId}`];
-        let postsData = [];
-        postsData = cloneDeep(get(profile, 'posts', []));
-        if(postsData && postId && !this.props.myPostLoading){
-          let index = 0 
-          if(postsData && postsData.length > 0) {
-            index = postsData.findIndex(elem => elem.id === postId);
-          }
-          let yPos = scaleModerate(index * 659);
-          this.scroller && this.scroller.scrollTo({x: 0, y: yPos, animated: true})
+      const { profile: allProfiles } = this.props;
+      const profile = allProfiles && allProfiles[`${userId}`];
+      let postsData = [];
+      postsData = cloneDeep(get(profile, 'posts', []));
+      if (postsData && postId && !this.props.myPostLoading) {
+        let index = 0
+        if (postsData && postsData.length > 0) {
+          index = postsData.findIndex(elem => elem.id === postId);
         }
+        let yPos = scaleModerate(index * 659);
+        this.scroller && this.scroller.scrollTo({ x: 0, y: yPos, animated: true })
       }
+    }
   }
 
   hasAndroidPermission = async () => {
     const permission = PermissionsAndroid.PERMISSIONS.WRITE_EXTERNAL_STORAGE;
-   
+
     const hasPermission = await PermissionsAndroid.check(permission);
     if (hasPermission) {
       return true;
     }
-   
+
     const status = await PermissionsAndroid.request(permission);
     return status === 'granted';
   }
@@ -215,19 +215,19 @@ class MyPosts extends Component {
     this.setState({ uploadingStatus: 0.01 });
 
     const cache = await RNFetchBlob.config({
-                fileCache: true,
-                appendExt: 'mp4',
-              }).fetch('GET', video.content, {}).progress((received, total) => {
-                    this.setState({ uploadingStatus: (received / total) * 100 })
-                    // console.log('Progress', (received / total) * 100);
-                });
+      fileCache: true,
+      appendExt: 'mp4',
+    }).fetch('GET', video.content, {}).progress((received, total) => {
+      this.setState({ uploadingStatus: (received / total) * 100 })
+      // console.log('Progress', (received / total) * 100);
+    });
     const gallery = await CameraRoll.save(cache.path(), 'video');
     cache.flush();
     this.setState({ uploadingStatus: 0 }, async () => {
       await Share.shareSingle({
-          title: (video && video.caption) ? video.caption : 'Performit Video',
-          social: Share.Social.INSTAGRAM,
-          url: gallery,
+        title: (video && video.caption) ? video.caption : 'Performit Video',
+        social: Share.Social.INSTAGRAM,
+        url: gallery,
       });
     })
   }
@@ -257,7 +257,7 @@ class MyPosts extends Component {
     const accessToken = this.props.accessToken;
     const userId = this.state.userId;
     const {
-      actions: {userDetails, addCommentToPost},
+      actions: { userDetails, addCommentToPost },
     } = this.props;
 
     await addCommentToPost(
@@ -279,15 +279,15 @@ class MyPosts extends Component {
     }
   };
 
-  ratePost = async (postId, rating, postOwner) => {
-    if(this.props.user && postOwnerId === this.props.user.pk){
+  ratePost = async (postId, rating, postOwnerId) => {
+    if (this.props.user && postOwnerId === this.props.user.pk) {
       Toast.show('User cannot rate his own post');
       return false;
     }
     const accessToken = this.props.accessToken;
     const userId = this.state.userId;
     const {
-      actions: {userDetails, addEditPostRank},
+      actions: { userDetails, addEditPostRank },
     } = this.props;
     let postsData = cloneDeep(this.state.postsData);
     postsData.length > 0 &&
@@ -305,7 +305,7 @@ class MyPosts extends Component {
 
   callPostViewed = (postId, isViewed) => {
     const {
-      actions: {addPostView},
+      actions: { addPostView },
     } = this.props;
     const accessToken = this.props.accessToken;
     !isViewed && addPostView(postId, accessToken);
@@ -337,44 +337,44 @@ class MyPosts extends Component {
 
   onClose = () => {
     let userId = this.state.userId
-    if(!userId) userId = this.state.user && this.props.user.pk;
-    this.props.navigation.navigate('ProfilePage', {userId});
+    if (!userId) userId = this.state.user && this.props.user.pk;
+    this.props.navigation.navigate('ProfilePage', { userId });
   };
 
   // 30+ 10 +350+ 30 + 10 +25 + 10 + 50 + 30 + 10 + 70 +24
 
   render() {
-    const {profile: allProfiles, posts, navigation, commentsList} = this.props;
-    let {postsData, userId, postId} = this.state;
+    const { profile: allProfiles, posts, navigation, commentsList } = this.props;
+    let { postsData, userId, postId } = this.state;
 
     const profile = allProfiles && allProfiles[`${userId}`];
 
     return (
       <KeyboardAvoidingView
         behavior={'position'}
-        style={{flex: 1, backgroundColor: 'black'}}>
+        style={{ flex: 1, backgroundColor: 'black' }}>
         <SafeAreaView style={styles.headerContainer}>
-                <View style={styles.headerLeftContainer}>
-                  <TouchableOpacity
-                    style={[styles.leftArrowContainer]}
-                    onPress={() => this.onClose()}>
-                    <View style={[styles.leftArrow]}>
-                      <Image
-                        style={[styles.leftArrow]}
-                        source={require('../../assets/images/left-arrow.png')}
-                      />
-                    </View>
-                  </TouchableOpacity>
-                  <Text style={styles.headerText}>My Posts</Text>
-                </View>
-                <View style={styles.headerRightContainer} />
-              </SafeAreaView>
+          <View style={styles.headerLeftContainer}>
+            <TouchableOpacity
+              style={[styles.leftArrowContainer]}
+              onPress={() => this.onClose()}>
+              <View style={[styles.leftArrow]}>
+                <Image
+                  style={[styles.leftArrow]}
+                  source={require('../../assets/images/left-arrow.png')}
+                />
+              </View>
+            </TouchableOpacity>
+            <Text style={styles.headerText}>My Posts</Text>
+          </View>
+          <View style={styles.headerRightContainer} />
+        </SafeAreaView>
         <ScrollView
           contentContainerStyle={styles.screen}
           keyboardShouldPersistTaps={'handled'}
-          style={{backgroundColor: 'black'}}
-          ref={(scroller) => {this.scroller = scroller}}
-          >
+          style={{ backgroundColor: 'black' }}
+          ref={(scroller) => { this.scroller = scroller }}
+        >
           {!this.state.isLoading ? (
             <>
               {postsData.map(postData => (
@@ -400,18 +400,17 @@ class MyPosts extends Component {
                       </TouchableOpacity>
                       <View style={styles.postProfileTextContainer}>
                         {profile &&
-                        profile.user &&
-                        (profile.user.first_name || profile.user.last_name) ? (
-                          <Text style={styles.postProfileText}>
-                            {`${profile.user.first_name} ${
-                              profile.user.last_name
-                            }`}
-                          </Text>
-                        ) : (
-                          <Text style={styles.postProfileText}>
-                            {profile.user.username}
-                          </Text>
-                        )}
+                          profile.user &&
+                          (profile.user.first_name || profile.user.last_name) ? (
+                            <Text style={styles.postProfileText}>
+                              {`${profile.user.first_name} ${profile.user.last_name
+                                }`}
+                            </Text>
+                          ) : (
+                            <Text style={styles.postProfileText}>
+                              {profile.user.username}
+                            </Text>
+                          )}
                       </View>
                     </View>
                   </View>
@@ -476,19 +475,19 @@ class MyPosts extends Component {
                           }
                           style={[styles.starImage]}>
                           {postData &&
-                          postData.meta_data &&
-                          postData.meta_data.ratings &&
-                          postData.meta_data.ratings.rating_by_login >= 1 ? (
-                            <Image
-                              style={[styles.starImage]}
-                              source={require('../../assets/images/filled_star.png')}
-                            />
-                          ) : (
-                            <Image
-                              style={[styles.starImage]}
-                              source={require('../../assets/images/empty_star.png')}
-                            />
-                          )}
+                            postData.meta_data &&
+                            postData.meta_data.ratings &&
+                            postData.meta_data.ratings.rating_by_login >= 1 ? (
+                              <Image
+                                style={[styles.starImage]}
+                                source={require('../../assets/images/filled_star.png')}
+                              />
+                            ) : (
+                              <Image
+                                style={[styles.starImage]}
+                                source={require('../../assets/images/empty_star.png')}
+                              />
+                            )}
                         </TouchableOpacity>
                         <TouchableOpacity
                           onPress={() =>
@@ -496,19 +495,19 @@ class MyPosts extends Component {
                           }
                           style={[styles.starImage]}>
                           {postData &&
-                          postData.meta_data &&
-                          postData.meta_data.ratings &&
-                          postData.meta_data.ratings.rating_by_login >= 2 ? (
-                            <Image
-                              style={[styles.starImage]}
-                              source={require('../../assets/images/filled_star.png')}
-                            />
-                          ) : (
-                            <Image
-                              style={[styles.starImage]}
-                              source={require('../../assets/images/empty_star.png')}
-                            />
-                          )}
+                            postData.meta_data &&
+                            postData.meta_data.ratings &&
+                            postData.meta_data.ratings.rating_by_login >= 2 ? (
+                              <Image
+                                style={[styles.starImage]}
+                                source={require('../../assets/images/filled_star.png')}
+                              />
+                            ) : (
+                              <Image
+                                style={[styles.starImage]}
+                                source={require('../../assets/images/empty_star.png')}
+                              />
+                            )}
                         </TouchableOpacity>
                         <TouchableOpacity
                           onPress={() =>
@@ -516,19 +515,19 @@ class MyPosts extends Component {
                           }
                           style={[styles.starImage]}>
                           {postData &&
-                          postData.meta_data &&
-                          postData.meta_data.ratings &&
-                          postData.meta_data.ratings.rating_by_login >= 3 ? (
-                            <Image
-                              style={[styles.starImage]}
-                              source={require('../../assets/images/filled_star.png')}
-                            />
-                          ) : (
-                            <Image
-                              style={[styles.starImage]}
-                              source={require('../../assets/images/empty_star.png')}
-                            />
-                          )}
+                            postData.meta_data &&
+                            postData.meta_data.ratings &&
+                            postData.meta_data.ratings.rating_by_login >= 3 ? (
+                              <Image
+                                style={[styles.starImage]}
+                                source={require('../../assets/images/filled_star.png')}
+                              />
+                            ) : (
+                              <Image
+                                style={[styles.starImage]}
+                                source={require('../../assets/images/empty_star.png')}
+                              />
+                            )}
                         </TouchableOpacity>
                         <TouchableOpacity
                           onPress={() =>
@@ -536,19 +535,19 @@ class MyPosts extends Component {
                           }
                           style={[styles.starImage]}>
                           {postData &&
-                          postData.meta_data &&
-                          postData.meta_data.ratings &&
-                          postData.meta_data.ratings.rating_by_login >= 4 ? (
-                            <Image
-                              style={[styles.starImage]}
-                              source={require('../../assets/images/filled_star.png')}
-                            />
-                          ) : (
-                            <Image
-                              style={[styles.starImage]}
-                              source={require('../../assets/images/empty_star.png')}
-                            />
-                          )}
+                            postData.meta_data &&
+                            postData.meta_data.ratings &&
+                            postData.meta_data.ratings.rating_by_login >= 4 ? (
+                              <Image
+                                style={[styles.starImage]}
+                                source={require('../../assets/images/filled_star.png')}
+                              />
+                            ) : (
+                              <Image
+                                style={[styles.starImage]}
+                                source={require('../../assets/images/empty_star.png')}
+                              />
+                            )}
                         </TouchableOpacity>
                         <TouchableOpacity
                           onPress={() =>
@@ -556,19 +555,19 @@ class MyPosts extends Component {
                           }
                           style={[styles.starImage]}>
                           {postData &&
-                          postData.meta_data &&
-                          postData.meta_data.ratings &&
-                          postData.meta_data.ratings.rating_by_login >= 5 ? (
-                            <Image
-                              style={[styles.starImage]}
-                              source={require('../../assets/images/filled_star.png')}
-                            />
-                          ) : (
-                            <Image
-                              style={[styles.starImage]}
-                              source={require('../../assets/images/empty_star.png')}
-                            />
-                          )}
+                            postData.meta_data &&
+                            postData.meta_data.ratings &&
+                            postData.meta_data.ratings.rating_by_login >= 5 ? (
+                              <Image
+                                style={[styles.starImage]}
+                                source={require('../../assets/images/filled_star.png')}
+                              />
+                            ) : (
+                              <Image
+                                style={[styles.starImage]}
+                                source={require('../../assets/images/empty_star.png')}
+                              />
+                            )}
                         </TouchableOpacity>
                         <View style={styles.postStatsLeftTextContainer}>
                           <Text style={styles.postStatsLeftText}>
@@ -624,7 +623,7 @@ class MyPosts extends Component {
                       </TouchableOpacity>
                       <TouchableOpacity
                         onPress={() => this.state.uploadingStatus === 0 && this.sharePost(postData)}
-                       style={[styles.shareImage]}>
+                        style={[styles.shareImage]}>
                         <Image
                           style={[styles.shareImage]}
                           source={require('../../assets/images/share_icon.png')}
@@ -634,35 +633,35 @@ class MyPosts extends Component {
                   </View>
 
                   {postData &&
-                  postData.caption &&
-                  postData.caption.length > 0 ? (
-                    <View style={styles.captionParentContainer}>
-                      <View style={styles.captionContainer}>
-                        <Text style={styles.captionText}>
-                          {postData.caption &&
-                            postData.caption
-                              .split(' ')
-                              .map(elem =>
-                                elem.includes('#') || elem.includes('@') ? (
-                                  <Text
-                                    style={[
-                                      styles.captionText,
-                                      {color: '#B88746'},
-                                    ]}>
-                                    {elem}
-                                  </Text>
-                                ) : (
-                                  <Text style={[styles.captionText]}>
-                                    {elem}{' '}
-                                  </Text>
-                                ),
-                              )}
-                        </Text>
+                    postData.caption &&
+                    postData.caption.length > 0 ? (
+                      <View style={styles.captionParentContainer}>
+                        <View style={styles.captionContainer}>
+                          <Text style={styles.captionText}>
+                            {postData.caption &&
+                              postData.caption
+                                .split(' ')
+                                .map(elem =>
+                                  elem.includes('#') || elem.includes('@') ? (
+                                    <Text
+                                      style={[
+                                        styles.captionText,
+                                        { color: '#B88746' },
+                                      ]}>
+                                      {elem}
+                                    </Text>
+                                  ) : (
+                                      <Text style={[styles.captionText]}>
+                                        {elem}{' '}
+                                      </Text>
+                                    ),
+                                )}
+                          </Text>
+                        </View>
                       </View>
-                    </View>
-                  ) : (
-                    <View style={styles.captionParentContainer} />
-                  )}
+                    ) : (
+                      <View style={styles.captionParentContainer} />
+                    )}
 
                   {/*{postData &&
                   postData.meta_data &&
@@ -736,46 +735,46 @@ class MyPosts extends Component {
               ))}
             </>
           ) : (
-            <View
-              style={{
-                flexDirection: 'row',
-                width: '100%',
-                height: '100%',
-                alignItems: 'center',
-                justifyContent: 'center',
-              }}>
-              <ActivityIndicator animating />
-            </View>
-          )}
-          <View style={{width: '100%', height: scaleModerate(120)}} />
+              <View
+                style={{
+                  flexDirection: 'row',
+                  width: '100%',
+                  height: '100%',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                }}>
+                <ActivityIndicator animating />
+              </View>
+            )}
+          <View style={{ width: '100%', height: scaleModerate(120) }} />
         </ScrollView>
-        {this.state.uploadingStatus > 0 && this.state.uploadingStatus < 100  && 
-            <View style={styles.loaderContainer}>
-              <Text
-                style={{
-                  color: '#ffffff',
-                  fontSize: scaleModerate(14),
-                  fontFamily: 'Nunito',
-                  lineHeight: undefined,
-                }}>
-                Downloading file to share
+        {this.state.uploadingStatus > 0 && this.state.uploadingStatus < 100 &&
+          <View style={styles.loaderContainer}>
+            <Text
+              style={{
+                color: '#ffffff',
+                fontSize: scaleModerate(14),
+                fontFamily: 'Nunito',
+                lineHeight: undefined,
+              }}>
+              Downloading file to share
               </Text>
-              <Text
-                style={{
-                  color: '#ffffff',
-                  fontSize: scaleModerate(14),
-                  fontFamily: 'Nunito',
-                  lineHeight: undefined,
-                }}>
-                {` ${Math.floor(this.state.uploadingStatus)} %`}
-              </Text>
-            </View>
-          }
-          {this.state.myPostLoading  && 
-            <View style={styles.postLoaderContainer}>
-              <ActivityIndicator animating />
-            </View>
-          }
+            <Text
+              style={{
+                color: '#ffffff',
+                fontSize: scaleModerate(14),
+                fontFamily: 'Nunito',
+                lineHeight: undefined,
+              }}>
+              {` ${Math.floor(this.state.uploadingStatus)} %`}
+            </Text>
+          </View>
+        }
+        {this.state.myPostLoading &&
+          <View style={styles.postLoaderContainer}>
+            <ActivityIndicator animating />
+          </View>
+        }
       </KeyboardAvoidingView>
     );
   }

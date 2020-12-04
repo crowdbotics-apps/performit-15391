@@ -1,5 +1,5 @@
-import React, {Component} from 'react';
-import {connect} from 'react-redux';
+import React, { Component } from 'react';
+import { connect } from 'react-redux';
 import {
   Image,
   Dimensions,
@@ -12,8 +12,8 @@ import {
   ActivityIndicator
 } from 'react-native';
 
-import {scaleModerate, scaleVertical} from '../../../../utils/scale';
-import {styles} from '../styles';
+import { scaleModerate, scaleVertical } from '../../../../utils/scale';
+import { styles } from '../styles';
 import * as emailAuthActions from '../../redux/actions';
 import ErrorBox from '../../../../components/ErrorBox';
 
@@ -55,10 +55,10 @@ class SignIn extends Component {
       }
     }
 
-    if(this.props.accessToken){
-       this.setState({
-          isLoading: false,
-        });
+    if (this.props.accessToken) {
+      this.setState({
+        isLoading: false,
+      });
     }
   }
 
@@ -73,7 +73,7 @@ class SignIn extends Component {
       height: scaleModerate(100, 1),
     };
     return (
-      <View style={[styles.imageContainer, {width: screenSize.width}]}>
+      <View style={[styles.imageContainer, { width: screenSize.width }]}>
         <ImageBackground
           style={[styles.imageBackground, imageBackgroundSize]}
           source={require('../../../../assets/images/Bubbles.png')}>
@@ -90,18 +90,18 @@ class SignIn extends Component {
   };
 
   handleUsernameChange(username) {
-    this.setState({username});
+    this.setState({ username });
     // todo add email validation
   }
 
   handlePasswordChange(password) {
-    this.setState({password});
+    this.setState({ password });
     // todo change keyboard and add validation
   }
 
   renderErrors() {
-    const {signInErrors} = this.props;
-    const {error} = this.state;
+    const { signInErrors } = this.props;
+    const { error } = this.state;
     if (this.state.showError) {
       if (error) {
         return <ErrorBox errorText={error} />;
@@ -115,24 +115,25 @@ class SignIn extends Component {
 
   async submitLogin() {
     let validation = true;
-    this.setState({error: '', isLoading: true});
+    this.setState({ error: '', isLoading: true });
     const {
-      actions: {login},
+      actions: { login },
     } = this.props;
 
-    const {username, password} = this.state;
+    const { username, password } = this.state;
     if (!username) {
-      this.setState({showError: true});
-      this.setState({error: 'Please enter a username'});
+      this.setState({ showError: true });
+      this.setState({ error: 'Please enter a username' });
       validation = false;
     } else if (!password) {
-      this.setState({showError: true});
-      this.setState({error: 'Please enter a password'});
+      this.setState({ showError: true });
+      this.setState({ error: 'Please enter a password' });
       validation = false;
     }
 
     if (validation) {
-      await login({username, password});
+      console.log(username, password)
+      await login({ username, password });
       setTimeout(() => {
         if (this.state.updateForm) {
           this.setState({
@@ -159,28 +160,28 @@ class SignIn extends Component {
   }
 
   goToPasswordRecover() {
-    const {navigation} = this.props;
+    const { navigation } = this.props;
     navigation.navigate('RecoverPassword');
   }
 
   goToSignUp() {
-    const {navigation} = this.props;
+    const { navigation } = this.props;
     navigation.navigate('SignUp');
   }
 
   goToForgotPassword() {
-    const {navigation} = this.props;
+    const { navigation } = this.props;
     navigation.navigate('ForgotPassword');
   }
 
   render() {
-    const {username, password, showPassword} = this.state;
-    const {errors} = this.props;
+    const { username, password, showPassword } = this.state;
+    const { errors } = this.props;
 
     return (
       <ScrollView
         contentContainerStyle={styles.signUpScreen}
-        style={{backgroundColor: 'black'}}>
+        style={{ backgroundColor: 'black' }}>
         <View
           style={{
             flexDirection: 'column',
@@ -189,7 +190,7 @@ class SignIn extends Component {
             height: Dimensions.get('window').height,
             width: '100%',
           }}>
-          <View style={{width: '100%', alignItems: 'center'}}>
+          <View style={{ width: '100%', alignItems: 'center' }}>
             {this.renderImage()}
             <View style={styles.inputContainer}>
               <View style={[styles.inputUserNameImage]}>
@@ -229,7 +230,7 @@ class SignIn extends Component {
               <TouchableOpacity
                 style={[styles.inputEyeImage]}
                 onPress={() =>
-                  password && this.setState({showPassword: !showPassword})
+                  password && this.setState({ showPassword: !showPassword })
                 }>
                 <Image
                   style={[styles.inputEyeImage]}
@@ -287,8 +288,8 @@ const mapStateToProps = state => ({
 
 const mapDispatchToProps = dispatch => ({
   actions: {
-    login: ({username, password}) => {
-      dispatch(emailAuthActions.login({username, password}));
+    login: ({ username, password }) => {
+      dispatch(emailAuthActions.login({ username, password }));
     },
   },
 });
