@@ -246,9 +246,10 @@ FCM_DJANGO_SETTINGS = {
 }
 # end fcm_django push notifications
 
+DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
 
-if DEBUG == False:
-    DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
+# if DEBUG == False:
+
 # if DEBUG:
 #     # output email to console instead of sending
 #     EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
