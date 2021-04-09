@@ -817,7 +817,7 @@ class EditProfile extends Component {
                   source={require('../../assets/images/facebook.png')}
                 />
               </View>
-              <Text style={styles.socialMediaText}>Connect to Facebook</Text>
+              <Text style={styles.socialMediaText}>{profile.user_details.facebook_link != ''? "Connected to Facebook" : "Connect to Facebook"}</Text>
             </View>
 
             <View style={styles.socialConnectEditProfileRightContainer}>
