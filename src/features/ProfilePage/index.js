@@ -8,6 +8,7 @@ import {
   ActivityIndicator,
   SafeAreaView,
   Dimensions,
+  Linking
 } from 'react-native';
 import Toast from 'react-native-simple-toast';
 import FastImage from 'react-native-fast-image';
@@ -471,7 +472,13 @@ class Profile extends Component {
               <View style={styles.socialMediaContainer}>
                 <TouchableOpacity
                   style={styles.singleSocialMediaContainer}
-                  onPress={() => this.showAccountNotConnected('Facebook')}>
+                  onPress={() => { 
+                    if(profile.user_details.facebook_link != ''){
+
+                      Linking.openURL("https://"+profile.user_details.facebook_link);
+                      return;
+                    }
+                    this.showAccountNotConnected('Facebook')}}>
                   <Image
                     style={[styles.facebookIcon]}
                     source={require('../../assets/images/facebook.png')}
@@ -479,7 +486,12 @@ class Profile extends Component {
                 </TouchableOpacity>
                 <TouchableOpacity
                   style={styles.singleSocialMediaContainer}
-                  onPress={() => this.showAccountNotConnected('Instagram')}>
+                  onPress={() => { 
+                    if(profile.user_details.facebook_link != ''){
+                      Linking.openURL("https://"+profile.user_details.instagram_link);
+                      return;
+                    }
+                    this.showAccountNotConnected('Instagram')}}>
                   <Image
                     style={[styles.instagramIcon]}
                     source={require('../../assets/images/instagram.png')}
