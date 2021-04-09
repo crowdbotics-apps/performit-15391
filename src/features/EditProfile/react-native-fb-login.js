@@ -46,7 +46,7 @@ export default class Facebook extends Component {
     const {url} = webViewState;
     // console.log(url)
     if (url && url.startsWith(redirectURI) && this.state.modalVisible) {
-      console.log(url);
+      //console.log(url);
       const token =
         this._getParameterByName('access_token', url) ||
         this._getParameterByName('#access_token', url);
@@ -71,7 +71,7 @@ export default class Facebook extends Component {
       scope: scope.join(','),
     });
     const uri = `https://www.facebook.com/v2.9/dialog/oauth?${query}`;
-    // console.log(uri)
+    console.log(uri)
     return (
       <Modal
         style={styles.modelContainer}

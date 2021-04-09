@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">Performit</string>
+    <string name="fb_app_id">479836829836091</string>
+    <string name="fb_login_protocol_scheme">fb479836829836091</string>
 </resources>

@@ -201,6 +201,7 @@ dependencies {
     implementation project(':rn-fetch-blob')
     implementation 'com.google.firebase:firebase-analytics:17.2.2'
     implementation fileTree(dir: "libs", include: ["*.jar"])
+    implementation project(':react-native-facebook-login')
     implementation "com.facebook.react:react-native:+"  // From node_modules
     compile 'com.android.support:multidex:1.0.0'
 

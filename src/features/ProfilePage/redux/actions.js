@@ -111,3 +111,10 @@ export const acceptGroupInvite = (invite_id, token) => ({
   invite_id,
   token
 });
+
+export const updateUserDetails = (token, user, userId) => ({
+  type: actions.UPDATE_PROFILE_DETAILS_REQUEST,
+  token,
+  user,
+  userId,
+});

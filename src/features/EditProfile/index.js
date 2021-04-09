@@ -29,6 +29,7 @@ import FacebookLogin from './react-native-fb-login';
 import {GoogleSignin, statusCodes} from '@react-native-community/google-signin';
 import {appConfig} from '../../config/app';
 import FastImage from 'react-native-fast-image';
+import {FBLoginManager,AccessToken} from 'react-native-facebook-login';
 
 class EditProfile extends Component {
   constructor(props) {
@@ -788,7 +789,25 @@ class EditProfile extends Component {
         </View>
         <TouchableOpacity
           onPress={() => {
-            this.facebookLogin.show();
+            //this.facebookLogin.show();
+            _this = this;
+            FBLoginManager.loginWithPermissions(["email"], function(error, data){
+              if (!error) {
+                console.log("Login data: ", data);
+
+                const userId = _this.props.user && _this.props.user.pk;
+                const {
+                  actions: {userDetailsUpdate},
+                  accessToken,
+                } = _this.props;
+                if (userId && accessToken) {
+                  userDetailsUpdate(userId,{social_media_type: "Facebook",link: "www.facebook.com/" + data.credentials.userId}, accessToken);
+                }
+
+              } else {
+                console.log("Error: ", error);
+              }
+            })
           }}>
           <View style={styles.socialConnectEditProfileContainer}>
             <View style={styles.socialConnectEditProfileLeftContainer}>
@@ -855,15 +874,15 @@ class EditProfile extends Component {
           }}
           onLoginFailure={data => console.log(data)}
         />
-        <FacebookLogin
+        {/* <FacebookLogin
           ref={ref => (this.facebookLogin = ref)}
-          clientId="1657132321119747"
+          clientId="479836829836091"
           redirectURI="https://performit-15391.botics.co"
-          scope={['public_profile', 'user_link']}
+          scope={['public_profile']}
           onLoginSuccess={res => {
             console.log('resssssss', res);
           }}
-        />
+        /> */}
       </ScrollView>
     );
   }
@@ -882,6 +901,9 @@ const mapDispatchToProps = dispatch => ({
   actions: {
     userDetails: (userId, token) => {
       dispatch(profileActions.userDetails(userId, token));
+    },
+    userDetailsUpdate: (userId,user, token) => {
+      dispatch(profileActions.updateUserDetails( token,user,userId));
     },
     editProfile: (token, user, userTypes) => {
       dispatch(profileActions.editProfile(token, user, userTypes));

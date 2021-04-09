@@ -46,6 +46,7 @@ import {
   ACCEPT_GROUP_INVITE_ERROR,
   PROFILE_USER_DETAIL_LOADING,
   GET_NOTIFICATIONS_LOADING,
+  UPDATE_PROFILE_DETAILS_REQUEST
 } from './constants';
 import {request} from '../../../utils/http';
 
@@ -55,6 +56,18 @@ function sendUserDetails(user_id, token) {
     {
       user_id,
     },
+    {
+      headers: {
+        Authorization: `Token ${token}`,
+      },
+    },
+  );
+}
+
+function updateUserDetails(user, token) {
+  return request.post(
+    '/connect-social-media/',
+    user,
     {
       headers: {
         Authorization: `Token ${token}`,
@@ -231,6 +244,47 @@ function sendAcceptGroupInvite(invite_id, token) {
       Authorization: `Token ${token}`,
     },
   });
+}
+
+function* handleUpdateProfileDetails(action) {
+  yield put({
+    type: PROFILE_USER_DETAIL_LOADING,
+  });
+
+  const {userId,user, token} = action;
+  try {
+    const {status, data} = yield call(updateUserDetails, user, token);
+    if (status === 200) {
+      yield put({
+        type: PROFILE_USER_DETAIL_SUCCESS,
+      });
+      yield put({
+        type: PROFILE_USER_DETAIL_SUCCESS,
+        profile: {user_details : data && data.data},
+        userId: userId,
+      });
+      yield put({
+        type: PROFILE_USER_DETAIL_ERROR,
+        error: '',
+      });
+      // if (data.origin === 'signup') {
+      //   // you can change the navigate for navigateAndResetStack to go to a protected route
+      //   NavigationService.navigate('Profile');
+      // } else {
+      //   NavigationService.navigate('ResetPassword', {data});
+      // }
+    } else {
+      yield put({
+        type: PROFILE_USER_DETAIL_ERROR,
+        error: 'Unknown Error',
+      });
+    }
+  } catch (error) {
+    yield put({
+      type: PROFILE_USER_DETAIL_ERROR,
+      error: 'Something went wrong',
+    });
+  }
 }
 
 function* handleGetUserDetails(action) {
@@ -834,4 +888,5 @@ export default all([
   takeLatest(READ_NOTIFICATION_REQUEST, handlReadNotification),
   takeLatest(ACCEPT_GROUP_JOIN_REQUEST, handleAcceptGroupJoin),
   takeLatest(ACCEPT_GROUP_INVITE_REQUEST, handleAcceptGroupInvite),
+  takeLatest(UPDATE_PROFILE_DETAILS_REQUEST, handleUpdateProfileDetails),
 ]);
