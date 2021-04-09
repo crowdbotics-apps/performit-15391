@@ -487,7 +487,7 @@ class Profile extends Component {
                 <TouchableOpacity
                   style={styles.singleSocialMediaContainer}
                   onPress={() => { 
-                    if(profile.user_details.facebook_link != ''){
+                    if(profile.user_details.instagram_link != ''){
                       Linking.openURL("https://"+profile.user_details.instagram_link);
                       return;
                     }
