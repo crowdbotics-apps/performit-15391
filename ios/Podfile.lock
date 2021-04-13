@@ -225,6 +225,16 @@ PODS:
     - BoringSSL-GRPC/Interface (= 0.0.7)
   - BoringSSL-GRPC/Interface (0.0.7)
   - DoubleConversion (1.1.6)
+  - FBSDKCoreKit (5.8.0):
+    - FBSDKCoreKit/Basics (= 5.8.0)
+    - FBSDKCoreKit/Core (= 5.8.0)
+  - FBSDKCoreKit/Basics (5.8.0)
+  - FBSDKCoreKit/Core (5.8.0):
+    - FBSDKCoreKit/Basics
+  - FBSDKLoginKit (5.8.0):
+    - FBSDKLoginKit/Login (= 5.8.0)
+  - FBSDKLoginKit/Login (5.8.0):
+    - FBSDKCoreKit (~> 5.0)
   - Firebase/Analytics (6.30.0):
     - Firebase/Core
   - Firebase/Auth (6.30.0):
@@ -455,6 +465,10 @@ PODS:
     - React
   - react-native-document-picker (3.5.4):
     - React
+  - react-native-facebook-login (1.6.2):
+    - FBSDKCoreKit (~> 5.8.0)
+    - FBSDKLoginKit (~> 5.8.0)
+    - React
   - react-native-geolocation (2.0.2):
     - React
   - react-native-google-maps (0.27.1):
@@ -578,6 +592,7 @@ DEPENDENCIES:
   - "react-native-cameraroll (from `../node_modules/@react-native-community/cameraroll`)"
   - "react-native-cookies (from `../node_modules/@react-native-community/cookies`)"
   - react-native-document-picker (from `../node_modules/react-native-document-picker`)
+  - react-native-facebook-login (from `../node_modules/react-native-facebook-login`)
   - "react-native-geolocation (from `../node_modules/@react-native-community/geolocation`)"
   - react-native-google-maps (from `../node_modules/react-native-maps`)
   - react-native-image-picker (from `../node_modules/react-native-image-picker`)
@@ -623,6 +638,8 @@ SPEC REPOS:
     - AppAuth
     - boost-for-react-native
     - BoringSSL-GRPC
+    - FBSDKCoreKit
+    - FBSDKLoginKit
     - Firebase
     - FirebaseAnalytics
     - FirebaseAuth
@@ -685,6 +702,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/@react-native-community/cookies"
   react-native-document-picker:
     :path: "../node_modules/react-native-document-picker"
+  react-native-facebook-login:
+    :path: "../node_modules/react-native-facebook-login"
   react-native-geolocation:
     :path: "../node_modules/@react-native-community/geolocation"
   react-native-google-maps:
@@ -768,6 +787,8 @@ SPEC CHECKSUMS:
   boost-for-react-native: 39c7adb57c4e60d6c5479dd8623128eb5b3f0f2c
   BoringSSL-GRPC: 8edf627ee524575e2f8d19d56f068b448eea3879
   DoubleConversion: 5805e889d232975c086db112ece9ed034df7a0b2
+  FBSDKCoreKit: e7dcac0aabcfb09d0166998edd95fe3b05a0ce5d
+  FBSDKLoginKit: 1b0cf04df0370b37404213157b060d6666ede814
   Firebase: 210f41ca352067d83b1ba4fd2e7fb49a0c017397
   FirebaseAnalytics: a299a86ef70fcc6aa011418bc65a7e101fb9636c
   FirebaseAuth: 300433de340c1b058dbb8aec224a3f1bcfda5184
@@ -806,6 +827,7 @@ SPEC CHECKSUMS:
   react-native-cameraroll: 9d2b7c1707204d2040d2812f960c6cebdbd9f670
   react-native-cookies: 7701c746be2c8f9ad73b2b8b6130efbfdbe1d145
   react-native-document-picker: c5752781fbc0c126c627c1549b037c139444a4cf
+  react-native-facebook-login: f1965a91ca7d8b641677849ede842d7e4ad9b27b
   react-native-geolocation: cbd9d6bd06bac411eed2671810f454d4908484a8
   react-native-google-maps: 0a989abda71059db2caa98b9dacca7a8f38a47d0
   react-native-image-picker: a6c3d644751a388b0fc8b56822ff7cbd398a3008
