@@ -53,6 +53,7 @@ class EditProfile extends Component {
       lat: '',
       lng: '',
       bio: '',
+      instagramLink: '',
       isMale: true,
       isArtistChecked: false,
       isSingerChecked: false,
@@ -300,6 +301,11 @@ class EditProfile extends Component {
     // todo change keyboard and add validation
   };
 
+  handleInstagramChange = text => {
+    this.setState({instagramLink: text});
+    // todo change keyboard and add validation
+  };
+  
   editProfile = async () => {
     this.setState({
       isEditLoading: true,
@@ -307,7 +313,7 @@ class EditProfile extends Component {
     let validation = true;
     this.setState({error: ''});
     const {
-      actions: {editProfile},
+      actions: {editProfile,userDetailsUpdate},
       accessToken,
     } = this.props;
 
@@ -324,6 +330,7 @@ class EditProfile extends Component {
       isDancerChecked,
       isProducerChecked,
       isOtherChecked,
+      instagramLink
     } = this.state;
 
     const userObject = {
@@ -371,6 +378,10 @@ class EditProfile extends Component {
 
     // todo add disable buttons on submit
     await editProfile(accessToken, userObject, userTypes);
+
+    if(instagramLink){
+      userDetailsUpdate(userId,{social_media_type: "Instagram",link: "www.instagram.com/" + instagramLink}, accessToken);
+    }
 
     const {
       user,
@@ -655,6 +666,18 @@ class EditProfile extends Component {
           />
         </View>
 
+        <View style={styles.bioInputContainer}>
+          <TextInput
+            value={bio}
+            onChangeText={this.handleInstagramChange}
+            placeholder="Instagram Username"
+            style={styles.bioInput}
+            autoCapitalize="none"
+            placeholderTextColor="#989ba5"
+            underlineColorAndroid="transparent"
+          />
+        </View>
+
         {/*<View style={styles.genderTitle}>
           <Text style={styles.genderText}>Gender</Text>
         </View>
@@ -830,7 +853,7 @@ class EditProfile extends Component {
             </View>
           </View>
         </TouchableOpacity>
-        <TouchableOpacity
+        {/* <TouchableOpacity
           onPress={() => {
             this.instagramLogin.show();
           }}>
@@ -854,8 +877,8 @@ class EditProfile extends Component {
               </View>
             </View>
           </View>
-        </TouchableOpacity>
-        <View style={{height: scaleModerate(40)}} />
+        </TouchableOpacity> */}
+        {/* <View style={{height: scaleModerate(40)}} />
 
         <InstagramLogin
           ref={ref => (this.instagramLogin = ref)}
@@ -873,7 +896,7 @@ class EditProfile extends Component {
             user && console.log(`https://www.instagram.com/${user.username}`);
           }}
           onLoginFailure={data => console.log(data)}
-        />
+        /> */}
         {/* <FacebookLogin
           ref={ref => (this.facebookLogin = ref)}
           clientId="479836829836091"
